@@ -13,3 +13,9 @@ analyses/twelve_genes/__pycache__
 analyses/twelve_genes/legacy_code
 analyses/nine_nine_nine_genes/__pycache__
 
+# Methodology report source and LaTeX intermediates are reproducible locally.
+# Keep only the rendered, reviewable PDF under version control.
+/analyses/methodology/*
+!/analyses/methodology/
+!/analyses/methodology/*.pdf
+
