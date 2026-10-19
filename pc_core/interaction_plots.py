@@ -4,7 +4,7 @@ The module accepts either result-table layout used in this repository:
 ``pair_i``/``pair_j`` for pairwise studies or ``gene_sets`` for a fixed
 interaction order.  It writes three complementary figures:
 
-* an all-result effect-versus-evidence overview;
+* an all-result effect-versus-unadjusted-p-value overview;
 * a readable forest plot of the strongest positive and negative effects; and
 * a sparse signed network (or signed hypergraph for interactions of order >2).
 
@@ -40,6 +40,7 @@ NORMAL_95_CRITICAL_VALUE = 1.959963984540054
 POSITIVE_COLOUR = "tab:red"
 NEGATIVE_COLOUR = "tab:blue"
 NEUTRAL_COLOUR = "0.35"
+NOMINAL_P_VALUE = 0.05
 
 
 def _as_numpy(value: object, *, dtype: type | None = None) -> np.ndarray:
@@ -83,8 +84,9 @@ def _result_arrays(
     np.ndarray,
     np.ndarray,
     np.ndarray | None,
+    np.ndarray | None,
 ]:
-    """Extract names, memberships, estimates, CIs, support, and q-values."""
+    """Extract names, memberships, estimates, CIs, support, p-values, and q-values."""
 
     names = tuple(str(name) for name in result["gene_names"])
     memberships = _interaction_indices(result)
@@ -106,6 +108,12 @@ def _result_arrays(
         ci_low = estimates.copy()
         ci_high = estimates.copy()
 
+    p_values = None
+    if "p_value" in result:
+        candidate_p = _as_numpy(result["p_value"], dtype=float)
+        if len(candidate_p) == len(estimates):
+            p_values = candidate_p
+
     q_values = None
     if "q_value" in result:
         candidate_q = _as_numpy(result["q_value"], dtype=float)
@@ -113,7 +121,17 @@ def _result_arrays(
             q_values = candidate_q
 
     labels = ["-".join(names[int(index)] for index in row) for row in memberships]
-    return names, memberships, labels, estimates, ci_low, ci_high, supported, q_values
+    return (
+        names,
+        memberships,
+        labels,
+        estimates,
+        ci_low,
+        ci_high,
+        supported,
+        p_values,
+        q_values,
+    )
 
 
 def _supported_indices(
@@ -161,14 +179,13 @@ def _write_empty_figure(path: Path, title: str, message: str) -> None:
 def plot_effect_evidence_overview(
     estimates: np.ndarray,
     supported_indices: np.ndarray,
-    q_values: np.ndarray | None,
+    p_values: np.ndarray | None,
     *,
     title: str,
-    max_q: float,
     min_abs_log_interaction: float,
     output: Path,
 ) -> None:
-    """Plot every supported result without trying to label individual pairs."""
+    """Plot every supported result against its unadjusted two-sided p-value."""
 
     if not len(supported_indices):
         _write_empty_figure(output, title, "No interactions supported for inference")
@@ -176,7 +193,7 @@ def plot_effect_evidence_overview(
 
     figure, axis = plt.subplots(figsize=(8.5, 6.2))
     values = estimates[supported_indices]
-    if q_values is None or not np.isfinite(q_values[supported_indices]).any():
+    if p_values is None or not np.isfinite(p_values[supported_indices]).any():
         bins = min(70, max(15, int(np.sqrt(len(values)))))
         axis.hist(
             values, bins=bins, color=NEUTRAL_COLOUR, edgecolor="white", linewidth=0.35
@@ -194,16 +211,16 @@ def plot_effect_evidence_overview(
             ylabel="Number of supported interactions",
         )
     else:
-        finite_q = np.isfinite(q_values[supported_indices])
-        rows = supported_indices[finite_q]
-        q = q_values[rows]
-        positive_q = q[q > 0.0]
-        floor = positive_q.min() if len(positive_q) else np.finfo(float).tiny
-        # Extremely small q-values add no useful vertical resolution to a
-        # scatter plot and may underflow to zero.  Cap only the display scale;
-        # the saved result table retains the exact q-values.
+        finite_p = np.isfinite(p_values[supported_indices])
+        rows = supported_indices[finite_p]
+        p = p_values[rows]
+        positive_p = p[p > 0.0]
+        floor = positive_p.min() if len(positive_p) else np.finfo(float).tiny
+        # Extremely small p-values add no useful vertical resolution to a
+        # scatter plot and may underflow to zero. Cap only the display scale;
+        # the saved result table retains the exact p-values.
         evidence_cap = 50.0
-        evidence = np.minimum(-np.log10(np.clip(q, floor, 1.0)), evidence_cap)
+        evidence = np.minimum(-np.log10(np.clip(p, floor, 1.0)), evidence_cap)
         positive = estimates[rows] >= 0.0
         # A 12-gene panel has at most hundreds of points, whereas the
         # all-gene pairwise plot has hundreds of thousands.  The latter needs
@@ -242,12 +259,18 @@ def plot_effect_evidence_overview(
             -min_abs_log_interaction, color=NEGATIVE_COLOUR, linestyle="--", linewidth=1
         )
         axis.axhline(
-            -np.log10(max_q), color=NEUTRAL_COLOUR, linestyle="--", linewidth=1
+            -np.log10(NOMINAL_P_VALUE),
+            color=NEUTRAL_COLOUR,
+            linestyle="--",
+            linewidth=1,
+            label="unadjusted p = 0.05 (reference)",
         )
         axis.set(
             title=title,
             xlabel="TMLE log(interaction)",
-            ylabel=f"−log10(BH q-value), capped at {evidence_cap:g}",
+            ylabel=(
+                rf"$-\log_{{10}}$(unadjusted two-sided p-value), capped at {evidence_cap:g}"
+            ),
         )
         axis.legend(frameon=False, loc="upper right")
     axis.grid(axis="y", color="0.9", linewidth=0.8)
@@ -683,9 +706,17 @@ def generate_interaction_plots(
         raise ValueError("forest_top_n must be at least one.")
     if network_max_items < 1 or network_max_degree < 1:
         raise ValueError("Network limits must be at least one.")
-    names, memberships, labels, estimates, ci_low, ci_high, supported, q_values = (
-        _result_arrays(result)
-    )
+    (
+        names,
+        memberships,
+        labels,
+        estimates,
+        ci_low,
+        ci_high,
+        supported,
+        p_values,
+        q_values,
+    ) = _result_arrays(result)
     supported_indices = _supported_indices(estimates, ci_low, ci_high, supported)
     display_indices = _screened_display_indices(
         supported_indices,
@@ -708,13 +739,12 @@ def generate_interaction_plots(
     plot_effect_evidence_overview(
         estimates,
         supported_indices,
-        q_values,
+        p_values,
         title=(
-            f"{quantity}: effect and evidence"
-            if q_values is not None and np.isfinite(q_values[supported_indices]).any()
-            else f"{quantity}: effect distribution"
+            f"{quantity}\neffect versus unadjusted p-value"
+            if p_values is not None and np.isfinite(p_values[supported_indices]).any()
+            else f"{quantity}\neffect distribution"
         ),
-        max_q=max_q,
         min_abs_log_interaction=min_abs_log_interaction,
         output=overview,
     )

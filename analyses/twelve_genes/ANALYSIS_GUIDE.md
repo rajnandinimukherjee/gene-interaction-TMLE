@@ -13,6 +13,12 @@ The workflow does four things:
 
 An interaction here is an association in binary gene-expression states. It is not evidence that one gene directly regulates another, and it is not a causal effect.
 
+### Pipeline map
+
+**Binary expression matrix** -> **choose a PC by validation likelihood** -> **cross-fit on opposite cell folds** -> **obtain exact marginal probabilities and held-out counts** -> **target the probability table with TMLE** -> **calculate EIF-based CI, p-value, and BH q-value** -> **save every result and render readable summaries**.
+
+The arrows describe a fixed order. Architecture selection does not look at interaction results, p-values, or q-values. The forest and network use display rules only after the full result table has been calculated.
+
 ## Data, panel, and saved files
 
 The panel has a fixed order. That order is part of the analysis and must not change.
@@ -234,13 +240,13 @@ q_(i) = min_{j=i,...,m} min(1, m * p_(j) / j).
 
 The value is then returned to its original target.  Thus `q_h <= alpha` means exactly that target `h` belongs to the BH discovery set if BH is run at level `alpha`; equivalently, `q_h` is the smallest BH FDR level at which it would be selected.  The name “q-value” here means this BH-adjusted p-value, not a posterior probability or a local false-discovery rate.
 
-In the overview plot, a point for target `h` has vertical coordinate
+The BH q-value still matters: it is used for the display screen described below and belongs in the result table. The overview's y-axis, however, intentionally shows the unadjusted p-value so that the height describes the evidence contributed by that one test before multiplicity adjustment. A point for target `h` has vertical coordinate
 
 ~~~text
-y_h = -log10(q_h),
+y_h = -log10(p_h),
 ~~~
 
-with values above 50 visually capped at 50.  Higher points have smaller BH-adjusted p-values: `q=0.05`, `0.01`, and `0.001` map to about `1.301`, `2`, and `3`, respectively.  The horizontal line is therefore at `-log10(0.05) = 1.301`; points on or above it meet the BH `q <= 0.05` criterion.  The x-coordinate and colour describe the estimated TMLE log interaction and its sign, respectively.  They do not change the q-value, which comes from a two-sided p-value.
+with values above 50 visually capped at 50. Higher points have smaller unadjusted p-values: `p=0.05`, `0.01`, and `0.001` map to about `1.301`, `2`, and `3`, respectively. The horizontal line is therefore at `-log10(0.05) = 1.301`, a nominal unadjusted p-value reference. It is **not** the BH `q <= 0.05` boundary. The x-coordinate and colour describe the estimated TMLE log interaction and its sign; neither changes the p-value, which comes from a two-sided normal test. “Evidence” means that the observed estimate is less compatible with exactly zero under that model-based approximation. It does not mean the point has a known probability of being true, false, causal, or biologically important.
 
 BH controls the FDR of the *set* selected at a fixed cutoff, where
 
@@ -280,7 +286,7 @@ D = {h : supported, finite estimate/CI, q_h <= 0.05,
 
 The two cuts serve different purposes: `q <= 0.05` is the multiple-testing evidence screen, whereas `|log interaction| >= 0.25` is an effect-size screen (an odds ratio at least `exp(0.25) ≈ 1.28`, or at most `exp(-0.25) ≈ 0.78`, for pairs).  If `D` is empty, the forest, pair network, and hypergraph fall back to all supported finite results so that the figure is not blank.  Consequently, a fallback figure is a ranking of supported results, not a set that passed both default cuts.  This is a display and ranking rule; the full result table remains the complete record.  The overview is different: it always shows every supported result.
 
-- **Overview:** Shows every supported effect against `-log10(BH q-value)`, capped at 50 only for drawing. Red means positive and blue means negative. Dashed vertical lines mark +/-0.25; the horizontal line at 1.301 marks `q=0.05`. The BH family is all supported targets in that plotted result, not only points passing the effect-size display cut.
+- **Overview:** Shows every supported effect against `-log10(p)`, where `p` is the unadjusted two-sided p-value, capped at 50 only for drawing. Red means positive and blue means negative. Dashed vertical lines mark +/-0.25; the horizontal line at 1.301 marks nominal `p=0.05`, not `q=0.05`. The BH family is still all supported targets in that plotted result, not only points passing the effect-size display cut; its q-values control the forest/network/hypergraph screen below.
 - **Forest:** Separates `D` into negative estimates (`theta < 0`) and non-negative estimates (`theta >= 0`). Within each sign it orders by the estimate itself—most negative first on the left and most positive first on the right—and takes `min(25, number available)`. Thus the two panels are selected independently, not balanced to contain 25 each. A panel has fewer than 25 points when fewer than 25 display-set results have that sign (or, after the no-hit fallback, fewer than 25 supported finite results have that sign); it says nothing about a 25th result being removed for a confidence interval or an additional significance test. A panel with no eligible results says “None selected.” Points are TMLE log effects, bars are 95% CIs, and the black line is zero. The default 25-point limit can be changed with `--forest-top-n`.
 - **Pair network:** Starts with the same `D` (or the fallback set), ranks candidate pairs by decreasing `|TMLE log interaction|`, and processes them greedily. It adds a pair only while fewer than 25 edges have been kept **and** both genes currently have degree below 4; then it increments both degrees. A strong pair can therefore be omitted because an endpoint has already reached degree 4, and fewer than 25 edges can remain if there are too few candidates or the degree cap prevents further additions. This is a sparse readability rule, not a global optimization or a second statistical test. Red/blue marks sign, edge width shows relative absolute effect, and node size shows retained degree. It is intentionally not a graph of every significant pair.
 - **Hypergraph (orders above 2):** Draws at most the eight strongest screened sets as outline polygons. Red/blue marks sign and line width shows relative magnitude. Polygon overlap has no extra statistical meaning.
@@ -292,3 +298,9 @@ The speed improvement changes the implementation, not the question being estimat
 The current code batches gene sets and patterns, uses exact tree message passing, builds contingency tables with tensors, and solves the TMLE updates in batches. It still calculates exact requested marginals for the fitted PC and uses the same universal least-favourable TMLE update. It is not expected to match the retired Cirkit checkpoint numerically, because the PC class, tree learning, and fitted checkpoint are different.
 
 The code can enumerate all panel sets for the listed orders, but the `2^r` pattern table gets sparse as `r` grows. That loss of support is the practical limit for unregularized high-order inference.
+
+## Further reading
+
+- van der Laan and Rose, *Targeted Learning: Causal Inference for Observational and Experimental Data* (2011), for TMLE, cross-fitting, and EIF-based standard errors.
+- Pearl, *Causality*, 2nd ed. (2009), for why an association among expression states is not automatically a causal or regulatory claim.
+- Benjamini and Hochberg (1995) and Benjamini and Yekutieli (2001), cited above, for the BH procedure used here and the more conservative BY alternative under arbitrary dependence.

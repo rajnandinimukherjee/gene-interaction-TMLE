@@ -11,6 +11,12 @@ The workflow has two different scopes:
 
 An interaction measures association among binary gene-expression states. It does not by itself show direct regulation, a biological mechanism, or causation.
 
+### Pipeline map
+
+**Binary expression matrix** -> **choose a PC by validation likelihood** -> **cross-fit on opposite cell folds** -> **obtain exact marginal probabilities and held-out counts** -> **target with TMLE** -> **calculate EIF-based CI, p-value, and BH q-value** -> **save all pairs and render readable summaries**.
+
+For order two, the exact pair cache makes the all-pair step practical. For orders three and above, the pipeline inserts a predeclared pairwise screening step before candidate estimation. That candidate selection means the later higher-order q-values are exploratory, not confirmatory.
+
 ## Data and saved files
 
 The source CSV contains 11,950 cells and 1,000 numeric columns. The unnamed first column is constant metadata and is removed. All 999 remaining named columns are kept in their CSV order and must be binary (0/1). The current analysis uses every cell and every gene; it applies no cell or gene filter.
@@ -226,13 +232,13 @@ q_(i) = min_{j=i,...,m} min(1, m * p_(j) / j).
 
 The value is then returned to its original pair.  Thus `q_h <= alpha` means exactly that pair `h` belongs to the BH discovery set if BH is run at level `alpha`; equivalently, `q_h` is the smallest BH FDR level at which it would be selected.  The name “q-value” here means this BH-adjusted p-value, not a posterior probability or a local false-discovery rate.
 
-In the overview plot, pair `h` has vertical coordinate
+The BH q-value still matters: it is used for the display screen described below and belongs in the result table. The overview's y-axis, however, intentionally shows the unadjusted p-value so that the height describes the evidence contributed by that one pair before multiplicity adjustment. Pair `h` has vertical coordinate
 
 ~~~text
-y_h = -log10(q_h),
+y_h = -log10(p_h),
 ~~~
 
-with values above 50 visually capped at 50.  Higher points have smaller BH-adjusted p-values: `q=0.05`, `0.01`, and `0.001` map to about `1.301`, `2`, and `3`, respectively.  The horizontal line is therefore at `-log10(0.05) = 1.301`; points on or above it meet the BH `q <= 0.05` criterion.  The x-coordinate and colour describe the estimated TMLE log interaction and its sign, respectively.  They do not change the q-value, which comes from a two-sided p-value.
+with values above 50 visually capped at 50. Higher points have smaller unadjusted p-values: `p=0.05`, `0.01`, and `0.001` map to about `1.301`, `2`, and `3`, respectively. The horizontal line is therefore at `-log10(0.05) = 1.301`, a nominal unadjusted p-value reference. It is **not** the BH `q <= 0.05` boundary. The x-coordinate and colour describe the estimated TMLE log interaction and its sign; neither changes the p-value, which comes from a two-sided normal test. “Evidence” means that the observed estimate is less compatible with exactly zero under that model-based approximation. It does not mean the point has a known probability of being true, false, causal, or biologically important.
 
 BH controls the FDR of the *set* selected at a fixed cutoff, where
 
@@ -259,7 +265,7 @@ D = {h : supported, finite estimate/CI, q_h <= 0.05,
 
 The two cuts have different jobs: `q <= 0.05` is the multiple-testing evidence screen, whereas `|log interaction| >= 0.25` is an effect-size screen (odds ratio at least `exp(0.25) ≈ 1.28`, or at most `exp(-0.25) ≈ 0.78`).  If no pair satisfies **both** cuts, the forest and network fall back to all supported finite pairs, so a figure is still available.  A fallback figure is therefore a ranking of supported pairs, not a set that passed both default cuts.  The overview does not use this screen: it always includes every supported pair.
 
-- **Overview:** Includes all supported pairs. The x-axis is the TMLE log interaction; the y-axis is `-log10(BH q-value)`, capped at 50 only for display. Red means positive and blue means negative. Dashed vertical lines mark +/-0.25; the horizontal line at 1.301 marks `q=0.05`. The BH family is all supported pairs, not only pairs passing the effect-size display cut.
+- **Overview:** Includes all supported pairs. The x-axis is the TMLE log interaction; the y-axis is `-log10(p)`, where `p` is the unadjusted two-sided p-value, capped at 50 only for display. Red means positive and blue means negative. Dashed vertical lines mark +/-0.25; the horizontal line at 1.301 marks nominal `p=0.05`, not `q=0.05`. The BH family is still all supported pairs, not only pairs passing the effect-size display cut; its q-values control the forest/network screen below.
 - **Forest:** Separates `D` into negative estimates (`theta < 0`) and non-negative estimates (`theta >= 0`). Within each sign it orders by the estimate itself—most negative first on the left and most positive first on the right—and takes `min(25, number available)`. The two panels are selected independently, not balanced to contain 25 each. Thus fewer than 25 points on a side means fewer than 25 display-set pairs have that sign (or, after the no-hit fallback, fewer than 25 supported finite pairs have that sign). It does not mean that a 25th pair failed an extra confidence-interval or significance test. A sign with no eligible pair is labelled “None selected.” Points are TMLE log effects, bars are 95% CIs, and the black line marks zero. The default 25-point limit can be changed with `--forest-top-n`.
 - **Network:** Starts with the same `D` (or the fallback set), ranks candidate pairs by decreasing `|TMLE log interaction|`, and processes them greedily. It adds a pair only while fewer than 25 edges have been kept **and** both of its genes currently have degree below 4; it then increments both degrees. A pair can therefore be absent despite passing the two display cuts because a gene in the pair already has four stronger retained neighbours. Fewer than 25 edges can remain if candidates run out or degree caps block the rest. These are sparse readability rules, not a global graph optimization or extra statistical tests. Red/blue marks sign, edge width shows relative absolute effect, and node size shows retained degree.
 
@@ -305,3 +311,9 @@ Each order-`r` set also has `2^r` binary pattern cells. A general tree query tak
 - On Apple MPS, pairwise and higher-order TMLE run on CPU because the implementation needs reliable float64 arithmetic and MPS float64 support is limited.
 
 The practical approach is to calculate all pairs exactly, screen using predeclared q-value, effect-size, and degree limits, cap the candidate set, inspect support carefully, and independently confirm selected higher-order findings.
+
+## Further reading
+
+- van der Laan and Rose, *Targeted Learning: Causal Inference for Observational and Experimental Data* (2011), for TMLE, cross-fitting, and EIF-based standard errors.
+- Pearl, *Causality*, 2nd ed. (2009), for why an association among expression states is not automatically a causal or regulatory claim.
+- Benjamini and Hochberg (1995) and Benjamini and Yekutieli (2001), cited above, for the BH procedure used here and the more conservative BY alternative under arbitrary dependence.
