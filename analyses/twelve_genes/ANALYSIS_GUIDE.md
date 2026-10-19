@@ -77,7 +77,7 @@ No interaction estimate, p-value, or q-value was used to select these settings.
 The selected PC is a weighted mixture of 32 binary tree distributions:
 
 ~~~text
-P(x) = sum_z pi_z P(x_root | z) product_{j != root} P(x_j | x_parent(j), z)
+p(x) = sum_z pi_z p(x_root | z) product_{j != root} p(x_j | x_parent(j), z)
 ~~~
 
 In plain language, each mixture component represents a broad expression pattern. Within a component, the genes follow the same tree layout, but their probabilities may differ. The component weights `pi_z` are normalized with softmax. Each component has its own root probability and two conditional probabilities for every non-root gene (one for each parent state). Starting values come from smoothed empirical probabilities with small noise, keeping probabilities away from exactly zero and one.
@@ -155,7 +155,7 @@ For the held-out cells, the code counts every pattern for every requested set in
 For a set `S` of order `r`, the reported interaction is:
 
 ~~~text
-theta(P) = sum_a s(a) log P(X_S=a)
+theta(p) = sum_a s(a) log p(X_S=a)
 s(a) = (-1)^(r - sum(a))
 ~~~
 
@@ -178,10 +178,10 @@ p_epsilon(a) = p_0(a) + epsilon s(a)
 `epsilon` is restricted so that every updated probability remains strictly positive. The code moves the endpoints of that valid interval slightly inward, then uses 64 vectorized bisection steps to solve:
 
 ~~~text
-sum_a P_n(a) s(a) / p_epsilon(a) = 0
+sum_a p_n(a) s(a) / p_epsilon(a) = 0
 ~~~
 
-Here, `P_n` is the observed distribution in the held-out fold. This equation says that the empirical efficient-influence-function (EIF) mean is zero. The EIF is **not** minimized.
+Here, `p_n` is the observed distribution in the held-out fold. This equation says that the empirical efficient-influence-function (EIF) mean is zero. The EIF is **not** minimized.
 
 At the updated table `p_star`, the centered EIF is:
 

@@ -65,7 +65,7 @@ The saved winner was:
 The selected PC has 32 mixture components. Each component has its own baseline Bernoulli logit for every gene. Tree-edge residual logits are shared across components:
 
 ~~~text
-logit P(X_j=1 | X_parent(j)=u, Z=z)
+logit p(X_j=1 | X_parent(j)=u, Z=z)
     = base_logit[z,j] + residual_edge_logit[j,u]
 ~~~
 
@@ -109,8 +109,8 @@ Together, the two held-out folds include every cell exactly once.
 
 There are 498,501 unordered pairs, but the workflow does not fit or separately query 498,501 PCs. With `--rebuild-cache`, it checks the data/checkpoint fingerprint, loads the two fold PCs, and creates a cache containing the following for each fold:
 
-1. `p_one[i] = P(X_i=1)`, a length-999 vector;
-2. `p11[i,j] = P(X_i=1, X_j=1)` for the upper triangle;
+1. `p_one[i] = p(X_i=1)`, a length-999 vector;
+2. `p11[i,j] = p(X_i=1, X_j=1)` for the upper triangle;
 3. held-out `count_one[i]` and `count11[i,j]`; and
 4. the held-out fold size.
 
@@ -150,7 +150,7 @@ The scalable workflow instead uses a calculation specific to pairwise marginals 
 For a pair, the target is the log odds ratio:
 
 ~~~text
-theta(P) = log[p00 p11 / (p01 p10)]
+theta(p) = log[p00 p11 / (p01 p10)]
 ~~~
 
 Zero means no interaction on this binary odds-ratio scale. Positive and negative values mean positive and negative association. This is not a causal estimate and does not establish a direct biological mechanism.
@@ -172,10 +172,10 @@ max(-p00,-p11) < epsilon < min(p01,p10)
 After shifting the endpoints slightly inward, the code runs 64 vectorized bisection steps to solve:
 
 ~~~text
-sum_a P_n(a) s(a) / p_epsilon(a) = 0
+sum_a p_n(a) s(a) / p_epsilon(a) = 0
 ~~~
 
-`P_n` is the observed distribution in that held-out fold. This is the efficient-influence-function (EIF) score equation: TMLE chooses the update whose empirical EIF mean is zero. The EIF is **not** minimized.
+`p_n` is the observed distribution in that held-out fold. This is the efficient-influence-function (EIF) score equation: TMLE chooses the update whose empirical EIF mean is zero. The EIF is **not** minimized.
 
 At the updated table `p_star`, the centered EIF is:
 
@@ -280,7 +280,7 @@ For every selected candidate, the PC then calculates all `2^r` binary-pattern pr
 The higher-order target is:
 
 ~~~text
-theta_r(P) = sum_{a in {0,1}^r} (-1)^(r-sum(a)) log P(X_S=a)
+theta_r(p) = sum_{a in {0,1}^r} (-1)^(r-sum(a)) log p(X_S=a)
 ~~~
 
 This is not a complete all-gene high-order search. The same pairwise data select candidates and are later used to estimate them. The saved higher-order result therefore carries an explicit exploratory warning. Do not present its q-values as confirmatory FDR evidence; use an independent confirmation split or a selection-aware design.

@@ -7,9 +7,9 @@ all-gene **higher-order** analysis is not.
 
 That conclusion applies to the **current estimand and implementation**:
 the marginal interaction
-`P(X_S = a)`, estimated with the current cross-fitted marginal-table TMLE.
+`p(X_S = a)`, estimated with the current cross-fitted marginal-table TMLE.
 There is a materially different exact-state/MFI estimand,
-`P(X_S = a, X_-S = 0)`, where every non-selected gene is off.  This document
+`p(X_S = a, X_-S = 0)`, where every non-selected gene is off.  This document
 discusses it only to compare the present analysis with the Gene Flows study:
 it is **not** a candidate replacement estimand or implementation route for
 this analysis.  It does not make the present data support that estimand, make
@@ -229,16 +229,16 @@ For a selected gene set `S` of order `r`, let `A` be the subset of selected
 genes that are on in binary pattern `a`.  Define the **exact-state mass**
 
 ```text
-q(A) = P(X_A = 1, X_-A = 0) = P(X = 1_A).
+q(A) = p(X_A = 1, X_-A = 0) = p(X = 1_A).
 ```
 
 For a pair `{i, j}`, the four components are therefore
 
 ```text
-q({})       = P(X_i=0, X_j=0, X_-(i,j)=0)
-q({j})      = P(X_i=0, X_j=1, X_-(i,j)=0)
-q({i})      = P(X_i=1, X_j=0, X_-(i,j)=0)
-q({i,j})    = P(X_i=1, X_j=1, X_-(i,j)=0).
+q({})       = p(X_i=0, X_j=0, X_-(i,j)=0)
+q({j})      = p(X_i=0, X_j=1, X_-(i,j)=0)
+q({i})      = p(X_i=1, X_j=0, X_-(i,j)=0)
+q({i,j})    = p(X_i=1, X_j=1, X_-(i,j)=0).
 ```
 
 The corresponding order-`r` MFI/log interaction is
@@ -248,15 +248,15 @@ I_S = sum_{A subseteq S} (-1)^(r-|A|) log q(A).
 ```
 
 This differs fundamentally from the current higher-order target,
-`sum_a (-1)^(r-sum(a)) log P(X_S=a)`, which marginalises all genes outside
+`sum_a (-1)^(r-sum(a)) log p(X_S=a)`, which marginalises all genes outside
 `S`.  If `R = X_-S`, then normalising the exact-state masses gives
-`P(X_S=a | R=0) = q(A) / sum_(B subseteq S) q(B)`.  The normalising constant
+`p(X_S=a | R=0) = q(A) / sum_(B subseteq S) q(B)`.  The normalising constant
 cancels from the alternating log contrast.  Thus `I_S` is the interaction
 conditional on the very specific all-other-genes-off stratum.
 
 This is an observational conditional association, not automatically a causal
-quantity.  `P(X_S=a, X_-S=0)` is not an interventional distribution.  A claim
-about `P(... | do(X_-S=0))`, or about regulation of one gene by another,
+quantity.  `p(X_S=a, X_-S=0)` is not an interventional distribution.  A claim
+about `p(... | do(X_-S=0))`, or about regulation of one gene by another,
 would require a causal graph/structural model and identification assumptions
 that this PC analysis does not supply.  Intervening to fix every gene would
 also require a carefully stated outcome; it is not equivalent to observing a
@@ -268,8 +268,8 @@ For this target, a probability is determined solely by its **active set**
 `A`; it does not depend on which additional selected genes happen to be off.
 For example, `q({i})` is reused in every pair containing `i`, and `q({i,j})`
 is reused in every triple containing `{i,j}`.  This reuse is unavailable for
-the current marginal probabilities: `P(X_i=1, X_j=0)` and
-`P(X_i=1, X_j=0, X_k=0)` marginalise different sets of variables.
+the current marginal probabilities: `p(X_i=1, X_j=0)` and
+`p(X_i=1, X_j=0, X_k=0)` marginalise different sets of variables.
 
 An exhaustive order-`r` exact-state scan therefore needs at most
 
@@ -327,7 +327,7 @@ marginal estimand selected for this study.
 In Section 2.1 and Sections 4.6--4.7,
 Leonie **Bossemeyer** and Alex **Belo** use this same all-other-genes-off MFI
 formulation.  Their two-factor formula contains
-`P(X_i,X_j, X_-(i,j)=0)` for each of the four on/off patterns; their
+`p(X_i,X_j, X_-(i,j)=0)` for each of the four on/off patterns; their
 three-factor formula extends it to eight exact full-state masses.
 
 Their ability to avoid screening is computational rather than statistical:
@@ -438,10 +438,10 @@ pipeline nevertheless enumerates the combinations and patterns; large CUDA
 batches and multiple A100s make the enumeration fast enough for triples.
 
 For the selected marginal estimand here, the probability needed for a gene
-set is `P(X_S=a)`, which sums over different complements for different `S`.
+set is `p(X_S=a)`, which sums over different complements for different `S`.
 There is no corresponding active-subset cache.  For example,
-`P(X_i=1, X_j=0)` cannot be recovered from, or reused as,
-`P(X_i=1, X_j=0, X_k=0)`, because the latter restricts rather than
+`p(X_i=1, X_j=0)` cannot be recovered from, or reused as,
+`p(X_i=1, X_j=0, X_k=0)`, because the latter restricts rather than
 marginalises `X_k`.  The generic PC tree-message query and the held-out
 `2^r` contingency table are therefore still required for each marginal target.
 
