@@ -221,7 +221,7 @@ analysis for the current marginal-TMLE target.  It is not a way to turn all
 analysis.  The exact-state/MFI comparator below explains why the Gene Flows
 GPU result does not alter that conclusion for the present estimand.
 
-# Exact-state/MFI (“all other genes off”) comparator (not a proposed analysis)
+# Exact-state/MFI (“all other genes off”) comparator
 
 ## The target under discussion
 
@@ -295,7 +295,7 @@ not need to materialise every triple mass: it can retain the lower-order
 caches, calculate a triple mass, assemble that triple's interaction, and
 write only the final shard.
 
-## What the data say: this exact-state estimand has no raw support here
+## What the data says: this exact-state estimand has no raw support here
 
 The 11,950 by 999 input matrix was checked directly.  Its smallest row sum is
 **29**: there are no all-zero, singleton, doubleton, or tripleton cell
@@ -322,10 +322,9 @@ Accordingly, this analysis will not add an unscreened exact-state/MFI run.  It
 would be a model extrapolation rather than a supported estimate and is not the
 marginal estimand selected for this study.
 
-## What Bossemeyer and Belo did in `GP__gene_flows.pdf`
+## What Bossemeyer and Belo did in the Gene Flows study
 
-The workspace contains `GP__gene_flows.pdf` (not a
-`GP__gene_flows.py` implementation).  In Section 2.1 and Sections 4.6--4.7,
+In Section 2.1 and Sections 4.6--4.7,
 Leonie **Bossemeyer** and Alex **Belo** use this same all-other-genes-off MFI
 formulation.  Their two-factor formula contains
 `P(X_i,X_j, X_-(i,j)=0)` for each of the four on/off patterns; their
@@ -424,7 +423,7 @@ conclusion that the current route cannot be scaled, not a particular GPU
 budget for the different exact-state functional.
 
 The closest published compute guide for an exact-state triple scan is instead
-the A100 experiment in `GP__gene_flows.pdf`: its 1,000-gene triple count is
+the A100 experiment in Gene Flows: its 1,000-gene triple count is
 within 0.3% of `C(999,3)`.  It is useful for explaining how their different
 functional can be evaluated, but is not a compute budget or implementation
 precedent for this analysis.

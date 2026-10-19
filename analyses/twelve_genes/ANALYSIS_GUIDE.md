@@ -33,7 +33,7 @@ Every checkpoint and result file stores a SHA-256 fingerprint of the ordered gen
 | `output/pc_architecture_sweep_12_genes.csv` | Results for every model-selection candidate. |
 | `output/pc_architecture_selected_config_12_genes.json` | The settings selected by validation likelihood. |
 | `output/cross_fitted_pcs_12_genes.pt` | The two fitted fold-specific PCs and run provenance. |
-| `output/{2,3,4,5}_pt_interactions_12_genes.pt` | Machine-readable interaction results for one order. |
+| `output/{2,3,4,5,6,7}_pt_interactions_12_genes.pt` | Machine-readable interaction results for one order. |
 | `plots/{order}_pt_interactions_12_genes.png` | A labelled comparison plot for every requested gene set. |
 | `plots/*_overview.png`, `*_forest.png`, `*_network.png`, `*_hypergraph.png` | Smaller summary figures. |
 | `logs/*.txt` | Plain-text run details, support checks, and results. |
@@ -95,9 +95,9 @@ The selection sweep chooses the architecture and a few hyperparameters. It is no
 | Training minibatch | 128 cells |
 | AdamW learning rate / weight decay | 0.02 / `1e-5` |
 | Fold seeds | 0 and 1 |
-| Device | MPS |
-| Training time | 4.84 s |
-| Final training NLL, folds 1 and 2 | 4.025127, 4.042978 |
+| Device | CPU |
+| Training time | 1.19 s model-fit/save timer; 2.13 s complete fresh training command |
+| Final training NLL, folds 1 and 2 | 4.024783, 4.044821 |
 
 During every epoch, the training cells are shuffled and AdamW minimizes the average NLL. A training batch always means a number of **cells**; it never means a group of the 12 genes.
 
@@ -114,6 +114,21 @@ Combine the two fold results, weighting each by its held-out sample size.
 
 This protects against evaluating a cell with a model that memorized it: every cell is evaluated by a PC trained on the other fold. The two held-out folds cover every cell exactly once.
 
+### Recorded fresh end-to-end runtimes
+
+The following are complete wall-clock timings from a fresh full-panel run on 19 October 2026. It trained the two 20-epoch fold PCs from the source CSV before any interaction work; no checkpoint, interaction result, or cache from an earlier run was read. Each interaction command then read the checkpoint produced moments earlier in that same master run. The run used `minimum-cell-count=1`, `minimum-probability=1e-12`, `batch-size=512`, 64 TMLE bisection iterations, default plots, and no reduced data.
+
+| Order | Full-panel targets | Fresh PC training (once) | Full interaction command | Fresh fit + one order |
+| ---: | ---: | ---: | ---: | ---: |
+| 2-point | 66 | 2.13 s | 1.60 s | 3.73 s |
+| 3-point | 220 | 2.13 s | 2.01 s | 4.14 s |
+| 4-point | 495 | 2.13 s | 2.95 s | 5.08 s |
+| 5-point | 792 | 2.13 s | 4.47 s | 6.60 s |
+| 6-point | 924 | 2.13 s | 5.28 s | 7.41 s |
+| 7-point | 792 | 2.13 s | 4.82 s | 6.95 s |
+
+The table reports the `real` time from `/usr/bin/time -p` around each whole Python command, so it includes interpreter startup and imports, loading the CSV and freshly written checkpoint, querying every gene set, exact PC probabilities and held-out counts, TMLE plus SE/p-value/BH calculation, result/report saving, and rendering the tall full-panel figure plus overview, forest, and network/hypergraph figures. The per-order program logs also retain their smaller internal analysis timer; the table deliberately uses the complete command timer rather than assigning unsupported substep timings. The master log, `logs/end_to_end_fresh_12_gene_orders_2_to_7_20261019T093419+0100.txt`, contains training and all six analyses in sequence. Training once and then running all six orders took 23.26 s by summing the recorded command times (`2.13 + 1.60 + 2.01 + 2.95 + 4.47 + 5.28 + 4.82`), rather than fitting six separate sets of PCs.
+
 ## 3. Calculate model probabilities and observed counts
 
 For interaction order `r`, the default run examines every `C(12,r)` gene set:
@@ -124,6 +139,8 @@ For interaction order `r`, the default run examines every `C(12,r)` gene set:
 | 3 (triples) | 220 |
 | 4 | 495 |
 | 5 | 792 |
+| 6 | 924 |
+| 7 | 792 |
 
 Use `--genes` when you want one named set instead of the full panel.
 
@@ -189,9 +206,9 @@ The table uses two deliberately different statuses:
 
 Only supported results receive an SE, confidence interval, p-value, and q-value. A targeted but unsupported result can still be useful as a descriptive point estimate, but it is intentionally not used for unregularized statistical inference.
 
-For the saved pairwise panel result, `minimum-cell-count=5` and `minimum-probability=1e-12`; all 66 pairs are supported. At larger interaction orders, sparse pattern counts—not computation—usually become the main scientific limit.
+For the freshly saved pairwise panel result, `minimum-cell-count=1` and `minimum-probability=1e-12`; all 66 pairs are supported. At larger interaction orders, sparse pattern counts—not computation—usually become the main scientific limit.
 
-> **What “supported unregularized TMLE” means here.** The raw held-out counts are used exactly as observed. The code does not add pseudocounts, a continuity correction, a probability floor, a ridge penalty, or variance regularization to repair a rare or empty pattern. For a pair in this saved run, each of 00, 01, 10, and 11 must appear at least five times in F1 and at least five times in F2. The fitted PC must also assign each pattern probability at least `1e-12` in both folds. These thresholds only decide whether inference is reported; they do not change counts or probabilities.
+> **What “supported unregularized TMLE” means here.** The raw held-out counts are used exactly as observed. The code does not add pseudocounts, a continuity correction, a probability floor, a ridge penalty, or variance regularization to repair a rare or empty pattern. For a pair in this saved run, each of 00, 01, 10, and 11 must appear at least once in F1 and at least once in F2. The fitted PC must also assign each pattern probability at least `1e-12` in both folds. These thresholds only decide whether inference is reported; they do not change counts or probabilities.
 >
 > A result may be targeted without being supported. For example, the score equation may have a finite solution even though one pattern is too rare for the prespecified inference rule. Such a result has no SE, CI, p-value, or q-value. If no strictly positive bisection solution exists, it is not targeted either.
 

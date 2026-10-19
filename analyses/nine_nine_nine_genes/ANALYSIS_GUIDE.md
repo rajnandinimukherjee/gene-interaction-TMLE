@@ -87,7 +87,7 @@ The selection sweep does not describe the final checkpoint training in full. The
 | AdamW learning rate / weight decay | 0.01 / `1e-5` |
 | Fold seeds | 0 and 1 |
 | Device | CPU |
-| Training time | 11.78 s |
+| Training time | 11.31 s model-fit/save timer; 12.16 s complete fresh training command |
 | Final training NLL, folds 1 and 2 | 246.000771, 246.297290 |
 
 Each epoch shuffles cells and AdamW minimizes the mean NLL. A minibatch always contains **cells**; it does not split the 999 genes into smaller analyses.
@@ -125,7 +125,19 @@ p10 = p_i - p11               n10 = n_i - n11
 p11 = p11                     n11 = n11
 ~~~
 
-The current run rebuilt the cache rather than reusing one. Its log records “Building pair cache,” processes both 5,975-cell held-out folds, and saves the result. Cache construction took 1.16 seconds; all-pairs TMLE took 1.26 seconds; total interaction-analysis time was 2.53 seconds. These times do not include PC fitting (11.78 seconds) or Python startup/import time.
+### Recorded fresh end-to-end runtime
+
+The current saved run trained a new two-fold checkpoint from the full source CSV, then forced a new pair-cache build before all-pairs TMLE. No checkpoint, cache, or pairwise result from an earlier run was read. It used `minimum-cell-count=0`, `minimum-probability=1e-12`, 64 bisection iterations, and default plots.
+
+| Stage | Time | What the timed stage contains |
+| --- | ---: | --- |
+| Fresh training command | 12.16 s | Complete external Python-command time, including startup/imports, input loading, both PC fits, and checkpoint saving. The checkpoint's internal model-fit/save timer was 11.31 s. |
+| Build and save the pair cache | 1.24 s | Program stage timer within the fresh pairwise command: restore the newly trained PCs; generate exact one- and two-gene probability tables and held-out count tables; and write the cache `.pt` file. |
+| All-pairs TMLE, final save, and plots | 1.30 s | Program stage timer within the fresh pairwise command: construct 498,501 four-cell tables; do two-fold TMLE, SE/p-value/BH calculation; write the final pairwise `.pt` result; print the report; and render the overview, forest, and network images. |
+| Fresh pairwise command, complete | 3.50 s | Complete external Python-command time for cache construction, TMLE, final save, and plots, including startup/imports, input loading, validation, result reload, and wrapper overhead. Its internal interaction timer was 2.65 s. |
+| Fresh sequential pipeline | 15.66 s | `12.16 + 3.50`: one new PC fit followed by one new cache build and the all-pairs analysis. |
+
+The complete external command times are the `real` values from `/usr/bin/time -p`; the two substage rows are the program's own logged timers. Thus the cache-construction row is the recorded **data-generation and cache-saving** time, while the all-pairs row is the recorded **TMLE, final-result saving, and plotting** time. The log does not separately time each operation inside those rows, so it would be misleading to assign finer-grained values. The master log, `logs/end_to_end_fresh_999_gene_pairwise_20261019T093921+0100.txt`, includes the training and pairwise commands in sequence. A later run can reuse a matching cache, but this recorded run did not.
 
 ### Why this is faster than the legacy workflow
 
@@ -184,17 +196,17 @@ Only supported pairs receive an SE, CI, p-value, and q-value. A finite targeted 
 
 > **What “supported unregularized” means here.** Inference uses the raw held-out four-cell table. It does not add a pseudocount, continuity correction, probability floor, ridge penalty, or variance regularization to repair an empty or rare cell. The thresholds are gates: they decide whether inference is shown, but they do not modify a count or clip a probability.
 >
-> In the current rerun, `minimum-cell-count=1`. A supported pair must therefore have at least one observation in each of 00, 01, 10, and 11 in F1 **and** in F2. The decision does not pool counts across all 11,950 cells. In every fold, the PC must also assign all four cells a probability of at least `1e-12`; lower values are excluded, not raised to that threshold.
+> In the current rerun, `minimum-cell-count=0`. The held-out count rule therefore does not exclude a pair with an empty 00, 01, 10, or 11 cell; it still applies independently to F1 and F2 rather than pooling counts across all 11,950 cells. In every fold, the PC must also assign all four cells a probability of at least `1e-12`; lower values are excluded, not raised to that threshold.
 >
 > “Targeted” is weaker than “supported.” A finite, strictly positive model table can have a valid TMLE solution even if one held-out cell is zero or otherwise below the threshold. Such a pair deliberately receives no SE, CI, p-value, or q-value.
 
-The most recent table used `minimum-cell-count=1` and `minimum-probability=1e-12`. Of 498,501 pairs, 389,779 have finite targeted estimates and 389,725 are supported. The 54 targeted-but-unsupported pairs remain point estimates without inference. All 108,776 unsupported pairs fail the held-out count rule in at least one fold; none fails the `1e-12` model-probability rule.
+The most recent table used `minimum-cell-count=0` and `minimum-probability=1e-12`. Of 498,501 pairs, 389,779 have finite targeted estimates and all 389,779 are supported. The remaining 108,722 pairs are not targeted because TMLE did not yield a finite point estimate in both folds; none is excluded by the held-out count or `1e-12` model-probability threshold.
 
 Lowering the minimum count increases coverage, but it permits inference based on smaller cells. That is a scientific design choice, not a speed optimization.
 
 ### What the BH q-value in the overview plot means
 
-BH is applied **only** to the 389,725 supported pairs in this run; targeted-but-unsupported pairs have no p-value or q-value and are not counted.  Let `m = 389,725`, let `p_h` be the two-sided Wald p-value for pair `h` under its null hypothesis of zero log interaction, and write the ordered p-values as
+BH is applied **only** to the 389,779 supported pairs in this run; targeted-but-unsupported pairs have no p-value or q-value and are not counted.  Let `m = 389,779`, let `p_h` be the two-sided Wald p-value for pair `h` under its null hypothesis of zero log interaction, and write the ordered p-values as
 
 ~~~text
 p_(1) <= p_(2) <= ... <= p_(m).
@@ -232,7 +244,7 @@ FDP = V / max(R, 1),       FDR = E[FDP],
 
 References: Benjamini and Hochberg, “Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing,” *Journal of the Royal Statistical Society: Series B* 57(1), 289--300 (1995), [doi:10.1111/j.2517-6161.1995.tb02031.x](https://doi.org/10.1111/j.2517-6161.1995.tb02031.x); Benjamini and Yekutieli, “The Control of the False Discovery Rate in Multiple Testing under Dependency,” *Annals of Statistics* 29(4), 1165--1188 (2001), [doi:10.1214/aos/1013699998](https://doi.org/10.1214/aos/1013699998).
 
-The default display screen additionally requires `|TMLE log interaction| >= 0.25`; 132,169 pairs pass both cuts in the current run.
+The default display screen additionally requires `|TMLE log interaction| >= 0.25`; 132,177 pairs pass both cuts in the current run.
 
 ## 5. Read the pairwise table and figures
 
