@@ -1,0 +1,854 @@
+Cross-fitted interaction analysis
+Started: 2026-10-19T13:53:49.321409+01:00
+Analysis: 12-gene
+Run settings
+  analysis: 12
+  data: input/trainingData_11950Cells_1000Genes.csv
+  model: None
+  interaction-order: 5
+  genes: None
+  output: None
+  log: None
+  batch-size: 512
+  nuisance-sample-batch-size: 64
+  probability-clip: 1e-06
+  fluctuation-iterations: 64
+  max-samples: None
+  device: cpu
+  plots-dir: None
+  forest-top-n: 25
+  network-max-items: 25
+  network-max-degree: 4
+  no-plots: False
+  plot: None
+  max-genes: None
+  pairwise-output: None
+  candidates: None
+  candidates-csv: None
+  screened-pairs-csv: None
+  screen-max-q: 0.05
+  screen-min-abs-log-interaction: 0.25
+  max-degree: 20
+  edge-policy: mutual
+  max-candidates: 100000
+Training provenance
+  Cross-fitted PC checkpoint: analyses/twelve_genes/output/cross_fitted_pcs_12_genes.pt
+  Checkpoint format: 4
+  Training data shape: (11950, 12) (cells, genes)
+  Model: architecture=mixture-chow-liu; components=32
+  Cross-fitting folds: 2 (held out: 5975, 5975 cells)
+  Training settings: epochs=20; batch_size=128; learning_rate=0.02; weight_decay=1e-05; seed=0; device=cpu
+  Training runtime: 1.18s
+  Final training NLL: fold 1: 4.024783, fold 2: 4.044821
+==============================================================================
+Conditional TMLE: 792 ordered targets across 2 folds.
+
+TMLE targeting
+  Finite point estimates in every cross-targeted fold: 619 / 792
+  Finite conditional fluctuations: 619 / 792
+  No finite fluctuation: 173
+  No empirical four-cell support gate is applied on this branch.
+  Conditional outcome/propensity clip: 1e-06
+  Raw PC propensities below the clip in any fold: 0
+
+TMLE results on the log-interaction scale (all 792 targets)
+Target                                                Plug-in           TMLE                      TMLE 95% CI     q value           SE   Targeted  Supported
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Spc24 <- Gmnn,Prim2,Gins2,Cks2                  +2.354872e-01  -1.041041e+00   [-3.958954e+00, +1.876871e+00]  1.000000e+00  1.488758e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Cdca8                 +6.127814e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Pbk                   +4.504032e-01  +2.662163e+00   [-6.724499e-01, +5.996775e+00]  1.000000e+00  1.701364e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Ube2c                 +1.896693e-01  +2.561915e+00   [-2.956358e-01, +5.419466e+00]  1.000000e+00  1.457961e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Ccna2                 -7.348500e-02  +1.000865e+00   [-4.590673e+00, +6.592403e+00]  1.000000e+00  2.852878e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Apitd1                -1.606522e-01  -5.038437e-02   [-2.778489e+00, +2.677720e+00]  1.000000e+00  1.391916e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Hells                 -2.056929e-01  -4.957327e-01   [-3.701041e+00, +2.709575e+00]  1.000000e+00  1.635391e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Mcm6                  -5.141644e-01  -7.452419e-01   [-3.464378e+00, +1.973894e+00]  1.000000e+00  1.387340e+00       True       True
+Spc24 <- Gmnn,Prim2,Cks2,Cdca8                  -2.700914e-01  -4.291813e+00   [-7.312593e+00, -1.271034e+00]  5.164279e-01  1.541242e+00       True       True
+Spc24 <- Gmnn,Prim2,Cks2,Pbk                    +2.265816e-02  +4.562557e+00   [+1.590383e+00, +7.534732e+00]  3.783247e-01  1.516444e+00       True       True
+Spc24 <- Gmnn,Prim2,Cks2,Ube2c                  -1.157664e-01  -2.028281e+00   [-5.319857e+00, +1.263296e+00]  1.000000e+00  1.679407e+00       True       True
+Spc24 <- Gmnn,Prim2,Cks2,Ccna2                  -2.089630e-01  -8.713388e-01   [-4.735606e+00, +2.992929e+00]  1.000000e+00  1.971601e+00       True       True
+Spc24 <- Gmnn,Prim2,Cks2,Apitd1                 +1.114541e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Hells                  -1.105587e-01  -1.852513e+00   [-5.134017e+00, +1.428991e+00]  1.000000e+00  1.674267e+00       True       True
+Spc24 <- Gmnn,Prim2,Cks2,Mcm6                   +9.533628e-02  -9.621206e-01   [-3.486855e+00, +1.562614e+00]  1.000000e+00  1.288153e+00       True       True
+Spc24 <- Gmnn,Prim2,Cdca8,Pbk                   -2.101550e-01  -3.216966e+00   [-6.640964e+00, +2.070331e-01]  1.000000e+00  1.746970e+00       True       True
+Spc24 <- Gmnn,Prim2,Cdca8,Ube2c                 -7.246313e-03  -2.139357e+00   [-5.633858e+00, +1.355144e+00]  1.000000e+00  1.782941e+00       True       True
+Spc24 <- Gmnn,Prim2,Cdca8,Ccna2                 -1.869700e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Apitd1                +3.695599e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Hells                 +2.000332e-01  +1.572476e+00   [-2.094223e+00, +5.239175e+00]  1.000000e+00  1.870799e+00       True       True
+Spc24 <- Gmnn,Prim2,Cdca8,Mcm6                  +1.351647e-01  -7.817275e-01   [-3.774218e+00, +2.210763e+00]  1.000000e+00  1.526809e+00       True       True
+Spc24 <- Gmnn,Prim2,Pbk,Ube2c                   -4.397038e-02  +4.112091e+00   [+1.162870e+00, +7.061312e+00]  5.237822e-01  1.504732e+00       True       True
+Spc24 <- Gmnn,Prim2,Pbk,Ccna2                   +1.864592e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Apitd1                  -5.165545e-02  -9.028281e-01   [-3.991757e+00, +2.186101e+00]  1.000000e+00  1.576013e+00       True       True
+Spc24 <- Gmnn,Prim2,Pbk,Hells                   +1.627064e-02  +2.246931e+00   [-9.357145e-01, +5.429577e+00]  1.000000e+00  1.623829e+00       True       True
+Spc24 <- Gmnn,Prim2,Pbk,Mcm6                    -3.628833e-02  +1.657011e+00   [-1.131526e+00, +4.445547e+00]  1.000000e+00  1.422749e+00       True       True
+Spc24 <- Gmnn,Prim2,Ube2c,Ccna2                 -4.060063e-02  -2.882992e+00   [-7.017428e+00, +1.251444e+00]  1.000000e+00  2.109445e+00       True       True
+Spc24 <- Gmnn,Prim2,Ube2c,Apitd1                +1.995417e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Hells                 +9.953257e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Mcm6                  +1.536190e-01  +1.261952e+00   [-1.396941e+00, +3.920846e+00]  1.000000e+00  1.356603e+00       True       True
+Spc24 <- Gmnn,Prim2,Ccna2,Apitd1                +2.011241e-02  -4.044084e+00   [-8.588432e+00, +5.002636e-01]  1.000000e+00  2.318587e+00       True       True
+Spc24 <- Gmnn,Prim2,Ccna2,Hells                 -1.278750e-01  -5.800868e+00   [-9.858940e+00, -1.742796e+00]  5.010419e-01  2.070483e+00       True       True
+Spc24 <- Gmnn,Prim2,Ccna2,Mcm6                  +8.760809e-03  -3.297303e-01   [-4.432769e+00, +3.773309e+00]  1.000000e+00  2.093426e+00       True       True
+Spc24 <- Gmnn,Prim2,Apitd1,Hells                +2.547199e-02  -2.709174e+00   [-5.465307e+00, +4.695889e-02]  1.000000e+00  1.406216e+00       True       True
+Spc24 <- Gmnn,Prim2,Apitd1,Mcm6                 +1.090153e-01  -6.057106e-02   [-2.830026e+00, +2.708884e+00]  1.000000e+00  1.413013e+00       True       True
+Spc24 <- Gmnn,Prim2,Hells,Mcm6                  +1.299752e-02  -1.037639e+00   [-4.123879e+00, +2.048601e+00]  1.000000e+00  1.574641e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Cdca8                  -1.005623e-01  -9.731498e-01   [-4.493628e+00, +2.547329e+00]  1.000000e+00  1.796196e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Pbk                    +5.233183e-01  -2.181571e+00   [-4.787518e+00, +4.243755e-01]  1.000000e+00  1.329589e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Ube2c                  +1.228774e-01  -2.865432e+00   [-5.239551e+00, -4.913125e-01]  9.406341e-01  1.211308e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Ccna2                  +1.261326e-01  +1.513047e+00   [-3.324713e+00, +6.350807e+00]  1.000000e+00  2.468290e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Apitd1                 -8.525232e-02  -9.440150e-01   [-3.238037e+00, +1.350007e+00]  1.000000e+00  1.170441e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Hells                  +5.343812e-01  +1.427277e+00   [-9.049633e-01, +3.759517e+00]  1.000000e+00  1.189940e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Mcm6                   -4.303271e-01  -4.705764e-01   [-2.529867e+00, +1.588714e+00]  1.000000e+00  1.050678e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Pbk                   -4.400625e-01  +9.889609e-01   [-2.351515e+00, +4.329437e+00]  1.000000e+00  1.704356e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Ube2c                 -1.450253e-01  +3.085924e-01   [-3.092983e+00, +3.710168e+00]  1.000000e+00  1.735530e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Ccna2                 -7.335214e-01  -2.324922e+00   [-9.110904e+00, +4.461059e+00]  1.000000e+00  3.462299e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Apitd1                -5.768323e-02  -4.261432e-01   [-4.290220e+00, +3.437933e+00]  1.000000e+00  1.971504e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Hells                 -8.609307e-02  +2.475154e+00   [-9.631707e-01, +5.913479e+00]  1.000000e+00  1.754280e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Mcm6                  +7.879044e-02  -2.869111e-01   [-3.903254e+00, +3.329432e+00]  1.000000e+00  1.845107e+00       True       True
+Spc24 <- Gmnn,Gins2,Pbk,Ube2c                   -4.431994e-01  -6.089523e-01   [-3.140688e+00, +1.922783e+00]  1.000000e+00  1.291726e+00       True       True
+Spc24 <- Gmnn,Gins2,Pbk,Ccna2                   -3.830854e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Apitd1                  +4.541557e-01  +3.713075e-01   [-2.119885e+00, +2.862500e+00]  1.000000e+00  1.271040e+00       True       True
+Spc24 <- Gmnn,Gins2,Pbk,Hells                   +2.412109e-02  -2.948820e+00   [-5.397152e+00, -5.004876e-01]  9.419330e-01  1.249172e+00       True       True
+Spc24 <- Gmnn,Gins2,Pbk,Mcm6                    +8.866633e-01  +1.181696e+00   [-1.224936e+00, +3.588328e+00]  1.000000e+00  1.227896e+00       True       True
+Spc24 <- Gmnn,Gins2,Ube2c,Ccna2                 +9.067285e-03  -2.221716e+00   [-7.582308e+00, +3.138877e+00]  1.000000e+00  2.735046e+00       True       True
+Spc24 <- Gmnn,Gins2,Ube2c,Apitd1                +1.142568e-01  +1.035027e+00   [-1.896352e+00, +3.966407e+00]  1.000000e+00  1.495629e+00       True       True
+Spc24 <- Gmnn,Gins2,Ube2c,Hells                 +7.088279e-02  +1.237933e+00   [-1.185200e+00, +3.661066e+00]  1.000000e+00  1.236315e+00       True       True
+Spc24 <- Gmnn,Gins2,Ube2c,Mcm6                  +1.221958e-01  -7.512531e-01   [-3.114685e+00, +1.612179e+00]  1.000000e+00  1.205855e+00       True       True
+Spc24 <- Gmnn,Gins2,Ccna2,Apitd1                -6.758674e-02  +9.323510e-01   [-3.439416e+00, +5.304118e+00]  1.000000e+00  2.230534e+00       True       True
+Spc24 <- Gmnn,Gins2,Ccna2,Hells                 -4.587678e-01  -4.754905e+00   [-9.439869e+00, -6.994044e-02]  1.000000e+00  2.390332e+00       True       True
+Spc24 <- Gmnn,Gins2,Ccna2,Mcm6                  -3.813482e-01  +1.730492e-01   [-4.881846e+00, +5.227944e+00]  1.000000e+00  2.579075e+00       True       True
+Spc24 <- Gmnn,Gins2,Apitd1,Hells                -1.640361e-01  -3.276220e-01   [-2.712148e+00, +2.056904e+00]  1.000000e+00  1.216617e+00       True       True
+Spc24 <- Gmnn,Gins2,Apitd1,Mcm6                 -1.427294e-01  -9.011646e-01   [-2.977934e+00, +1.175605e+00]  1.000000e+00  1.059596e+00       True       True
+Spc24 <- Gmnn,Gins2,Hells,Mcm6                  -4.633437e-01  -2.329490e-02   [-1.897985e+00, +1.851396e+00]  1.000000e+00  9.564923e-01       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Pbk                    -8.727864e-01  +4.491013e-02   [-2.041134e+00, +2.130954e+00]  1.000000e+00  1.064328e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Ube2c                  -2.038565e-01  -2.903281e+00   [-5.867749e+00, +6.118659e-02]  1.000000e+00  1.512511e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Ccna2                  -5.840618e-01  +7.988685e-01   [-2.767485e+00, +4.365222e+00]  1.000000e+00  1.819602e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Apitd1                 -6.288686e-01  -1.142726e+00   [-4.337344e+00, +2.051892e+00]  1.000000e+00  1.629937e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Hells                  -2.084529e-01  +1.337304e+00   [-1.892506e+00, +4.567114e+00]  1.000000e+00  1.647893e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Mcm6                   -2.146350e-01  -4.080326e-02   [-2.515822e+00, +2.434215e+00]  1.000000e+00  1.262788e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Ube2c                    +1.743920e-01  -8.808884e-01   [-3.121536e+00, +1.359759e+00]  1.000000e+00  1.143209e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Ccna2                    -7.500504e-02  +4.492348e-01   [-3.650341e+00, +4.548811e+00]  1.000000e+00  2.091659e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Apitd1                   -8.861403e-02  -2.143372e+00   [-5.007016e+00, +7.202725e-01]  1.000000e+00  1.461070e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Hells                    +1.749986e-01  -1.049071e+00   [-3.731803e+00, +1.633662e+00]  1.000000e+00  1.368766e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Mcm6                     +1.690339e-01  +2.069715e-01   [-2.504466e+00, +2.918409e+00]  1.000000e+00  1.383412e+00       True       True
+Spc24 <- Gmnn,Cks2,Ube2c,Ccna2                  +7.596204e-02  -5.372297e+00   [-8.025441e+00, -2.719154e+00]  3.917661e-02  1.353670e+00       True       True
+Spc24 <- Gmnn,Cks2,Ube2c,Apitd1                 -9.932875e-02  -2.928140e+00   [-7.622285e+00, +1.766004e+00]  1.000000e+00  2.395016e+00       True       True
+Spc24 <- Gmnn,Cks2,Ube2c,Hells                  +1.094720e-01  -8.762914e-01   [-3.483878e+00, +1.731295e+00]  1.000000e+00  1.330426e+00       True       True
+Spc24 <- Gmnn,Cks2,Ube2c,Mcm6                   +6.162738e-02  -7.296675e-01   [-3.106940e+00, +1.647605e+00]  1.000000e+00  1.212917e+00       True       True
+Spc24 <- Gmnn,Cks2,Ccna2,Apitd1                 -1.937894e-01  -7.445040e-01   [-3.913432e+00, +2.424424e+00]  1.000000e+00  1.616830e+00       True       True
+Spc24 <- Gmnn,Cks2,Ccna2,Hells                  -1.067655e-01  -3.574943e+00   [-7.589533e+00, +4.396467e-01]  1.000000e+00  2.048298e+00       True       True
+Spc24 <- Gmnn,Cks2,Ccna2,Mcm6                   -6.251929e-02  +2.736817e-01   [-2.733397e+00, +3.280760e+00]  1.000000e+00  1.534252e+00       True       True
+Spc24 <- Gmnn,Cks2,Apitd1,Hells                 +3.344313e-02  -1.344069e+00   [-4.415163e+00, +1.727025e+00]  1.000000e+00  1.566914e+00       True       True
+Spc24 <- Gmnn,Cks2,Apitd1,Mcm6                  +8.739033e-02  +2.086243e+00   [-3.066054e-01, +4.479091e+00]  1.000000e+00  1.220863e+00       True       True
+Spc24 <- Gmnn,Cks2,Hells,Mcm6                   -1.114788e-01  -5.267529e-01   [-2.788994e+00, +1.735488e+00]  1.000000e+00  1.154226e+00       True       True
+Spc24 <- Gmnn,Cdca8,Pbk,Ube2c                   +4.181857e-01  +5.955685e-01   [-1.705026e+00, +2.896163e+00]  1.000000e+00  1.173794e+00       True       True
+Spc24 <- Gmnn,Cdca8,Pbk,Ccna2                   -4.735071e-02  +1.431543e+00   [-2.405107e+00, +5.268193e+00]  1.000000e+00  1.957510e+00       True       True
+Spc24 <- Gmnn,Cdca8,Pbk,Apitd1                  -7.129326e-01  +1.521855e-01   [-2.522664e+00, +2.827035e+00]  1.000000e+00  1.364744e+00       True       True
+Spc24 <- Gmnn,Cdca8,Pbk,Hells                   -2.045748e-01  +1.212075e+00   [-1.593065e+00, +4.017215e+00]  1.000000e+00  1.431220e+00       True       True
+Spc24 <- Gmnn,Cdca8,Pbk,Mcm6                    -1.141252e-01  -4.873474e-02   [-2.646758e+00, +2.549289e+00]  1.000000e+00  1.325547e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ube2c,Ccna2                 -4.873658e-02  -3.461960e+00   [-6.820553e+00, -1.033667e-01]  1.000000e+00  1.713600e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ube2c,Apitd1                -6.010763e-02  +4.847277e-02   [-3.081413e+00, +3.178359e+00]  1.000000e+00  1.596910e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ube2c,Hells                 +1.827677e-01  +1.841775e+00   [-8.436079e-01, +4.527159e+00]  1.000000e+00  1.370119e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ube2c,Mcm6                  -8.559052e-02  +4.046807e+00   [+1.716370e+00, +6.377244e+00]  1.923604e-01  1.189020e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ccna2,Apitd1                -3.494907e-01  -1.416140e+00   [-4.834750e+00, +2.002469e+00]  1.000000e+00  1.744220e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ccna2,Hells                 -2.482715e-01  -2.910853e+00   [-6.592154e+00, +7.704474e-01]  1.000000e+00  1.878249e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ccna2,Mcm6                  -2.572659e-01  -9.064759e+00   [-1.273201e+01, -5.397513e+00]  1.100000e-03  1.871078e+00       True       True
+Spc24 <- Gmnn,Cdca8,Apitd1,Hells                +1.852579e-01  +3.693833e+00   [+9.385173e-01, +6.449148e+00]  6.215899e-01  1.405799e+00       True       True
+Spc24 <- Gmnn,Cdca8,Apitd1,Mcm6                 -2.121456e-02  -3.624226e-01   [-2.745197e+00, +2.020352e+00]  1.000000e+00  1.215724e+00       True       True
+Spc24 <- Gmnn,Cdca8,Hells,Mcm6                  +2.380692e-01  +3.918447e-01   [-2.255244e+00, +3.038933e+00]  1.000000e+00  1.350580e+00       True       True
+Spc24 <- Gmnn,Pbk,Ube2c,Ccna2                   +5.984905e-02  -2.763957e+00   [-5.848988e+00, +3.210750e-01]  1.000000e+00  1.574025e+00       True       True
+Spc24 <- Gmnn,Pbk,Ube2c,Apitd1                  -2.875537e-01  -2.717771e-01   [-3.581336e+00, +3.037782e+00]  1.000000e+00  1.688581e+00       True       True
+Spc24 <- Gmnn,Pbk,Ube2c,Hells                   +1.618778e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ube2c,Mcm6                    -3.333112e-02  -1.213171e+00   [-3.501477e+00, +1.075135e+00]  1.000000e+00  1.167525e+00       True       True
+Spc24 <- Gmnn,Pbk,Ccna2,Apitd1                  -1.113998e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ccna2,Hells                   +2.214598e-01  -2.018121e+00   [-5.637067e+00, +1.600826e+00]  1.000000e+00  1.846435e+00       True       True
+Spc24 <- Gmnn,Pbk,Ccna2,Mcm6                    +2.709442e-01  +3.804560e-01   [-3.846280e+00, +4.607192e+00]  1.000000e+00  2.156537e+00       True       True
+Spc24 <- Gmnn,Pbk,Apitd1,Hells                  +6.368886e-02  -6.304585e-01   [-5.412855e+00, +4.151938e+00]  1.000000e+00  2.440043e+00       True       True
+Spc24 <- Gmnn,Pbk,Apitd1,Mcm6                   -1.630767e-04  +7.707771e-01   [-2.396774e+00, +3.938328e+00]  1.000000e+00  1.616127e+00       True       True
+Spc24 <- Gmnn,Pbk,Hells,Mcm6                    +3.673035e-01  -1.477579e-01   [-2.881990e+00, +2.586474e+00]  1.000000e+00  1.395042e+00       True       True
+Spc24 <- Gmnn,Ube2c,Ccna2,Apitd1                -2.197381e-01  -1.928694e+00   [-5.201744e+00, +1.344356e+00]  1.000000e+00  1.669954e+00       True       True
+Spc24 <- Gmnn,Ube2c,Ccna2,Hells                 +7.271640e-02  -2.717002e+00   [-5.709954e+00, +2.759498e-01]  1.000000e+00  1.527044e+00       True       True
+Spc24 <- Gmnn,Ube2c,Ccna2,Mcm6                  -1.256945e-01  -3.779236e+00   [-6.733070e+00, -8.254024e-01]  7.678199e-01  1.507086e+00       True       True
+Spc24 <- Gmnn,Ube2c,Apitd1,Hells                +3.012988e-01  +2.084205e+00   [-9.898865e-01, +5.158297e+00]  1.000000e+00  1.568443e+00       True       True
+Spc24 <- Gmnn,Ube2c,Apitd1,Mcm6                 +2.278225e-01  -4.529686e+00   [-7.315256e+00, -1.744116e+00]  2.596362e-01  1.421235e+00       True       True
+Spc24 <- Gmnn,Ube2c,Hells,Mcm6                  +1.106493e-01  +1.433958e+00   [-1.782332e+00, +4.650249e+00]  1.000000e+00  1.640995e+00       True       True
+Spc24 <- Gmnn,Ccna2,Apitd1,Hells                +3.941508e-02  -3.503251e+00   [-6.957020e+00, -4.948179e-02]  1.000000e+00  1.762159e+00       True       True
+Spc24 <- Gmnn,Ccna2,Apitd1,Mcm6                 +2.424090e-02  +3.174454e-01   [-2.556714e+00, +3.191605e+00]  1.000000e+00  1.466435e+00       True       True
+Spc24 <- Gmnn,Ccna2,Hells,Mcm6                  -2.384607e-01  +1.582283e+00   [-1.470983e+00, +4.635549e+00]  1.000000e+00  1.557817e+00       True       True
+Spc24 <- Gmnn,Apitd1,Hells,Mcm6                 -2.947809e-02  -5.598293e-01   [-3.260464e+00, +2.140805e+00]  1.000000e+00  1.377900e+00       True       True
+Spc24 <- Prim2,Gins2,Cks2,Cdca8                 +1.209737e-01  -1.132762e+00   [-4.794057e+00, +2.528532e+00]  1.000000e+00  1.868042e+00       True       True
+Spc24 <- Prim2,Gins2,Cks2,Pbk                   +3.469186e-01  -1.138865e+00   [-8.447503e+00, +6.169773e+00]  1.000000e+00  3.728966e+00       True       True
+Spc24 <- Prim2,Gins2,Cks2,Ube2c                 +1.177678e-02  -2.614498e+00   [-6.235060e+00, +1.006063e+00]  1.000000e+00  1.847259e+00       True       True
+Spc24 <- Prim2,Gins2,Cks2,Ccna2                 +1.722217e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Apitd1                +6.317559e-02  +2.386279e-02   [-2.975140e+00, +3.022865e+00]  1.000000e+00  1.530131e+00       True       True
+Spc24 <- Prim2,Gins2,Cks2,Hells                 -1.198461e-02  -3.042584e-01   [-3.629313e+00, +3.020796e+00]  1.000000e+00  1.696488e+00       True       True
+Spc24 <- Prim2,Gins2,Cks2,Mcm6                  -2.683235e-02  -2.955244e+00   [-5.684886e+00, -2.256026e-01]  1.000000e+00  1.392700e+00       True       True
+Spc24 <- Prim2,Gins2,Cdca8,Pbk                  -2.556842e-02  -2.994885e+00   [-6.555289e+00, +5.655197e-01]  1.000000e+00  1.816566e+00       True       True
+Spc24 <- Prim2,Gins2,Cdca8,Ube2c                -9.752474e-02  +2.994803e+00   [-5.375076e-01, +6.527114e+00]  1.000000e+00  1.802233e+00       True       True
+Spc24 <- Prim2,Gins2,Cdca8,Ccna2                -2.138505e-01  -2.774699e+00   [-1.269880e+01, +7.149406e+00]  1.000000e+00  5.063412e+00       True       True
+Spc24 <- Prim2,Gins2,Cdca8,Apitd1               +5.518717e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Hells                +1.012061e-04  +7.144103e-01   [-2.901161e+00, +4.329981e+00]  1.000000e+00  1.844713e+00       True       True
+Spc24 <- Prim2,Gins2,Cdca8,Mcm6                 -1.493468e-03  +6.115183e+00   [+2.475544e+00, +9.754822e+00]  2.342050e-01  1.856993e+00       True       True
+Spc24 <- Prim2,Gins2,Pbk,Ube2c                  -2.560775e-01  -2.601113e+00   [-6.416180e+00, +1.213954e+00]  1.000000e+00  1.946499e+00       True       True
+Spc24 <- Prim2,Gins2,Pbk,Ccna2                  +8.482968e-02  -7.987288e+00   [-1.275533e+01, -3.219247e+00]  2.342050e-01  2.432719e+00       True       True
+Spc24 <- Prim2,Gins2,Pbk,Apitd1                 -2.815906e-02  +2.686469e+00   [-3.088542e-01, +5.681792e+00]  1.000000e+00  1.528254e+00       True       True
+Spc24 <- Prim2,Gins2,Pbk,Hells                  -1.908369e-01  -4.341436e+00   [-7.470089e+00, -1.212782e+00]  5.285376e-01  1.596281e+00       True       True
+Spc24 <- Prim2,Gins2,Pbk,Mcm6                   +1.949247e-02  -2.861971e+00   [-6.737077e+00, +1.013135e+00]  1.000000e+00  1.977131e+00       True       True
+Spc24 <- Prim2,Gins2,Ube2c,Ccna2                +1.186822e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Apitd1               +2.328959e-04  +5.049477e+00   [+1.766673e+00, +8.332281e+00]  3.783247e-01  1.674931e+00       True       True
+Spc24 <- Prim2,Gins2,Ube2c,Hells                -1.843631e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Mcm6                 -4.315649e-02  +2.684432e+00   [-2.201783e-01, +5.589042e+00]  1.000000e+00  1.481971e+00       True       True
+Spc24 <- Prim2,Gins2,Ccna2,Apitd1               +2.126565e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ccna2,Hells                -1.280417e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ccna2,Mcm6                 -1.777291e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Apitd1,Hells               +5.188789e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Apitd1,Mcm6                -8.825373e-02  -7.829689e-01   [-3.735411e+00, +2.169473e+00]  1.000000e+00  1.506376e+00       True       True
+Spc24 <- Prim2,Gins2,Hells,Mcm6                 +5.352296e-02  +3.994393e-01   [-2.421861e+00, +3.220739e+00]  1.000000e+00  1.439465e+00       True       True
+Spc24 <- Prim2,Cks2,Cdca8,Pbk                   -1.655869e-02  -1.232934e+00   [-4.424875e+00, +1.959006e+00]  1.000000e+00  1.628571e+00       True       True
+Spc24 <- Prim2,Cks2,Cdca8,Ube2c                 -1.107344e-01  +2.631287e+00   [-1.362791e+00, +6.625365e+00]  1.000000e+00  2.037832e+00       True       True
+Spc24 <- Prim2,Cks2,Cdca8,Ccna2                 -3.373640e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Apitd1                -6.377043e-02  +2.015861e+00   [-1.221702e+00, +5.253425e+00]  1.000000e+00  1.651848e+00       True       True
+Spc24 <- Prim2,Cks2,Cdca8,Hells                 -2.596073e-02  -6.895142e-01   [-4.467480e+00, +3.088452e+00]  1.000000e+00  1.927569e+00       True       True
+Spc24 <- Prim2,Cks2,Cdca8,Mcm6                  -3.568145e-02  -3.125945e+00   [-6.304233e+00, +5.234239e-02]  1.000000e+00  1.621605e+00       True       True
+Spc24 <- Prim2,Cks2,Pbk,Ube2c                   +2.118305e-02  +2.326066e-01   [-3.593545e+00, +4.058758e+00]  1.000000e+00  1.952154e+00       True       True
+Spc24 <- Prim2,Cks2,Pbk,Ccna2                   +4.072412e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Apitd1                  -9.942355e-02  +2.917920e+00   [-9.762562e-02, +5.933466e+00]  1.000000e+00  1.538572e+00       True       True
+Spc24 <- Prim2,Cks2,Pbk,Hells                   +1.827180e-02  -4.856580e+00   [-8.564024e+00, -1.149135e+00]  6.941997e-01  1.891588e+00       True       True
+Spc24 <- Prim2,Cks2,Pbk,Mcm6                    -4.074116e-02  -2.092101e+00   [-5.169901e+00, +9.856981e-01]  1.000000e+00  1.570335e+00       True       True
+Spc24 <- Prim2,Cks2,Ube2c,Ccna2                 +5.642743e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Apitd1                -3.636506e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Hells                 -6.772267e-03  -6.059454e-01   [-3.918266e+00, +2.706375e+00]  1.000000e+00  1.689990e+00       True       True
+Spc24 <- Prim2,Cks2,Ube2c,Mcm6                  -7.083452e-02  +3.959058e-01   [-8.674993e+00, +9.466805e+00]  1.000000e+00  4.628095e+00       True       True
+Spc24 <- Prim2,Cks2,Ccna2,Apitd1                -8.176733e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ccna2,Hells                 -3.761337e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ccna2,Mcm6                  -1.195785e-01  -1.089809e+00   [-4.008652e+00, +1.829035e+00]  1.000000e+00  1.489233e+00       True       True
+Spc24 <- Prim2,Cks2,Apitd1,Hells                +3.231444e-02  -3.725743e+00   [-6.985708e+00, -4.657772e-01]  1.000000e+00  1.663278e+00       True       True
+Spc24 <- Prim2,Cks2,Apitd1,Mcm6                 +1.783689e-02  +7.588270e-01   [-1.837317e+00, +3.354971e+00]  1.000000e+00  1.324588e+00       True       True
+Spc24 <- Prim2,Cks2,Hells,Mcm6                  +5.483423e-02  -3.080841e+00   [-6.833052e+00, +6.713696e-01]  1.000000e+00  1.914429e+00       True       True
+Spc24 <- Prim2,Cdca8,Pbk,Ube2c                  -9.642714e-02  -1.459469e+00   [-4.931991e+00, +2.013053e+00]  1.000000e+00  1.771727e+00       True       True
+Spc24 <- Prim2,Cdca8,Pbk,Ccna2                  +3.848659e-02  -2.487105e-01   [-9.651851e+00, +9.154429e+00]  1.000000e+00  4.797609e+00       True       True
+Spc24 <- Prim2,Cdca8,Pbk,Apitd1                 +8.218643e-02  +3.096988e+00   [-6.208946e+00, +1.240292e+01]  1.000000e+00  4.748013e+00       True       True
+Spc24 <- Prim2,Cdca8,Pbk,Hells                  +8.348910e-02  +9.345230e-01   [-2.449946e+00, +4.318992e+00]  1.000000e+00  1.726802e+00       True       True
+Spc24 <- Prim2,Cdca8,Pbk,Mcm6                   +8.261529e-02  +2.123492e+00   [-1.085909e+00, +5.332894e+00]  1.000000e+00  1.637480e+00       True       True
+Spc24 <- Prim2,Cdca8,Ube2c,Ccna2                -1.031267e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Apitd1               -2.117283e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Hells                -9.017028e-02  +4.290570e-01   [-2.604493e+00, +3.462607e+00]  1.000000e+00  1.547758e+00       True       True
+Spc24 <- Prim2,Cdca8,Ube2c,Mcm6                 -9.545516e-02  -4.701307e+00   [-8.238995e+00, -1.163620e+00]  6.331137e-01  1.804976e+00       True       True
+Spc24 <- Prim2,Cdca8,Ccna2,Apitd1               -1.447788e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ccna2,Hells                -9.509643e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ccna2,Mcm6                 -5.144955e-02  -1.366180e+00   [-1.042153e+01, +7.689170e+00]  1.000000e+00  4.620162e+00       True       True
+Spc24 <- Prim2,Cdca8,Apitd1,Hells               +9.242002e-02  +5.919701e+00   [+2.826844e+00, +9.012558e+00]  7.627652e-02  1.578017e+00       True       True
+Spc24 <- Prim2,Cdca8,Apitd1,Mcm6                +1.835233e-01  -3.772390e-01   [-3.473610e+00, +2.719132e+00]  1.000000e+00  1.579810e+00       True       True
+Spc24 <- Prim2,Cdca8,Hells,Mcm6                 +1.046848e-01  +3.899846e+00   [+8.651043e-01, +6.934587e+00]  7.678199e-01  1.548366e+00       True       True
+Spc24 <- Prim2,Pbk,Ube2c,Ccna2                  +2.701558e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ube2c,Apitd1                 +1.545289e-02  +3.426283e+00   [-2.028152e-02, +6.872847e+00]  1.000000e+00  1.758483e+00       True       True
+Spc24 <- Prim2,Pbk,Ube2c,Hells                  +1.596852e-02  +2.593768e+00   [-2.371839e-01, +5.424720e+00]  1.000000e+00  1.444390e+00       True       True
+Spc24 <- Prim2,Pbk,Ube2c,Mcm6                   -3.306076e-03  -6.027921e-02   [-3.197811e+00, +3.077253e+00]  1.000000e+00  1.600811e+00       True       True
+Spc24 <- Prim2,Pbk,Ccna2,Apitd1                 -8.941779e-02  +6.004422e+00   [+1.969999e+00, +1.003884e+01]  3.935904e-01  2.058417e+00       True       True
+Spc24 <- Prim2,Pbk,Ccna2,Hells                  -1.916079e-02  -2.038397e+00   [-5.963283e+00, +1.886489e+00]  1.000000e+00  2.002530e+00       True       True
+Spc24 <- Prim2,Pbk,Ccna2,Mcm6                   -6.926039e-02  +4.104849e+00   [-5.830166e-01, +8.792714e+00]  1.000000e+00  2.391812e+00       True       True
+Spc24 <- Prim2,Pbk,Apitd1,Hells                 -1.139564e-01  +3.978541e+00   [+1.136904e+00, +6.820179e+00]  5.237822e-01  1.449842e+00       True       True
+Spc24 <- Prim2,Pbk,Apitd1,Mcm6                  -1.571548e-01  +2.317747e+00   [-5.700146e-01, +5.205508e+00]  1.000000e+00  1.473375e+00       True       True
+Spc24 <- Prim2,Pbk,Hells,Mcm6                   +1.294019e-01  +1.005309e+00   [-2.420523e+00, +4.431140e+00]  1.000000e+00  1.747905e+00       True       True
+Spc24 <- Prim2,Ube2c,Ccna2,Apitd1               -1.921708e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Ccna2,Hells                -3.368983e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Ccna2,Mcm6                 -4.971372e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Apitd1,Hells               +9.288759e-02  +1.549306e+00   [-1.745968e+00, +4.844580e+00]  1.000000e+00  1.681293e+00       True       True
+Spc24 <- Prim2,Ube2c,Apitd1,Mcm6                +1.290284e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Hells,Mcm6                 +1.131542e-02  -2.096793e+00   [-5.495513e+00, +1.301926e+00]  1.000000e+00  1.734073e+00       True       True
+Spc24 <- Prim2,Ccna2,Apitd1,Hells               +7.684440e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ccna2,Apitd1,Mcm6                +5.806800e-02  -3.282308e+00   [-7.349431e+00, +7.848140e-01]  1.000000e+00  2.075101e+00       True       True
+Spc24 <- Prim2,Ccna2,Hells,Mcm6                 +3.158702e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Apitd1,Hells,Mcm6                +1.116649e-01  -7.360196e-02   [-3.185689e+00, +3.038485e+00]  1.000000e+00  1.587829e+00       True       True
+Spc24 <- Gins2,Cks2,Cdca8,Pbk                   +6.539706e-01  -1.474714e+00   [-4.669897e+00, +1.720469e+00]  1.000000e+00  1.630225e+00       True       True
+Spc24 <- Gins2,Cks2,Cdca8,Ube2c                 +4.065913e-01  -1.962161e+00   [-5.040004e+00, +1.115682e+00]  1.000000e+00  1.570357e+00       True       True
+Spc24 <- Gins2,Cks2,Cdca8,Ccna2                 +6.306815e-01  +8.892470e-01   [-4.109664e+00, +5.888158e+00]  1.000000e+00  2.550512e+00       True       True
+Spc24 <- Gins2,Cks2,Cdca8,Apitd1                +2.003996e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Hells                 +4.464643e-01  +4.278623e-01   [-3.274362e+00, +4.130087e+00]  1.000000e+00  1.888925e+00       True       True
+Spc24 <- Gins2,Cks2,Cdca8,Mcm6                  -3.440526e-01  +5.482850e-01   [-2.744504e+00, +3.841074e+00]  1.000000e+00  1.680025e+00       True       True
+Spc24 <- Gins2,Cks2,Pbk,Ube2c                   +3.702810e-01  +2.395758e+00   [-8.584177e-01, +5.649933e+00]  1.000000e+00  1.660324e+00       True       True
+Spc24 <- Gins2,Cks2,Pbk,Ccna2                   +3.386258e-01  +3.157237e+00   [-2.077883e+00, +8.392358e+00]  1.000000e+00  2.671029e+00       True       True
+Spc24 <- Gins2,Cks2,Pbk,Apitd1                  -1.126054e-01  -3.780002e+00   [-6.594466e+00, -9.655380e-01]  6.215899e-01  1.435978e+00       True       True
+Spc24 <- Gins2,Cks2,Pbk,Hells                   +1.869481e-01  -2.001219e+00   [-4.797856e+00, +7.954188e-01]  1.000000e+00  1.426882e+00       True       True
+Spc24 <- Gins2,Cks2,Pbk,Mcm6                    +2.646882e-01  +1.706718e-01   [-3.131186e+00, +3.472530e+00]  1.000000e+00  1.684653e+00       True       True
+Spc24 <- Gins2,Cks2,Ube2c,Ccna2                 +4.454492e-01  -3.334825e+00   [-1.333657e+01, +6.666921e+00]  1.000000e+00  5.103025e+00       True       True
+Spc24 <- Gins2,Cks2,Ube2c,Apitd1                +2.401660e-01  +1.332247e+00   [-1.441528e+00, +4.106022e+00]  1.000000e+00  1.415218e+00       True       True
+Spc24 <- Gins2,Cks2,Ube2c,Hells                 +2.939914e-01  +3.727546e+00   [+1.372874e+00, +6.082218e+00]  3.080079e-01  1.201385e+00       True       True
+Spc24 <- Gins2,Cks2,Ube2c,Mcm6                  -1.308732e-01  -2.214884e-01   [-3.619338e+00, +3.176361e+00]  1.000000e+00  1.733629e+00       True       True
+Spc24 <- Gins2,Cks2,Ccna2,Apitd1                +1.683169e-01  -1.777820e+00   [-4.930477e+00, +1.374836e+00]  1.000000e+00  1.608528e+00       True       True
+Spc24 <- Gins2,Cks2,Ccna2,Hells                 +1.942568e-01  +1.762843e+00   [-1.679282e+00, +5.204967e+00]  1.000000e+00  1.756218e+00       True       True
+Spc24 <- Gins2,Cks2,Ccna2,Mcm6                  -3.928589e-02  +2.253304e+00   [-1.023288e+00, +5.529895e+00]  1.000000e+00  1.671761e+00       True       True
+Spc24 <- Gins2,Cks2,Apitd1,Hells                -3.815613e-02  -9.138510e-01   [-3.806292e+00, +1.978590e+00]  1.000000e+00  1.475763e+00       True       True
+Spc24 <- Gins2,Cks2,Apitd1,Mcm6                 -3.197597e-02  +4.703180e-01   [-2.035102e+00, +2.975738e+00]  1.000000e+00  1.278299e+00       True       True
+Spc24 <- Gins2,Cks2,Hells,Mcm6                  -1.117721e-01  -5.324513e-01   [-2.692810e+00, +1.627907e+00]  1.000000e+00  1.102244e+00       True       True
+Spc24 <- Gins2,Cdca8,Pbk,Ube2c                  +1.181926e-01  +2.956698e-01   [-2.674662e+00, +3.266002e+00]  1.000000e+00  1.515503e+00       True       True
+Spc24 <- Gins2,Cdca8,Pbk,Ccna2                  +9.152878e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Apitd1                 +9.588080e-02  -1.708424e+00   [-4.765196e+00, +1.348348e+00]  1.000000e+00  1.559606e+00       True       True
+Spc24 <- Gins2,Cdca8,Pbk,Hells                  +1.002636e-01  +1.500470e+00   [-1.736939e+00, +4.737878e+00]  1.000000e+00  1.651769e+00       True       True
+Spc24 <- Gins2,Cdca8,Pbk,Mcm6                   -1.676060e-01  -8.207645e-01   [-3.458573e+00, +1.817044e+00]  1.000000e+00  1.345845e+00       True       True
+Spc24 <- Gins2,Cdca8,Ube2c,Ccna2                +2.426090e-01  +1.128543e+00   [-4.449410e+00, +6.706496e+00]  1.000000e+00  2.845946e+00       True       True
+Spc24 <- Gins2,Cdca8,Ube2c,Apitd1               +1.167383e-01  +3.030409e+00   [-4.088733e-01, +6.469692e+00]  1.000000e+00  1.754768e+00       True       True
+Spc24 <- Gins2,Cdca8,Ube2c,Hells                +2.711917e-01  +3.264681e+00   [+1.547536e-01, +6.374609e+00]  1.000000e+00  1.586727e+00       True       True
+Spc24 <- Gins2,Cdca8,Ube2c,Mcm6                 -2.912246e-01  +2.052440e+00   [-9.731033e-01, +5.077982e+00]  1.000000e+00  1.543673e+00       True       True
+Spc24 <- Gins2,Cdca8,Ccna2,Apitd1               +3.662103e-02  -4.789976e-01   [-4.836861e+00, +3.878866e+00]  1.000000e+00  2.223441e+00       True       True
+Spc24 <- Gins2,Cdca8,Ccna2,Hells                +7.691031e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ccna2,Mcm6                 -1.784678e-01  -7.088701e-01   [-5.295978e+00, +3.878237e+00]  1.000000e+00  2.340404e+00       True       True
+Spc24 <- Gins2,Cdca8,Apitd1,Hells               -8.965703e-03  +1.940579e+00   [-1.181108e+00, +5.062265e+00]  1.000000e+00  1.592726e+00       True       True
+Spc24 <- Gins2,Cdca8,Apitd1,Mcm6                +5.958300e-02  -2.186997e+00   [-5.325057e+00, +9.510622e-01]  1.000000e+00  1.601080e+00       True       True
+Spc24 <- Gins2,Cdca8,Hells,Mcm6                 -1.568729e-01  +7.206982e-02   [-3.076742e+00, +3.220882e+00]  1.000000e+00  1.606566e+00       True       True
+Spc24 <- Gins2,Pbk,Ube2c,Ccna2                  +2.915165e-02  +4.209201e+00   [-6.928042e+00, +1.534644e+01]  1.000000e+00  5.682371e+00       True       True
+Spc24 <- Gins2,Pbk,Ube2c,Apitd1                 +9.372884e-02  -5.824902e-01   [-3.645718e+00, +2.480738e+00]  1.000000e+00  1.562900e+00       True       True
+Spc24 <- Gins2,Pbk,Ube2c,Hells                  +7.400551e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ube2c,Mcm6                   +8.053315e-02  +2.493096e-01   [-2.137795e+00, +2.636414e+00]  1.000000e+00  1.217933e+00       True       True
+Spc24 <- Gins2,Pbk,Ccna2,Apitd1                 +2.973797e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ccna2,Hells                  +1.393100e-01  +5.839786e+00   [+2.177542e+00, +9.502030e+00]  3.080079e-01  1.868526e+00       True       True
+Spc24 <- Gins2,Pbk,Ccna2,Mcm6                   +4.388327e-01  +4.174193e+00   [+7.986726e-01, +7.549714e+00]  8.652777e-01  1.722236e+00       True       True
+Spc24 <- Gins2,Pbk,Apitd1,Hells                 +1.078218e-01  -8.509266e-01   [-3.548701e+00, +1.846848e+00]  1.000000e+00  1.376441e+00       True       True
+Spc24 <- Gins2,Pbk,Apitd1,Mcm6                  +2.385972e-01  -1.775081e+00   [-4.176668e+00, +6.265060e-01]  1.000000e+00  1.225322e+00       True       True
+Spc24 <- Gins2,Pbk,Hells,Mcm6                   +2.857323e-01  +2.508791e+00   [-9.356267e-02, +5.111145e+00]  1.000000e+00  1.327756e+00       True       True
+Spc24 <- Gins2,Ube2c,Ccna2,Apitd1               +1.365199e-01  -6.040179e+00   [-1.003655e+01, -2.043812e+00]  3.783247e-01  2.039000e+00       True       True
+Spc24 <- Gins2,Ube2c,Ccna2,Hells                +2.353694e-01  +4.873686e+00   [+7.520862e-01, +8.995286e+00]  1.000000e+00  2.102896e+00       True       True
+Spc24 <- Gins2,Ube2c,Ccna2,Mcm6                 -7.526232e-02  +3.013705e+00   [-6.964941e-01, +6.723904e+00]  1.000000e+00  1.892993e+00       True       True
+Spc24 <- Gins2,Ube2c,Apitd1,Hells               +7.136618e-02  -1.233619e+00   [-4.075210e+00, +1.607971e+00]  1.000000e+00  1.449818e+00       True       True
+Spc24 <- Gins2,Ube2c,Apitd1,Mcm6                +5.980242e-02  +9.717286e-01   [-2.118090e+00, +4.061547e+00]  1.000000e+00  1.576467e+00       True       True
+Spc24 <- Gins2,Ube2c,Hells,Mcm6                 -1.173702e-01  -1.461295e+00   [-4.475941e+00, +1.553350e+00]  1.000000e+00  1.538113e+00       True       True
+Spc24 <- Gins2,Ccna2,Apitd1,Hells               +2.311735e-02  +1.653969e+00   [-1.859479e+00, +5.167418e+00]  1.000000e+00  1.792609e+00       True       True
+Spc24 <- Gins2,Ccna2,Apitd1,Mcm6                -4.455307e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Ccna2,Hells,Mcm6                 -6.580583e-02  -2.272017e+00   [-6.075641e+00, +1.531607e+00]  1.000000e+00  1.940660e+00       True       True
+Spc24 <- Gins2,Apitd1,Hells,Mcm6                +2.466862e-01  -3.152116e-01   [-2.810272e+00, +2.179849e+00]  1.000000e+00  1.273013e+00       True       True
+Spc24 <- Cks2,Cdca8,Pbk,Ube2c                   -1.181518e-02  +9.752928e-01   [-7.400678e-01, +2.690653e+00]  1.000000e+00  8.752001e-01       True       True
+Spc24 <- Cks2,Cdca8,Pbk,Ccna2                   +3.352251e-01  -1.448907e+00   [-4.221654e+00, +1.323840e+00]  1.000000e+00  1.414693e+00       True       True
+Spc24 <- Cks2,Cdca8,Pbk,Apitd1                  -2.756403e-03  -5.956437e-01   [-3.992724e+00, +2.801437e+00]  1.000000e+00  1.733236e+00       True       True
+Spc24 <- Cks2,Cdca8,Pbk,Hells                   -1.532802e-01  -2.799552e+00   [-6.411660e+00, +8.125563e-01]  1.000000e+00  1.842946e+00       True       True
+Spc24 <- Cks2,Cdca8,Pbk,Mcm6                    +1.882589e-02  +8.205914e-01   [-1.374469e+00, +3.015652e+00]  1.000000e+00  1.119949e+00       True       True
+Spc24 <- Cks2,Cdca8,Ube2c,Ccna2                 +3.763823e-01  +1.359039e+00   [-1.464581e+00, +4.182660e+00]  1.000000e+00  1.440649e+00       True       True
+Spc24 <- Cks2,Cdca8,Ube2c,Apitd1                +1.027878e-01  +5.237620e-01   [-5.339533e+00, +6.387057e+00]  1.000000e+00  2.991532e+00       True       True
+Spc24 <- Cks2,Cdca8,Ube2c,Hells                 +2.984416e-01  +6.055664e-01   [-2.614367e+00, +3.825499e+00]  1.000000e+00  1.642853e+00       True       True
+Spc24 <- Cks2,Cdca8,Ube2c,Mcm6                  +1.549619e-01  -3.408061e-01   [-3.183641e+00, +2.502029e+00]  1.000000e+00  1.450453e+00       True       True
+Spc24 <- Cks2,Cdca8,Ccna2,Apitd1                +2.363324e-01  -3.325986e+00   [-6.673230e+00, +2.125819e-02]  1.000000e+00  1.707809e+00       True       True
+Spc24 <- Cks2,Cdca8,Ccna2,Hells                 +1.487248e-01  +2.702241e+00   [-5.245851e+00, +1.065033e+01]  1.000000e+00  4.055224e+00       True       True
+Spc24 <- Cks2,Cdca8,Ccna2,Mcm6                  +2.505631e-01  -2.708133e+00   [-5.403622e+00, -1.264432e-02]  1.000000e+00  1.375275e+00       True       True
+Spc24 <- Cks2,Cdca8,Apitd1,Hells                -6.469231e-02  -1.361665e+00   [-5.187418e+00, +2.464088e+00]  1.000000e+00  1.951951e+00       True       True
+Spc24 <- Cks2,Cdca8,Apitd1,Mcm6                 -1.780100e-03  +4.955880e-01   [-2.620997e+00, +3.612173e+00]  1.000000e+00  1.590124e+00       True       True
+Spc24 <- Cks2,Cdca8,Hells,Mcm6                  -1.538443e-01  +2.132309e+00   [-1.047440e+00, +5.312058e+00]  1.000000e+00  1.622351e+00       True       True
+Spc24 <- Cks2,Pbk,Ube2c,Ccna2                   +1.816970e-01  -3.744557e-01   [-4.947140e+00, +4.198229e+00]  1.000000e+00  2.333045e+00       True       True
+Spc24 <- Cks2,Pbk,Ube2c,Apitd1                  +1.301147e-01  -5.964289e-01   [-3.214561e+00, +2.021704e+00]  1.000000e+00  1.335806e+00       True       True
+Spc24 <- Cks2,Pbk,Ube2c,Hells                   +2.192728e-01  +8.949248e-01   [-1.621375e+00, +3.411225e+00]  1.000000e+00  1.283850e+00       True       True
+Spc24 <- Cks2,Pbk,Ube2c,Mcm6                    +1.087495e-01  -2.695938e+00   [-4.875410e+00, -5.164663e-01]  8.652777e-01  1.111996e+00       True       True
+Spc24 <- Cks2,Pbk,Ccna2,Apitd1                  +2.258043e-02  +1.999873e+00   [-1.180013e+00, +5.179758e+00]  1.000000e+00  1.622421e+00       True       True
+Spc24 <- Cks2,Pbk,Ccna2,Hells                   +1.117578e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ccna2,Mcm6                    +9.712320e-02  -5.483362e-01   [-3.227797e+00, +2.131125e+00]  1.000000e+00  1.367097e+00       True       True
+Spc24 <- Cks2,Pbk,Apitd1,Hells                  +4.267113e-02  -4.581388e+00   [-7.600048e+00, -1.562728e+00]  3.783247e-01  1.540161e+00       True       True
+Spc24 <- Cks2,Pbk,Apitd1,Mcm6                   -6.588238e-02  -5.259035e-02   [-2.631822e+00, +2.526641e+00]  1.000000e+00  1.315959e+00       True       True
+Spc24 <- Cks2,Pbk,Hells,Mcm6                    +4.547348e-01  -2.161239e-01   [-3.065395e+00, +2.633147e+00]  1.000000e+00  1.453736e+00       True       True
+Spc24 <- Cks2,Ube2c,Ccna2,Apitd1                +2.771275e-01  -5.342462e+00   [-8.587299e+00, -2.097625e+00]  2.466113e-01  1.655559e+00       True       True
+Spc24 <- Cks2,Ube2c,Ccna2,Hells                 +3.823862e-01  +2.704101e+00   [-6.162931e-02, +5.469831e+00]  1.000000e+00  1.411113e+00       True       True
+Spc24 <- Cks2,Ube2c,Ccna2,Mcm6                  +2.476844e-01  +8.058739e-01   [-2.011881e+00, +3.623628e+00]  1.000000e+00  1.437656e+00       True       True
+Spc24 <- Cks2,Ube2c,Apitd1,Hells                +1.636501e-01  -1.184291e+00   [-4.259894e+00, +1.891311e+00]  1.000000e+00  1.569214e+00       True       True
+Spc24 <- Cks2,Ube2c,Apitd1,Mcm6                 +1.179928e-01  -1.694732e+00   [-4.148108e+00, +7.586446e-01]  1.000000e+00  1.251746e+00       True       True
+Spc24 <- Cks2,Ube2c,Hells,Mcm6                  -4.788693e-02  -4.185169e-01   [-3.628862e+00, +2.791828e+00]  1.000000e+00  1.637961e+00       True       True
+Spc24 <- Cks2,Ccna2,Apitd1,Hells                +4.579389e-02  -4.843920e-01   [-3.708936e+00, +2.740152e+00]  1.000000e+00  1.645206e+00       True       True
+Spc24 <- Cks2,Ccna2,Apitd1,Mcm6                 +2.168486e-02  +2.761636e-01   [-2.320494e+00, +2.872821e+00]  1.000000e+00  1.324849e+00       True       True
+Spc24 <- Cks2,Ccna2,Hells,Mcm6                  -9.316557e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Apitd1,Hells,Mcm6                 +3.700697e-02  -8.124435e-01   [-3.643652e+00, +2.018765e+00]  1.000000e+00  1.444520e+00       True       True
+Spc24 <- Cdca8,Pbk,Ube2c,Ccna2                  -1.703096e-01  +1.325235e+00   [-1.333946e+00, +3.984416e+00]  1.000000e+00  1.356750e+00       True       True
+Spc24 <- Cdca8,Pbk,Ube2c,Apitd1                 -2.290648e-01  -1.058424e+00   [-4.342951e+00, +2.226103e+00]  1.000000e+00  1.675810e+00       True       True
+Spc24 <- Cdca8,Pbk,Ube2c,Hells                  -1.442301e-01  +2.240342e+00   [-6.025215e-01, +5.083207e+00]  1.000000e+00  1.450467e+00       True       True
+Spc24 <- Cdca8,Pbk,Ube2c,Mcm6                   -2.042188e-01  -2.002831e+00   [-4.182463e+00, +1.767998e-01]  1.000000e+00  1.112077e+00       True       True
+Spc24 <- Cdca8,Pbk,Ccna2,Apitd1                 -2.411476e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ccna2,Hells                  -3.786325e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ccna2,Mcm6                   +8.534884e-02  -1.947175e-01   [-2.602444e+00, +2.213009e+00]  1.000000e+00  1.228455e+00       True       True
+Spc24 <- Cdca8,Pbk,Apitd1,Hells                 -1.488748e-02  -4.417122e-01   [-3.460613e+00, +2.577189e+00]  1.000000e+00  1.540284e+00       True       True
+Spc24 <- Cdca8,Pbk,Apitd1,Mcm6                  +4.334302e-02  -1.042979e-01   [-2.559140e+00, +2.350545e+00]  1.000000e+00  1.252494e+00       True       True
+Spc24 <- Cdca8,Pbk,Hells,Mcm6                   +2.271463e-02  +1.433898e+00   [-1.457154e+00, +4.324950e+00]  1.000000e+00  1.475054e+00       True       True
+Spc24 <- Cdca8,Ube2c,Ccna2,Apitd1               +2.811924e-02  -1.152069e+00   [-4.237668e+00, +1.933530e+00]  1.000000e+00  1.574314e+00       True       True
+Spc24 <- Cdca8,Ube2c,Ccna2,Hells                +1.018570e-01  +4.250064e-01   [-3.017195e+00, +3.867208e+00]  1.000000e+00  1.756257e+00       True       True
+Spc24 <- Cdca8,Ube2c,Ccna2,Mcm6                 +1.401364e-01  -5.731428e+00   [-8.354613e+00, -3.108243e+00]  1.336682e-02  1.338384e+00       True       True
+Spc24 <- Cdca8,Ube2c,Apitd1,Hells               -2.856885e-02  +2.249944e+00   [-6.455698e-01, +5.145458e+00]  1.000000e+00  1.477330e+00       True       True
+Spc24 <- Cdca8,Ube2c,Apitd1,Mcm6                +3.734414e-03  -1.788855e+00   [-4.451573e+00, +8.738642e-01]  1.000000e+00  1.358555e+00       True       True
+Spc24 <- Cdca8,Ube2c,Hells,Mcm6                 -1.583298e-01  -2.156600e+00   [-5.486644e+00, +1.173444e+00]  1.000000e+00  1.699033e+00       True       True
+Spc24 <- Cdca8,Ccna2,Apitd1,Hells               -1.219384e-01  -6.646326e-01   [-3.806196e+00, +2.476931e+00]  1.000000e+00  1.602868e+00       True       True
+Spc24 <- Cdca8,Ccna2,Apitd1,Mcm6                -4.267576e-02  -3.506667e+00   [-5.901055e+00, -1.112278e+00]  4.335795e-01  1.221649e+00       True       True
+Spc24 <- Cdca8,Ccna2,Hells,Mcm6                 -1.827300e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Apitd1,Hells,Mcm6                +4.994826e-03  +2.375642e+00   [-2.088538e-01, +4.960137e+00]  1.000000e+00  1.318644e+00       True       True
+Spc24 <- Pbk,Ube2c,Ccna2,Apitd1                 -8.762016e-02  +7.233936e-02   [-3.254391e+00, +3.399069e+00]  1.000000e+00  1.697342e+00       True       True
+Spc24 <- Pbk,Ube2c,Ccna2,Hells                  -8.621304e-02  -8.181130e-01   [-4.500236e+00, +2.864010e+00]  1.000000e+00  1.878669e+00       True       True
+Spc24 <- Pbk,Ube2c,Ccna2,Mcm6                   -8.713108e-02  +1.168625e+00   [-2.241625e+00, +4.578874e+00]  1.000000e+00  1.739955e+00       True       True
+Spc24 <- Pbk,Ube2c,Apitd1,Hells                 +6.601432e-02  +8.532922e-01   [-2.148530e+00, +3.855115e+00]  1.000000e+00  1.531570e+00       True       True
+Spc24 <- Pbk,Ube2c,Apitd1,Mcm6                  +2.195796e-02  +2.609375e+00   [-2.223214e-02, +5.240982e+00]  1.000000e+00  1.342681e+00       True       True
+Spc24 <- Pbk,Ube2c,Hells,Mcm6                   +1.040889e-01  +1.829895e+00   [-1.611783e+00, +5.271572e+00]  1.000000e+00  1.755990e+00       True       True
+Spc24 <- Pbk,Ccna2,Apitd1,Hells                 -4.749423e-02  -6.420371e-01   [-4.020147e+00, +2.736073e+00]  1.000000e+00  1.723557e+00       True       True
+Spc24 <- Pbk,Ccna2,Apitd1,Mcm6                  +9.122869e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Pbk,Ccna2,Hells,Mcm6                   +2.906366e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Pbk,Apitd1,Hells,Mcm6                  +2.039790e-01  -6.043129e-01   [-3.846999e+00, +2.638373e+00]  1.000000e+00  1.654462e+00       True       True
+Spc24 <- Ube2c,Ccna2,Apitd1,Hells               +2.294896e-03  -1.094880e+00   [-4.029623e+00, +1.839863e+00]  1.000000e+00  1.497345e+00       True       True
+Spc24 <- Ube2c,Ccna2,Apitd1,Mcm6                +4.087777e-02  -7.816938e+00   [-1.051950e+01, -5.114376e+00]  2.075955e-05  1.378884e+00       True       True
+Spc24 <- Ube2c,Ccna2,Hells,Mcm6                 -8.056411e-02  -2.224670e-01   [-3.519871e+00, +3.074937e+00]  1.000000e+00  1.682380e+00       True       True
+Spc24 <- Ube2c,Apitd1,Hells,Mcm6                +2.942078e-02  -1.731052e+00   [-5.066724e+00, +1.604620e+00]  1.000000e+00  1.701905e+00       True       True
+Spc24 <- Ccna2,Apitd1,Hells,Mcm6                -6.642994e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Cdca8                  +1.239155e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Pbk                    +1.573777e-01  -6.217909e-01   [-3.217295e+00, +1.973713e+00]  1.000000e+00  1.324261e+00       True       True
+Gmnn <- Prim2,Gins2,Cks2,Ube2c                  +2.659022e-01  -3.094240e-01   [-2.845044e+00, +2.226196e+00]  1.000000e+00  1.293707e+00       True       True
+Gmnn <- Prim2,Gins2,Cks2,Ccna2                  +1.011306e-01  -5.287598e+00   [-9.054947e+00, -1.520249e+00]  5.237822e-01  1.922152e+00       True       True
+Gmnn <- Prim2,Gins2,Cks2,Apitd1                 +2.385626e-01  -9.424560e-01   [-3.555467e+00, +1.670555e+00]  1.000000e+00  1.333193e+00       True       True
+Gmnn <- Prim2,Gins2,Cks2,Hells                  +1.402390e-01  +9.614808e-01   [-2.091167e+00, +4.014129e+00]  1.000000e+00  1.557502e+00       True       True
+Gmnn <- Prim2,Gins2,Cks2,Mcm6                   +3.879824e-02  -2.875884e-01   [-2.809904e+00, +2.234728e+00]  1.000000e+00  1.286920e+00       True       True
+Gmnn <- Prim2,Gins2,Cdca8,Pbk                   +1.430922e-01  -1.522340e+00   [-5.829488e+00, +2.784808e+00]  1.000000e+00  2.197565e+00       True       True
+Gmnn <- Prim2,Gins2,Cdca8,Ube2c                 -1.455247e-01  +5.348670e+00   [+1.754261e+00, +8.943079e+00]  3.935904e-01  1.833916e+00       True       True
+Gmnn <- Prim2,Gins2,Cdca8,Ccna2                 +2.467640e-02  -8.074404e+00   [-1.440274e+01, -1.746065e+00]  7.678199e-01  3.228804e+00       True       True
+Gmnn <- Prim2,Gins2,Cdca8,Apitd1                +5.439605e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Hells                 +5.030832e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Mcm6                  +1.864535e-01  -1.123241e+00   [-4.778883e+00, +2.532401e+00]  1.000000e+00  1.865158e+00       True       True
+Gmnn <- Prim2,Gins2,Pbk,Ube2c                   -2.276221e-01  -2.599803e+00   [-6.561662e+00, +1.362055e+00]  1.000000e+00  2.021394e+00       True       True
+Gmnn <- Prim2,Gins2,Pbk,Ccna2                   +7.549219e-02  -1.027809e+00   [-7.369577e+00, +5.313960e+00]  1.000000e+00  3.235656e+00       True       True
+Gmnn <- Prim2,Gins2,Pbk,Apitd1                  +2.975196e-03  +5.130813e+00   [+2.034232e+00, +8.227393e+00]  2.404137e-01  1.579917e+00       True       True
+Gmnn <- Prim2,Gins2,Pbk,Hells                   -3.429134e-02  -4.255558e+00   [-7.373707e+00, -1.137408e+00]  5.687394e-01  1.590922e+00       True       True
+Gmnn <- Prim2,Gins2,Pbk,Mcm6                    +6.426946e-02  +1.379796e-01   [-2.360613e+00, +2.636572e+00]  1.000000e+00  1.274815e+00       True       True
+Gmnn <- Prim2,Gins2,Ube2c,Ccna2                 -2.944180e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Apitd1                +1.626944e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Hells                 +5.258255e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Mcm6                  -2.920552e-02  +3.398780e+00   [+3.605734e-01, +6.436987e+00]  1.000000e+00  1.550134e+00       True       True
+Gmnn <- Prim2,Gins2,Ccna2,Apitd1                +1.206315e-02  -2.085810e+00   [-6.310469e+00, +2.138850e+00]  1.000000e+00  2.155478e+00       True       True
+Gmnn <- Prim2,Gins2,Ccna2,Hells                 -2.543224e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ccna2,Mcm6                  -1.160539e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Apitd1,Hells                -2.026612e-01  +1.041024e+00   [-2.339031e+00, +4.421080e+00]  1.000000e+00  1.724550e+00       True       True
+Gmnn <- Prim2,Gins2,Apitd1,Mcm6                 -2.300920e-01  -4.003915e-01   [-2.632155e+00, +1.831372e+00]  1.000000e+00  1.138676e+00       True       True
+Gmnn <- Prim2,Gins2,Hells,Mcm6                  -6.062741e-01  -1.026394e+00   [-3.361729e+00, +1.308941e+00]  1.000000e+00  1.191519e+00       True       True
+Gmnn <- Prim2,Cks2,Cdca8,Pbk                    +2.696149e-02  -3.091942e+00   [-5.338671e+00, -8.452125e-01]  5.512069e-01  1.146312e+00       True       True
+Gmnn <- Prim2,Cks2,Cdca8,Ube2c                  -1.126682e-01  -3.577199e+00   [-6.413518e+00, -7.408801e-01]  8.208506e-01  1.447128e+00       True       True
+Gmnn <- Prim2,Cks2,Cdca8,Ccna2                  -7.534139e-02  -2.250768e+00   [-7.365071e+00, +2.863536e+00]  1.000000e+00  2.609387e+00       True       True
+Gmnn <- Prim2,Cks2,Cdca8,Apitd1                 -8.244087e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Hells                  +7.019411e-02  -1.858278e+00   [-4.532701e+00, +8.161446e-01]  1.000000e+00  1.364526e+00       True       True
+Gmnn <- Prim2,Cks2,Cdca8,Mcm6                   +3.332926e-02  -4.565275e+00   [-7.110459e+00, -2.020091e+00]  1.585857e-01  1.298587e+00       True       True
+Gmnn <- Prim2,Cks2,Pbk,Ube2c                    +7.224677e-03  -1.351606e-01   [-2.716221e+00, +2.445899e+00]  1.000000e+00  1.316892e+00       True       True
+Gmnn <- Prim2,Cks2,Pbk,Ccna2                    +1.337505e-01  -1.549249e+00   [-7.593468e+00, +4.494970e+00]  1.000000e+00  3.083842e+00       True       True
+Gmnn <- Prim2,Cks2,Pbk,Apitd1                   +1.047576e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Hells                    -1.246910e-02  +3.962954e+00   [+1.238979e+00, +6.686929e+00]  4.389426e-01  1.389809e+00       True       True
+Gmnn <- Prim2,Cks2,Pbk,Mcm6                     +1.544674e-02  +1.509042e+00   [-9.546006e-01, +3.972685e+00]  1.000000e+00  1.256984e+00       True       True
+Gmnn <- Prim2,Cks2,Ube2c,Ccna2                  -7.218858e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Apitd1                 -2.294566e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Hells                  -6.406662e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Mcm6                   -4.965874e-03  +1.335099e+00   [-9.154887e-01, +3.585686e+00]  1.000000e+00  1.148280e+00       True       True
+Gmnn <- Prim2,Cks2,Ccna2,Apitd1                 +1.212908e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ccna2,Hells                  +3.014791e-02  -1.527681e+00   [-6.542227e+00, +3.486866e+00]  1.000000e+00  2.558489e+00       True       True
+Gmnn <- Prim2,Cks2,Ccna2,Mcm6                   +8.855013e-02  -4.038875e+00   [-7.274578e+00, -8.031717e-01]  8.570394e-01  1.650899e+00       True       True
+Gmnn <- Prim2,Cks2,Apitd1,Hells                 +4.767797e-02  +9.975004e-01   [-2.508490e+00, +4.503491e+00]  1.000000e+00  1.788804e+00       True       True
+Gmnn <- Prim2,Cks2,Apitd1,Mcm6                  +1.279533e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Hells,Mcm6                   +1.599329e-02  -5.184288e-01   [-3.381422e+00, +2.344564e+00]  1.000000e+00  1.460737e+00       True       True
+Gmnn <- Prim2,Cdca8,Pbk,Ube2c                   +4.044727e-02  -3.736553e+00   [-6.747650e+00, -7.254559e-01]  8.652777e-01  1.536302e+00       True       True
+Gmnn <- Prim2,Cdca8,Pbk,Ccna2                   +8.970211e-03  -3.449705e+00   [-1.047046e+01, +3.571049e+00]  1.000000e+00  3.582083e+00       True       True
+Gmnn <- Prim2,Cdca8,Pbk,Apitd1                  -2.883401e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Hells                   -2.863621e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Mcm6                    +7.577888e-02  -4.579318e+00   [-8.012737e+00, -1.145898e+00]  6.257792e-01  1.751777e+00       True       True
+Gmnn <- Prim2,Cdca8,Ube2c,Ccna2                 -2.389077e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Apitd1                -3.069483e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Hells                 +8.182652e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Mcm6                  +2.634959e-02  -8.030860e+00   [-1.060110e+01, -5.460623e+00]  1.978443e-06  1.311369e+00       True       True
+Gmnn <- Prim2,Cdca8,Ccna2,Apitd1                -1.504318e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ccna2,Hells                 +5.323746e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ccna2,Mcm6                  +7.746234e-02  -4.406422e+00   [-9.507052e+00, +6.942083e-01]  1.000000e+00  2.602410e+00       True       True
+Gmnn <- Prim2,Cdca8,Apitd1,Hells                -9.549066e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Apitd1,Mcm6                 -8.193516e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Hells,Mcm6                  +2.710193e-01  +1.397824e+00   [-2.816226e+00, +5.611873e+00]  1.000000e+00  2.150065e+00       True       True
+Gmnn <- Prim2,Pbk,Ube2c,Ccna2                   +5.130256e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Apitd1                  -1.355605e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Hells                   -1.037989e-01  -1.988104e-02   [-3.171444e+00, +3.131682e+00]  1.000000e+00  1.607970e+00       True       True
+Gmnn <- Prim2,Pbk,Ube2c,Mcm6                    -4.487502e-02  +1.989543e+00   [-7.305953e-01, +4.709681e+00]  1.000000e+00  1.387851e+00       True       True
+Gmnn <- Prim2,Pbk,Ccna2,Apitd1                  -1.863605e-02  +2.633229e+00   [-3.041738e+00, +8.308196e+00]  1.000000e+00  2.895445e+00       True       True
+Gmnn <- Prim2,Pbk,Ccna2,Hells                   +9.847521e-03  -1.478927e+00   [-7.329473e+00, +4.371619e+00]  1.000000e+00  2.985027e+00       True       True
+Gmnn <- Prim2,Pbk,Ccna2,Mcm6                    +7.244313e-02  +2.146085e+00   [-4.647181e+00, +8.939351e+00]  1.000000e+00  3.466016e+00       True       True
+Gmnn <- Prim2,Pbk,Apitd1,Hells                  -6.548868e-02  -1.452186e+00   [-6.005597e+00, +3.101224e+00]  1.000000e+00  2.323211e+00       True       True
+Gmnn <- Prim2,Pbk,Apitd1,Mcm6                   -1.563079e-01  +3.031542e-01   [-2.761346e+00, +3.367654e+00]  1.000000e+00  1.563549e+00       True       True
+Gmnn <- Prim2,Pbk,Hells,Mcm6                    +4.120703e-02  +3.260402e+00   [+5.796394e-01, +5.941164e+00]  9.063472e-01  1.367761e+00       True       True
+Gmnn <- Prim2,Ube2c,Ccna2,Apitd1                +8.246381e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Ccna2,Hells                 +6.613512e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Ccna2,Mcm6                  +7.334317e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Apitd1,Hells                +2.436883e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Apitd1,Mcm6                 +1.832154e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Hells,Mcm6                  +1.503700e-01  +3.962830e+00   [+1.309412e+00, +6.616248e+00]  3.935904e-01  1.353810e+00       True       True
+Gmnn <- Prim2,Ccna2,Apitd1,Hells                -7.146719e-03  +2.990982e+00   [-9.022978e-01, +6.884262e+00]  1.000000e+00  1.986404e+00       True       True
+Gmnn <- Prim2,Ccna2,Apitd1,Mcm6                 +6.257701e-02  -4.265602e+00   [-7.681404e+00, -8.498001e-01]  8.570394e-01  1.742788e+00       True       True
+Gmnn <- Prim2,Ccna2,Hells,Mcm6                  +8.651374e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Apitd1,Hells,Mcm6                 +1.470302e-01  +1.295170e+00   [-1.979802e+00, +4.570142e+00]  1.000000e+00  1.670935e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Pbk                    -2.753243e-01  +5.087683e-01   [-2.172601e+00, +3.190138e+00]  1.000000e+00  1.368071e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Ube2c                  +1.938805e-01  +1.204855e+00   [-1.612268e+00, +4.021978e+00]  1.000000e+00  1.437334e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Ccna2                  -1.046073e-01  +5.548851e-01   [-4.106189e+00, +5.215959e+00]  1.000000e+00  2.378143e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Apitd1                 -5.153767e-01  -3.945861e+00   [-1.004477e+01, +2.153046e+00]  1.000000e+00  3.111744e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Hells                  +2.078459e-02  +3.497196e+00   [+5.794847e-01, +6.414907e+00]  9.598203e-01  1.488655e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Mcm6                   +5.965235e-02  +2.301966e-01   [-2.483202e+00, +2.943595e+00]  1.000000e+00  1.384413e+00       True       True
+Gmnn <- Gins2,Cks2,Pbk,Ube2c                    +3.363485e-01  -1.514421e+00   [-4.373068e+00, +1.344225e+00]  1.000000e+00  1.458520e+00       True       True
+Gmnn <- Gins2,Cks2,Pbk,Ccna2                    +3.477937e-01  +3.704713e+00   [-7.185263e-01, +8.127952e+00]  1.000000e+00  2.256796e+00       True       True
+Gmnn <- Gins2,Cks2,Pbk,Apitd1                   +2.947812e-02  -1.034911e-01   [-2.755054e+00, +2.548072e+00]  1.000000e+00  1.352863e+00       True       True
+Gmnn <- Gins2,Cks2,Pbk,Hells                    +3.364106e-02  +1.103056e+00   [-1.617123e+00, +3.823235e+00]  1.000000e+00  1.387872e+00       True       True
+Gmnn <- Gins2,Cks2,Pbk,Mcm6                     +1.774162e-01  +6.229349e-02   [-2.181446e+00, +2.306033e+00]  1.000000e+00  1.144786e+00       True       True
+Gmnn <- Gins2,Cks2,Ube2c,Ccna2                  +1.718255e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Ube2c,Apitd1                 -1.651081e-01  -3.349018e+00   [-5.731953e+00, -9.660829e-01]  5.237822e-01  1.215806e+00       True       True
+Gmnn <- Gins2,Cks2,Ube2c,Hells                  +9.975360e-02  +2.418991e+00   [-6.500219e-01, +5.488004e+00]  1.000000e+00  1.565852e+00       True       True
+Gmnn <- Gins2,Cks2,Ube2c,Mcm6                   -9.160684e-03  +1.030353e+00   [-1.156010e+00, +3.216717e+00]  1.000000e+00  1.115512e+00       True       True
+Gmnn <- Gins2,Cks2,Ccna2,Apitd1                 -7.883307e-02  +5.588380e-01   [-2.697333e+00, +3.815009e+00]  1.000000e+00  1.661342e+00       True       True
+Gmnn <- Gins2,Cks2,Ccna2,Hells                  +4.562415e-02  +4.895622e+00   [-2.788077e-01, +1.007005e+01]  1.000000e+00  2.640064e+00       True       True
+Gmnn <- Gins2,Cks2,Ccna2,Mcm6                   -1.488944e-02  +1.206117e+00   [-2.640762e+00, +5.052996e+00]  1.000000e+00  1.962729e+00       True       True
+Gmnn <- Gins2,Cks2,Apitd1,Hells                 +4.024013e-01  -2.602006e-01   [-2.551476e+00, +2.031075e+00]  1.000000e+00  1.169040e+00       True       True
+Gmnn <- Gins2,Cks2,Apitd1,Mcm6                  +1.160255e-01  +9.020023e-03   [-2.042184e+00, +2.060224e+00]  1.000000e+00  1.046552e+00       True       True
+Gmnn <- Gins2,Cks2,Hells,Mcm6                   +9.570916e-02  -1.084073e-01   [-1.920630e+00, +1.703815e+00]  1.000000e+00  9.246204e-01       True       True
+Gmnn <- Gins2,Cdca8,Pbk,Ube2c                   -3.793963e-01  +1.554953e+00   [-1.771157e+00, +4.881062e+00]  1.000000e+00  1.697026e+00       True       True
+Gmnn <- Gins2,Cdca8,Pbk,Ccna2                   -2.630540e-01  -4.525610e+00   [-1.017727e+01, +1.126050e+00]  1.000000e+00  2.883553e+00       True       True
+Gmnn <- Gins2,Cdca8,Pbk,Apitd1                  -2.705014e-01  -1.500578e-01   [-6.050951e+00, +5.750835e+00]  1.000000e+00  3.010715e+00       True       True
+Gmnn <- Gins2,Cdca8,Pbk,Hells                   -1.314556e-01  +1.017777e-01   [-3.026245e+00, +3.229800e+00]  1.000000e+00  1.595959e+00       True       True
+Gmnn <- Gins2,Cdca8,Pbk,Mcm6                    +2.178035e-01  +7.154295e-02   [-2.582804e+00, +2.725890e+00]  1.000000e+00  1.354284e+00       True       True
+Gmnn <- Gins2,Cdca8,Ube2c,Ccna2                 -3.129123e-01  -5.864241e-01   [-6.538071e+00, +5.365223e+00]  1.000000e+00  3.036610e+00       True       True
+Gmnn <- Gins2,Cdca8,Ube2c,Apitd1                -6.262013e-02  +1.340419e+00   [-4.684810e+00, +7.365647e+00]  1.000000e+00  3.074153e+00       True       True
+Gmnn <- Gins2,Cdca8,Ube2c,Hells                 +3.224123e-02  +5.020583e+00   [+1.359959e+00, +8.681207e+00]  5.564854e-01  1.867700e+00       True       True
+Gmnn <- Gins2,Cdca8,Ube2c,Mcm6                  -1.350266e-01  +1.302680e+00   [-2.426951e+00, +5.032310e+00]  1.000000e+00  1.902908e+00       True       True
+Gmnn <- Gins2,Cdca8,Ccna2,Apitd1                -2.530625e-01  +1.056405e-01   [-6.014079e+00, +6.225360e+00]  1.000000e+00  3.122363e+00       True       True
+Gmnn <- Gins2,Cdca8,Ccna2,Hells                 -7.321404e-02  +2.092099e+00   [-2.032483e+00, +6.216681e+00]  1.000000e+00  2.104417e+00       True       True
+Gmnn <- Gins2,Cdca8,Ccna2,Mcm6                  +2.818836e-01  +1.658045e+00   [-2.496533e+00, +5.812622e+00]  1.000000e+00  2.119721e+00       True       True
+Gmnn <- Gins2,Cdca8,Apitd1,Hells                +2.164000e-01  +4.852979e+00   [-8.108588e-01, +1.051682e+01]  1.000000e+00  2.889766e+00       True       True
+Gmnn <- Gins2,Cdca8,Apitd1,Mcm6                 +6.059450e-02  -5.411777e+00   [-1.183790e+01, +1.014349e+00]  1.000000e+00  3.278696e+00       True       True
+Gmnn <- Gins2,Cdca8,Hells,Mcm6                  +5.679212e-01  +1.567171e+00   [-2.341382e+00, +5.475725e+00]  1.000000e+00  1.994197e+00       True       True
+Gmnn <- Gins2,Pbk,Ube2c,Ccna2                   -1.149959e-01  +1.589242e+00   [-7.109396e+00, +1.028788e+01]  1.000000e+00  4.438162e+00       True       True
+Gmnn <- Gins2,Pbk,Ube2c,Apitd1                  -2.574560e-03  +2.304491e-01   [-2.172492e+00, +2.633390e+00]  1.000000e+00  1.226013e+00       True       True
+Gmnn <- Gins2,Pbk,Ube2c,Hells                   -1.801562e-01  -4.756989e-01   [-3.190493e+00, +2.239095e+00]  1.000000e+00  1.385124e+00       True       True
+Gmnn <- Gins2,Pbk,Ube2c,Mcm6                    -7.415265e-02  +8.380733e-01   [-1.259086e+00, +2.935233e+00]  1.000000e+00  1.069999e+00       True       True
+Gmnn <- Gins2,Pbk,Ccna2,Apitd1                  +2.438971e-01  -8.784886e-02   [-3.311851e+00, +3.136154e+00]  1.000000e+00  1.644929e+00       True       True
+Gmnn <- Gins2,Pbk,Ccna2,Hells                   +1.516379e-01  -4.846342e+00   [-8.070854e+00, -1.621830e+00]  3.880904e-01  1.645189e+00       True       True
+Gmnn <- Gins2,Pbk,Ccna2,Mcm6                    +4.108252e-01  +9.524822e-01   [-3.134026e+00, +5.038990e+00]  1.000000e+00  2.084991e+00       True       True
+Gmnn <- Gins2,Pbk,Apitd1,Hells                  +6.708446e-02  -4.401399e+00   [-7.576056e+00, -1.226742e+00]  5.285376e-01  1.619753e+00       True       True
+Gmnn <- Gins2,Pbk,Apitd1,Mcm6                   +2.138582e-01  +8.033714e-01   [-1.492416e+00, +3.099159e+00]  1.000000e+00  1.171342e+00       True       True
+Gmnn <- Gins2,Pbk,Hells,Mcm6                    +5.105413e-01  +2.198686e+00   [-3.511285e-01, +4.748500e+00]  1.000000e+00  1.300949e+00       True       True
+Gmnn <- Gins2,Ube2c,Ccna2,Apitd1                -1.760067e-01  -1.085000e-01   [-3.820547e+00, +3.603548e+00]  1.000000e+00  1.893937e+00       True       True
+Gmnn <- Gins2,Ube2c,Ccna2,Hells                 +6.344219e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Ube2c,Ccna2,Mcm6                  -6.588927e-02  +3.358525e-01   [-5.072442e+00, +5.744147e+00]  1.000000e+00  2.759385e+00       True       True
+Gmnn <- Gins2,Ube2c,Apitd1,Hells                +5.953991e-01  +2.310556e+00   [-4.645878e-01, +5.085700e+00]  1.000000e+00  1.415916e+00       True       True
+Gmnn <- Gins2,Ube2c,Apitd1,Mcm6                 +1.366157e-01  +2.778187e-01   [-2.418500e+00, +2.974138e+00]  1.000000e+00  1.375698e+00       True       True
+Gmnn <- Gins2,Ube2c,Hells,Mcm6                  +1.832198e-01  +9.541847e-01   [-1.445234e+00, +3.353604e+00]  1.000000e+00  1.224216e+00       True       True
+Gmnn <- Gins2,Ccna2,Apitd1,Hells                +2.791364e-01  +9.909569e-01   [-3.140696e+00, +5.122610e+00]  1.000000e+00  2.108025e+00       True       True
+Gmnn <- Gins2,Ccna2,Apitd1,Mcm6                 +3.414292e-01  +4.693762e+00   [+1.366503e+00, +8.021021e+00]  5.237822e-01  1.697612e+00       True       True
+Gmnn <- Gins2,Ccna2,Hells,Mcm6                  -1.645433e-01  -9.100003e-01   [-4.282827e+00, +2.462827e+00]  1.000000e+00  1.720862e+00       True       True
+Gmnn <- Gins2,Apitd1,Hells,Mcm6                 -1.065001e-01  +1.273846e+00   [-4.126305e-01, +2.960322e+00]  1.000000e+00  8.604629e-01       True       True
+Gmnn <- Cks2,Cdca8,Pbk,Ube2c                    +1.628952e-01  -2.478773e+00   [-4.253455e+00, -7.040911e-01]  5.237822e-01  9.054665e-01       True       True
+Gmnn <- Cks2,Cdca8,Pbk,Ccna2                    -2.359070e-02  +7.382201e-02   [-2.539067e+00, +2.686711e+00]  1.000000e+00  1.333131e+00       True       True
+Gmnn <- Cks2,Cdca8,Pbk,Apitd1                   -1.008218e-01  -3.144617e-01   [-3.403258e+00, +2.774335e+00]  1.000000e+00  1.575946e+00       True       True
+Gmnn <- Cks2,Cdca8,Pbk,Hells                    -7.969222e-02  +1.633640e+00   [-4.332232e-01, +3.700504e+00]  1.000000e+00  1.054541e+00       True       True
+Gmnn <- Cks2,Cdca8,Pbk,Mcm6                     -4.150707e-02  -6.325213e-01   [-2.736885e+00, +1.471842e+00]  1.000000e+00  1.073675e+00       True       True
+Gmnn <- Cks2,Cdca8,Ube2c,Ccna2                  +1.128195e-01  +1.042630e+00   [-2.281238e+00, +4.366498e+00]  1.000000e+00  1.695882e+00       True       True
+Gmnn <- Cks2,Cdca8,Ube2c,Apitd1                 +4.695617e-02  +6.457831e-01   [-5.989152e+00, +7.280719e+00]  1.000000e+00  3.385233e+00       True       True
+Gmnn <- Cks2,Cdca8,Ube2c,Hells                  +9.392737e-02  -1.097790e+00   [-4.405716e+00, +2.210137e+00]  1.000000e+00  1.687749e+00       True       True
+Gmnn <- Cks2,Cdca8,Ube2c,Mcm6                   -9.018595e-02  -3.202993e+00   [-5.300646e+00, -1.105341e+00]  3.783247e-01  1.070250e+00       True       True
+Gmnn <- Cks2,Cdca8,Ccna2,Apitd1                 -8.985164e-02  -1.191070e+00   [-4.281197e+00, +1.899056e+00]  1.000000e+00  1.576624e+00       True       True
+Gmnn <- Cks2,Cdca8,Ccna2,Hells                  -1.513179e-01  -5.979746e+00   [-1.079184e+01, -1.167649e+00]  8.652777e-01  2.455196e+00       True       True
+Gmnn <- Cks2,Cdca8,Ccna2,Mcm6                   -2.615983e-02  -1.132602e+00   [-4.021710e+00, +1.756505e+00]  1.000000e+00  1.474062e+00       True       True
+Gmnn <- Cks2,Cdca8,Apitd1,Hells                 +2.492543e-01  +2.924294e+00   [+1.260611e-01, +5.722527e+00]  1.000000e+00  1.427696e+00       True       True
+Gmnn <- Cks2,Cdca8,Apitd1,Mcm6                  +3.094321e-02  -1.671451e+00   [-6.070066e+00, +2.727163e+00]  1.000000e+00  2.244232e+00       True       True
+Gmnn <- Cks2,Cdca8,Hells,Mcm6                   +2.095655e-02  -1.869232e+00   [-4.996190e+00, +1.257725e+00]  1.000000e+00  1.595416e+00       True       True
+Gmnn <- Cks2,Pbk,Ube2c,Ccna2                    +1.657421e-01  +1.972736e+00   [-2.797293e+00, +6.742765e+00]  1.000000e+00  2.433733e+00       True       True
+Gmnn <- Cks2,Pbk,Ube2c,Apitd1                   -1.714447e-02  -7.616732e-01   [-3.849829e+00, +2.326483e+00]  1.000000e+00  1.575619e+00       True       True
+Gmnn <- Cks2,Pbk,Ube2c,Hells                    +8.828019e-02  +7.400122e-01   [-2.163581e+00, +3.643605e+00]  1.000000e+00  1.481452e+00       True       True
+Gmnn <- Cks2,Pbk,Ube2c,Mcm6                     +1.343606e-01  +7.302847e-01   [-1.447938e+00, +2.908507e+00]  1.000000e+00  1.111359e+00       True       True
+Gmnn <- Cks2,Pbk,Ccna2,Apitd1                   -2.042051e-02  -1.181489e+00   [-4.128226e+00, +1.765248e+00]  1.000000e+00  1.503465e+00       True       True
+Gmnn <- Cks2,Pbk,Ccna2,Hells                    +6.042958e-02  -1.423527e+00   [-5.752103e+00, +2.905049e+00]  1.000000e+00  2.208498e+00       True       True
+Gmnn <- Cks2,Pbk,Ccna2,Mcm6                     +1.112797e-01  -1.484407e+00   [-5.062894e+00, +2.094081e+00]  1.000000e+00  1.825792e+00       True       True
+Gmnn <- Cks2,Pbk,Apitd1,Hells                   +2.190370e-01  -3.348284e+00   [-7.557663e+00, +8.610947e-01]  1.000000e+00  2.147682e+00       True       True
+Gmnn <- Cks2,Pbk,Apitd1,Mcm6                    +7.476173e-02  +1.372035e+00   [-1.292348e+00, +4.036418e+00]  1.000000e+00  1.359404e+00       True       True
+Gmnn <- Cks2,Pbk,Hells,Mcm6                     +9.854527e-02  +1.851991e-01   [-1.787063e+00, +2.157461e+00]  1.000000e+00  1.006275e+00       True       True
+Gmnn <- Cks2,Ube2c,Ccna2,Apitd1                 -9.454024e-02  -5.176251e+00   [-8.081694e+00, -2.270808e+00]  1.600454e-01  1.482396e+00       True       True
+Gmnn <- Cks2,Ube2c,Ccna2,Hells                  -1.405818e-02  +1.364552e+00   [-3.276079e+00, +6.005184e+00]  1.000000e+00  2.367713e+00       True       True
+Gmnn <- Cks2,Ube2c,Ccna2,Mcm6                   -4.778119e-02  +1.500622e+00   [-2.134984e+00, +5.136227e+00]  1.000000e+00  1.854935e+00       True       True
+Gmnn <- Cks2,Ube2c,Apitd1,Hells                 +1.930553e-01  -2.578810e-01   [-4.393065e+00, +3.877303e+00]  1.000000e+00  2.109827e+00       True       True
+Gmnn <- Cks2,Ube2c,Apitd1,Mcm6                  +7.566242e-02  -4.268909e+00   [-7.088151e+00, -1.449667e+00]  3.783247e-01  1.438415e+00       True       True
+Gmnn <- Cks2,Ube2c,Hells,Mcm6                   +1.201092e-01  +2.451034e+00   [-9.084816e-01, +5.810550e+00]  1.000000e+00  1.714070e+00       True       True
+Gmnn <- Cks2,Ccna2,Apitd1,Hells                 +3.011317e-01  +7.474721e+00   [+3.092441e+00, +1.185700e+01]  2.113874e-01  2.235898e+00       True       True
+Gmnn <- Cks2,Ccna2,Apitd1,Mcm6                  +1.763558e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Ccna2,Hells,Mcm6                   -2.509003e-02  -2.491175e+00   [-7.670115e+00, +2.687765e+00]  1.000000e+00  2.642365e+00       True       True
+Gmnn <- Cks2,Apitd1,Hells,Mcm6                  -1.971338e-02  +1.538398e-01   [-2.210037e+00, +2.517716e+00]  1.000000e+00  1.206082e+00       True       True
+Gmnn <- Cdca8,Pbk,Ube2c,Ccna2                   +6.063310e-02  +1.016626e+00   [-1.943757e+00, +3.977010e+00]  1.000000e+00  1.510427e+00       True       True
+Gmnn <- Cdca8,Pbk,Ube2c,Apitd1                  -4.263101e-01  +8.740376e-01   [-1.956801e+00, +3.704877e+00]  1.000000e+00  1.444332e+00       True       True
+Gmnn <- Cdca8,Pbk,Ube2c,Hells                   +2.136747e-01  +2.336344e+00   [-4.711040e-02, +4.719798e+00]  1.000000e+00  1.216070e+00       True       True
+Gmnn <- Cdca8,Pbk,Ube2c,Mcm6                    -9.561255e-02  +4.614569e-02   [-2.066179e+00, +2.158471e+00]  1.000000e+00  1.077737e+00       True       True
+Gmnn <- Cdca8,Pbk,Ccna2,Apitd1                  -2.858885e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ccna2,Hells                   -2.099819e-01  -3.151008e-01   [-2.846110e+00, +2.215908e+00]  1.000000e+00  1.291355e+00       True       True
+Gmnn <- Cdca8,Pbk,Ccna2,Mcm6                    +6.546631e-02  +2.144405e-01   [-3.025256e+00, +3.454137e+00]  1.000000e+00  1.652937e+00       True       True
+Gmnn <- Cdca8,Pbk,Apitd1,Hells                  -9.283024e-02  +2.154678e+00   [-1.032535e+00, +5.341892e+00]  1.000000e+00  1.626159e+00       True       True
+Gmnn <- Cdca8,Pbk,Apitd1,Mcm6                   +1.423766e-01  -1.123547e+00   [-4.717664e+00, +2.470570e+00]  1.000000e+00  1.833767e+00       True       True
+Gmnn <- Cdca8,Pbk,Hells,Mcm6                    +2.384263e-01  +5.319265e+00   [+2.307478e+00, +8.331051e+00]  1.663459e-01  1.536654e+00       True       True
+Gmnn <- Cdca8,Ube2c,Ccna2,Apitd1                -1.011208e-01  +5.110001e+00   [+1.599368e+00, +8.620635e+00]  4.389426e-01  1.791172e+00       True       True
+Gmnn <- Cdca8,Ube2c,Ccna2,Hells                 +1.627241e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Ube2c,Ccna2,Mcm6                  -3.459392e-02  +7.584678e-01   [-2.208119e+00, +3.725055e+00]  1.000000e+00  1.513593e+00       True       True
+Gmnn <- Cdca8,Ube2c,Apitd1,Hells                +3.737568e-01  +6.022944e+00   [+2.990319e+00, +9.055569e+00]  4.779213e-02  1.547286e+00       True       True
+Gmnn <- Cdca8,Ube2c,Apitd1,Mcm6                 -7.742846e-02  +1.064764e+00   [-2.123755e+00, +4.253283e+00]  1.000000e+00  1.626825e+00       True       True
+Gmnn <- Cdca8,Ube2c,Hells,Mcm6                  +1.397216e-01  -4.409486e-01   [-3.820401e+00, +2.938504e+00]  1.000000e+00  1.724242e+00       True       True
+Gmnn <- Cdca8,Ccna2,Apitd1,Hells                +8.497057e-02  -3.345139e+00   [-6.777068e+00, +8.678954e-02]  1.000000e+00  1.751016e+00       True       True
+Gmnn <- Cdca8,Ccna2,Apitd1,Mcm6                 +3.446510e-01  +4.020693e+00   [+7.248502e-01, +7.316536e+00]  8.995802e-01  1.681583e+00       True       True
+Gmnn <- Cdca8,Ccna2,Hells,Mcm6                  +7.627197e-02  -1.091696e+00   [-4.730478e+00, +2.547085e+00]  1.000000e+00  1.856555e+00       True       True
+Gmnn <- Cdca8,Apitd1,Hells,Mcm6                 +6.300229e-02  -3.499368e-01   [-3.973984e+00, +3.274111e+00]  1.000000e+00  1.849038e+00       True       True
+Gmnn <- Pbk,Ube2c,Ccna2,Apitd1                  -1.007821e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ube2c,Ccna2,Hells                   +7.658255e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ube2c,Ccna2,Mcm6                    +1.017434e-01  +3.155343e-01   [-3.650953e+00, +4.282021e+00]  1.000000e+00  2.023755e+00       True       True
+Gmnn <- Pbk,Ube2c,Apitd1,Hells                  +6.620470e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ube2c,Apitd1,Mcm6                   -6.970193e-02  -2.115336e+00   [-5.422652e+00, +1.191981e+00]  1.000000e+00  1.687437e+00       True       True
+Gmnn <- Pbk,Ube2c,Hells,Mcm6                    +1.366729e-01  +9.884851e-01   [-1.275570e+00, +3.252540e+00]  1.000000e+00  1.155151e+00       True       True
+Gmnn <- Pbk,Ccna2,Apitd1,Hells                  +1.542912e-01  +1.126395e+00   [-2.441087e+00, +4.693878e+00]  1.000000e+00  1.820177e+00       True       True
+Gmnn <- Pbk,Ccna2,Apitd1,Mcm6                   +1.023503e-01  -8.246240e-01   [-4.211428e+00, +2.562180e+00]  1.000000e+00  1.727993e+00       True       True
+Gmnn <- Pbk,Ccna2,Hells,Mcm6                    +1.755989e-01  -1.728598e+00   [-5.164452e+00, +1.707256e+00]  1.000000e+00  1.753019e+00       True       True
+Gmnn <- Pbk,Apitd1,Hells,Mcm6                   +4.250656e-02  -4.639045e-01   [-4.870125e+00, +3.942315e+00]  1.000000e+00  2.248113e+00       True       True
+Gmnn <- Ube2c,Ccna2,Apitd1,Hells                +3.540669e-01  +2.578900e+00   [-9.286252e-01, +6.086426e+00]  1.000000e+00  1.789587e+00       True       True
+Gmnn <- Ube2c,Ccna2,Apitd1,Mcm6                 +2.359011e-02  -2.886524e+00   [-5.952509e+00, +1.794608e-01]  1.000000e+00  1.564307e+00       True       True
+Gmnn <- Ube2c,Ccna2,Hells,Mcm6                  +4.319259e-02  +3.594421e+00   [+5.193298e-01, +6.669512e+00]  1.000000e+00  1.568953e+00       True       True
+Gmnn <- Ube2c,Apitd1,Hells,Mcm6                 +2.894205e-01  -3.332638e-01   [-3.108630e+00, +2.442102e+00]  1.000000e+00  1.416029e+00       True       True
+Gmnn <- Ccna2,Apitd1,Hells,Mcm6                 -3.398782e-02  +1.721570e+00   [-3.645705e+00, +7.088844e+00]  1.000000e+00  2.738456e+00       True       True
+Prim2 <- Gins2,Cks2,Cdca8,Pbk                   -6.307453e-02  -5.151808e-01   [-3.651018e+00, +2.620657e+00]  1.000000e+00  1.599946e+00       True       True
+Prim2 <- Gins2,Cks2,Cdca8,Ube2c                 +2.225969e-01  +2.639373e+00   [-1.508229e+00, +6.786976e+00]  1.000000e+00  2.116163e+00       True       True
+Prim2 <- Gins2,Cks2,Cdca8,Ccna2                 -1.139874e-01  +2.895262e+00   [-1.146759e+00, +6.937282e+00]  1.000000e+00  2.062293e+00       True       True
+Prim2 <- Gins2,Cks2,Cdca8,Apitd1                +3.286952e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Hells                 +2.873407e-01  +1.988661e+00   [-1.911937e+00, +5.889259e+00]  1.000000e+00  1.990138e+00       True       True
+Prim2 <- Gins2,Cks2,Cdca8,Mcm6                  +1.465341e-01  -2.486414e-02   [-2.996763e+00, +2.947035e+00]  1.000000e+00  1.516303e+00       True       True
+Prim2 <- Gins2,Cks2,Pbk,Ube2c                   +1.272082e-01  +2.016238e+00   [-1.835790e+00, +5.868267e+00]  1.000000e+00  1.965357e+00       True       True
+Prim2 <- Gins2,Cks2,Pbk,Ccna2                   +8.037322e-02  +2.337231e+00   [-1.248904e+00, +5.923366e+00]  1.000000e+00  1.829694e+00       True       True
+Prim2 <- Gins2,Cks2,Pbk,Apitd1                  +1.634130e-01  +5.816695e-01   [-2.484377e+00, +3.647716e+00]  1.000000e+00  1.564338e+00       True       True
+Prim2 <- Gins2,Cks2,Pbk,Hells                   -7.556247e-02  +8.897273e-01   [-2.034362e+00, +3.813817e+00]  1.000000e+00  1.491910e+00       True       True
+Prim2 <- Gins2,Cks2,Pbk,Mcm6                    +9.813625e-02  -7.275858e-01   [-3.516831e+00, +2.061660e+00]  1.000000e+00  1.423111e+00       True       True
+Prim2 <- Gins2,Cks2,Ube2c,Ccna2                 +9.321904e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ube2c,Apitd1                +2.006051e-01  -3.448821e-01   [-3.906513e+00, +3.216749e+00]  1.000000e+00  1.817192e+00       True       True
+Prim2 <- Gins2,Cks2,Ube2c,Hells                 +4.294055e-02  -2.068972e+00   [-5.589509e+00, +1.451565e+00]  1.000000e+00  1.796225e+00       True       True
+Prim2 <- Gins2,Cks2,Ube2c,Mcm6                  +1.197549e-01  -2.395783e+00   [-5.276379e+00, +4.848144e-01]  1.000000e+00  1.469719e+00       True       True
+Prim2 <- Gins2,Cks2,Ccna2,Apitd1                +9.311358e-02  +3.952233e+00   [+3.824386e-02, +7.866221e+00]  1.000000e+00  1.996970e+00       True       True
+Prim2 <- Gins2,Cks2,Ccna2,Hells                 -2.430020e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ccna2,Mcm6                  -6.114804e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Apitd1,Hells                +2.188697e-01  +2.531861e+00   [-2.550143e-01, +5.318737e+00]  1.000000e+00  1.421901e+00       True       True
+Prim2 <- Gins2,Cks2,Apitd1,Mcm6                 +2.075773e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Hells,Mcm6                  +9.697717e-02  +2.982493e-01   [-2.117475e+00, +2.713973e+00]  1.000000e+00  1.232535e+00       True       True
+Prim2 <- Gins2,Cdca8,Pbk,Ube2c                  -6.435747e-01  -2.017525e+00   [-5.653315e+00, +1.618265e+00]  1.000000e+00  1.855029e+00       True       True
+Prim2 <- Gins2,Cdca8,Pbk,Ccna2                  +3.594490e-02  +1.632902e+00   [-2.342910e+00, +5.608714e+00]  1.000000e+00  2.028513e+00       True       True
+Prim2 <- Gins2,Cdca8,Pbk,Apitd1                 +2.542542e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Hells                  +1.208025e-01  +5.062667e-01   [-3.217590e+00, +4.230123e+00]  1.000000e+00  1.899962e+00       True       True
+Prim2 <- Gins2,Cdca8,Pbk,Mcm6                   -7.240769e-02  +1.258717e+00   [-1.757950e+00, +4.275383e+00]  1.000000e+00  1.539144e+00       True       True
+Prim2 <- Gins2,Cdca8,Ube2c,Ccna2                -2.784669e-01  -3.832189e+00   [-8.757560e+00, +1.093181e+00]  1.000000e+00  2.512990e+00       True       True
+Prim2 <- Gins2,Cdca8,Ube2c,Apitd1               +6.466548e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Hells                -7.416681e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Mcm6                 -3.814395e-02  -1.086697e+00   [-5.145667e+00, +2.972273e+00]  1.000000e+00  2.070941e+00       True       True
+Prim2 <- Gins2,Cdca8,Ccna2,Apitd1               -1.403097e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ccna2,Hells                +6.549942e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ccna2,Mcm6                 -7.289937e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Apitd1,Hells               -9.368630e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Apitd1,Mcm6                -5.606281e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Hells,Mcm6                 +2.617902e-01  -1.164518e+00   [-4.775620e+00, +2.446583e+00]  1.000000e+00  1.842433e+00       True       True
+Prim2 <- Gins2,Pbk,Ube2c,Ccna2                  -4.394003e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Apitd1                 -3.771527e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Hells                  -4.881408e-01  -1.952306e+00   [-5.144890e+00, +1.240279e+00]  1.000000e+00  1.628899e+00       True       True
+Prim2 <- Gins2,Pbk,Ube2c,Mcm6                   -7.912968e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ccna2,Apitd1                 +3.190220e-01  +6.040227e+00   [+2.416023e+00, +9.664431e+00]  2.360695e-01  1.849118e+00       True       True
+Prim2 <- Gins2,Pbk,Ccna2,Hells                  +1.831767e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ccna2,Mcm6                   +1.262519e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Apitd1,Hells                 -1.883628e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Apitd1,Mcm6                  -8.540946e-02  +2.876958e+00   [-8.328474e-02, +5.837200e+00]  1.000000e+00  1.510356e+00       True       True
+Prim2 <- Gins2,Pbk,Hells,Mcm6                   +3.603292e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ube2c,Ccna2,Apitd1               -1.252524e-02  -5.165268e+00   [-1.020695e+01, -1.235837e-01]  1.000000e+00  2.572335e+00       True       True
+Prim2 <- Gins2,Ube2c,Ccna2,Hells                -1.367846e-01  -4.147637e+00   [-9.490243e+00, +1.194970e+00]  1.000000e+00  2.725870e+00       True       True
+Prim2 <- Gins2,Ube2c,Ccna2,Mcm6                 -1.925203e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ube2c,Apitd1,Hells               -9.236489e-02  -9.295418e-01   [-4.630297e+00, +2.771213e+00]  1.000000e+00  1.888175e+00       True       True
+Prim2 <- Gins2,Ube2c,Apitd1,Mcm6                -1.647849e-01  -2.014142e+00   [-5.705709e+00, +1.677426e+00]  1.000000e+00  1.883487e+00       True       True
+Prim2 <- Gins2,Ube2c,Hells,Mcm6                 +8.080402e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ccna2,Apitd1,Hells               -8.809055e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ccna2,Apitd1,Mcm6                -1.845425e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ccna2,Hells,Mcm6                 -5.228314e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Apitd1,Hells,Mcm6                -1.667615e-01  -2.306109e-01   [-2.794530e+00, +2.333308e+00]  1.000000e+00  1.308146e+00       True       True
+Prim2 <- Cks2,Cdca8,Pbk,Ube2c                   +8.208714e-02  -2.116078e-01   [-3.175686e+00, +2.752470e+00]  1.000000e+00  1.512313e+00       True       True
+Prim2 <- Cks2,Cdca8,Pbk,Ccna2                   +4.317660e-01  +2.130700e+00   [-1.071847e+00, +5.333247e+00]  1.000000e+00  1.633983e+00       True       True
+Prim2 <- Cks2,Cdca8,Pbk,Apitd1                  -1.624916e-01  -2.578339e+00   [-5.792922e+00, +6.362440e-01]  1.000000e+00  1.640124e+00       True       True
+Prim2 <- Cks2,Cdca8,Pbk,Hells                   -1.613527e-01  +2.202045e+00   [-8.354441e-01, +5.239533e+00]  1.000000e+00  1.549768e+00       True       True
+Prim2 <- Cks2,Cdca8,Pbk,Mcm6                    +3.163611e-02  -5.999608e-01   [-3.339245e+00, +2.139323e+00]  1.000000e+00  1.397620e+00       True       True
+Prim2 <- Cks2,Cdca8,Ube2c,Ccna2                 +1.476060e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Apitd1                -1.827053e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Hells                 -8.416889e-02  -3.622872e+00   [-7.149481e+00, -9.626356e-02]  1.000000e+00  1.799323e+00       True       True
+Prim2 <- Cks2,Cdca8,Ube2c,Mcm6                  -1.619038e-01  -6.552512e+00   [-1.036312e+01, -2.741908e+00]  2.035581e-01  1.944221e+00       True       True
+Prim2 <- Cks2,Cdca8,Ccna2,Apitd1                -4.034560e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ccna2,Hells                 -1.126967e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ccna2,Mcm6                  -1.487769e-01  +1.082943e+00   [-2.634047e+00, +4.799933e+00]  1.000000e+00  1.896458e+00       True       True
+Prim2 <- Cks2,Cdca8,Apitd1,Hells                -1.672297e-02  +3.386349e+00   [+3.364155e-01, +6.436282e+00]  1.000000e+00  1.556117e+00       True       True
+Prim2 <- Cks2,Cdca8,Apitd1,Mcm6                 +9.207351e-02  +1.519111e+00   [-1.141658e+00, +4.179880e+00]  1.000000e+00  1.357560e+00       True       True
+Prim2 <- Cks2,Cdca8,Hells,Mcm6                  +1.477082e-04  +2.005762e+00   [-8.895389e-01, +4.901063e+00]  1.000000e+00  1.477222e+00       True       True
+Prim2 <- Cks2,Pbk,Ube2c,Ccna2                   +1.512696e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ube2c,Apitd1                  -8.515539e-02  -3.166883e+00   [-6.250867e+00, -8.289868e-02]  1.000000e+00  1.573490e+00       True       True
+Prim2 <- Cks2,Pbk,Ube2c,Hells                   -1.322974e-01  -5.358861e-01   [-3.562176e+00, +2.490404e+00]  1.000000e+00  1.544054e+00       True       True
+Prim2 <- Cks2,Pbk,Ube2c,Mcm6                    -1.089145e-01  -2.090802e+00   [-4.770175e+00, +5.885716e-01]  1.000000e+00  1.367052e+00       True       True
+Prim2 <- Cks2,Pbk,Ccna2,Apitd1                  -1.084597e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ccna2,Hells                   -1.080113e-01  +2.931546e+00   [-3.935515e-01, +6.256643e+00]  1.000000e+00  1.696509e+00       True       True
+Prim2 <- Cks2,Pbk,Ccna2,Mcm6                    -1.201861e-01  -1.815828e+00   [-5.592477e+00, +1.960820e+00]  1.000000e+00  1.926897e+00       True       True
+Prim2 <- Cks2,Pbk,Apitd1,Hells                  -2.048914e-02  +9.043395e-01   [-2.131299e+00, +3.939978e+00]  1.000000e+00  1.548824e+00       True       True
+Prim2 <- Cks2,Pbk,Apitd1,Mcm6                   -5.514724e-02  +1.583569e+00   [-1.112564e+00, +4.279702e+00]  1.000000e+00  1.375603e+00       True       True
+Prim2 <- Cks2,Pbk,Hells,Mcm6                    -4.435284e-02  +1.273579e+00   [-1.342008e+00, +3.889166e+00]  1.000000e+00  1.334508e+00       True       True
+Prim2 <- Cks2,Ube2c,Ccna2,Apitd1                -9.214698e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Ccna2,Hells                 -1.540395e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Ccna2,Mcm6                  -2.177993e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Apitd1,Hells                -1.101584e-02  +2.352834e+00   [-1.183795e+00, +5.889463e+00]  1.000000e+00  1.804436e+00       True       True
+Prim2 <- Cks2,Ube2c,Apitd1,Mcm6                 +2.016193e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Hells,Mcm6                  +2.656395e-02  -3.241223e+00   [-6.668629e+00, +1.861829e-01]  1.000000e+00  1.748709e+00       True       True
+Prim2 <- Cks2,Ccna2,Apitd1,Hells                -6.701271e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ccna2,Apitd1,Mcm6                 +3.068521e-02  -6.821138e-01   [-8.388613e+00, +7.024386e+00]  1.000000e+00  3.931960e+00       True       True
+Prim2 <- Cks2,Ccna2,Hells,Mcm6                  -6.563284e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Apitd1,Hells,Mcm6                 -3.534245e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Ccna2                  +9.293423e-02  +1.436581e+00   [-3.063507e+00, +5.936669e+00]  1.000000e+00  2.296006e+00       True       True
+Prim2 <- Cdca8,Pbk,Ube2c,Apitd1                 +1.065811e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Hells                  +2.726141e-03  -1.844242e+00   [-4.773831e+00, +1.085348e+00]  1.000000e+00  1.494716e+00       True       True
+Prim2 <- Cdca8,Pbk,Ube2c,Mcm6                   +3.850261e-02  -2.104281e+00   [-5.267503e+00, +1.058940e+00]  1.000000e+00  1.613918e+00       True       True
+Prim2 <- Cdca8,Pbk,Ccna2,Apitd1                 -5.995510e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ccna2,Hells                  -9.772051e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ccna2,Mcm6                   +1.213251e-01  +2.179544e+00   [-1.514214e+00, +5.873301e+00]  1.000000e+00  1.884605e+00       True       True
+Prim2 <- Cdca8,Pbk,Apitd1,Hells                 -7.750860e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Apitd1,Mcm6                  +5.448362e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Hells,Mcm6                   +3.718392e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Ccna2,Apitd1               +2.534203e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Ccna2,Hells                -2.682149e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Ccna2,Mcm6                 -9.255032e-02  -6.660986e+00   [-1.106718e+01, -2.254793e+00]  3.783247e-01  2.248099e+00       True       True
+Prim2 <- Cdca8,Ube2c,Apitd1,Hells               +6.059338e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Apitd1,Mcm6                +1.426915e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Hells,Mcm6                 +1.126321e-01  -3.657704e+00   [-7.440118e+00, +1.247105e-01]  1.000000e+00  1.929839e+00       True       True
+Prim2 <- Cdca8,Ccna2,Apitd1,Hells               +6.372821e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ccna2,Apitd1,Mcm6                +2.199857e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ccna2,Hells,Mcm6                 +2.080720e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Apitd1,Hells,Mcm6                +1.569328e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ube2c,Ccna2,Apitd1                 -1.234651e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ube2c,Ccna2,Hells                  -3.847411e-02  -1.673916e+00   [-4.596780e+00, +1.248948e+00]  1.000000e+00  1.491285e+00       True       True
+Prim2 <- Pbk,Ube2c,Ccna2,Mcm6                   +4.437605e-02  +1.543455e+00   [-2.239255e+00, +5.326165e+00]  1.000000e+00  1.929989e+00       True       True
+Prim2 <- Pbk,Ube2c,Apitd1,Hells                 -1.036007e-01  -4.887352e+00   [-8.215170e+00, -1.559533e+00]  4.332525e-01  1.697898e+00       True       True
+Prim2 <- Pbk,Ube2c,Apitd1,Mcm6                  -8.996046e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ube2c,Hells,Mcm6                   +2.327665e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ccna2,Apitd1,Hells                 -1.387885e-02  +6.540731e+00   [+2.390028e+00, +1.069143e+01]  3.115443e-01  2.117744e+00       True       True
+Prim2 <- Pbk,Ccna2,Apitd1,Mcm6                  -6.771749e-03  +5.212860e+00   [-2.262368e+00, +1.268809e+01]  1.000000e+00  3.813962e+00       True       True
+Prim2 <- Pbk,Ccna2,Hells,Mcm6                   +1.355098e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Apitd1,Hells,Mcm6                  -1.345884e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Ube2c,Ccna2,Apitd1,Hells               +4.550055e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Ube2c,Ccna2,Apitd1,Mcm6                +8.252871e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Ube2c,Ccna2,Hells,Mcm6                 -1.021732e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Ube2c,Apitd1,Hells,Mcm6                -3.011086e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Ccna2,Apitd1,Hells,Mcm6                +1.011652e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Ube2c                   +2.783640e-01  +1.368482e+00   [-5.183131e-01, +3.255278e+00]  1.000000e+00  9.626684e-01       True       True
+Gins2 <- Cks2,Cdca8,Pbk,Ccna2                   -1.603854e-01  -1.861809e+00   [-4.414135e+00, +6.905174e-01]  1.000000e+00  1.302231e+00       True       True
+Gins2 <- Cks2,Cdca8,Pbk,Apitd1                  -1.933509e-01  +2.093065e+00   [-3.689590e-01, +4.555089e+00]  1.000000e+00  1.256158e+00       True       True
+Gins2 <- Cks2,Cdca8,Pbk,Hells                   -2.689485e-01  -1.102612e+00   [-3.957980e+00, +1.752755e+00]  1.000000e+00  1.456847e+00       True       True
+Gins2 <- Cks2,Cdca8,Pbk,Mcm6                    -3.659113e-01  -2.273971e+00   [-4.454502e+00, -9.343969e-02]  1.000000e+00  1.112536e+00       True       True
+Gins2 <- Cks2,Cdca8,Ube2c,Ccna2                 +2.047737e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ube2c,Apitd1                +3.090263e-01  +9.643890e-01   [-2.866379e+00, +4.795157e+00]  1.000000e+00  1.954509e+00       True       True
+Gins2 <- Cks2,Cdca8,Ube2c,Hells                 -1.031273e-02  +1.549112e+00   [-9.990091e-01, +4.097234e+00]  1.000000e+00  1.300086e+00       True       True
+Gins2 <- Cks2,Cdca8,Ube2c,Mcm6                  -2.004267e-01  +2.499147e-01   [-2.133698e+00, +2.633527e+00]  1.000000e+00  1.216151e+00       True       True
+Gins2 <- Cks2,Cdca8,Ccna2,Apitd1                +1.410481e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ccna2,Hells                 -2.237719e-01  -2.034975e-01   [-3.144336e+00, +2.737341e+00]  1.000000e+00  1.500456e+00       True       True
+Gins2 <- Cks2,Cdca8,Ccna2,Mcm6                  -2.301322e-01  -9.136620e-01   [-4.293877e+00, +2.466553e+00]  1.000000e+00  1.724631e+00       True       True
+Gins2 <- Cks2,Cdca8,Apitd1,Hells                +2.807391e-01  +3.864492e+00   [+1.013892e+00, +6.715091e+00]  5.893643e-01  1.454414e+00       True       True
+Gins2 <- Cks2,Cdca8,Apitd1,Mcm6                 +6.116678e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Hells,Mcm6                  +3.700793e-01  +2.850466e+00   [-1.125039e-03, +5.702057e+00]  1.000000e+00  1.454920e+00       True       True
+Gins2 <- Cks2,Pbk,Ube2c,Ccna2                   +1.144278e-01  -1.902622e+00   [-5.197828e+00, +1.392584e+00]  1.000000e+00  1.681258e+00       True       True
+Gins2 <- Cks2,Pbk,Ube2c,Apitd1                  -9.796494e-03  -1.013772e+00   [-3.427767e+00, +1.400223e+00]  1.000000e+00  1.231653e+00       True       True
+Gins2 <- Cks2,Pbk,Ube2c,Hells                   -1.698719e-01  -7.717496e-01   [-3.489173e+00, +1.945673e+00]  1.000000e+00  1.386466e+00       True       True
+Gins2 <- Cks2,Pbk,Ube2c,Mcm6                    +5.390221e-02  +3.155514e-01   [-2.172469e+00, +2.803571e+00]  1.000000e+00  1.269421e+00       True       True
+Gins2 <- Cks2,Pbk,Ccna2,Apitd1                  -2.475298e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ccna2,Hells                   -1.325195e-01  +7.186004e+00   [+4.291571e+00, +1.008044e+01]  1.100000e-03  1.476778e+00       True       True
+Gins2 <- Cks2,Pbk,Ccna2,Mcm6                    +2.409026e-01  -2.384656e+00   [-4.936067e+00, +1.667544e-01]  1.000000e+00  1.301764e+00       True       True
+Gins2 <- Cks2,Pbk,Apitd1,Hells                  +5.845925e-02  -3.417330e+00   [-7.675085e+00, +8.404254e-01]  1.000000e+00  2.172364e+00       True       True
+Gins2 <- Cks2,Pbk,Apitd1,Mcm6                   +2.333926e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Hells,Mcm6                    +1.380277e-01  +1.869245e+00   [-7.273718e-01, +4.465862e+00]  1.000000e+00  1.324829e+00       True       True
+Gins2 <- Cks2,Ube2c,Ccna2,Apitd1                +2.699428e-01  -4.754131e+00   [-8.314894e+00, -1.193367e+00]  6.257792e-01  1.816749e+00       True       True
+Gins2 <- Cks2,Ube2c,Ccna2,Hells                 -6.240381e-02  +3.261517e+00   [+5.929339e-01, +5.930100e+00]  8.995802e-01  1.361547e+00       True       True
+Gins2 <- Cks2,Ube2c,Ccna2,Mcm6                  -1.562178e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Ube2c,Apitd1,Hells                +1.748685e-01  +2.088230e+00   [-4.030765e+00, +8.207225e+00]  1.000000e+00  3.121994e+00       True       True
+Gins2 <- Cks2,Ube2c,Apitd1,Mcm6                 +8.092461e-02  +2.884092e-02   [-2.193552e+00, +2.251233e+00]  1.000000e+00  1.133895e+00       True       True
+Gins2 <- Cks2,Ube2c,Hells,Mcm6                  -8.100314e-02  -2.238490e+00   [-4.919518e+00, +4.425383e-01]  1.000000e+00  1.367897e+00       True       True
+Gins2 <- Cks2,Ccna2,Apitd1,Hells                +3.821161e-02  -4.994360e-01   [-4.238191e+00, +3.239319e+00]  1.000000e+00  1.907563e+00       True       True
+Gins2 <- Cks2,Ccna2,Apitd1,Mcm6                 +7.964740e-02  -7.292269e-01   [-6.049892e+00, +4.591438e+00]  1.000000e+00  2.714675e+00       True       True
+Gins2 <- Cks2,Ccna2,Hells,Mcm6                  -1.281135e-01  +4.413400e+00   [+1.719623e+00, +7.107177e+00]  2.492860e-01  1.374401e+00       True       True
+Gins2 <- Cks2,Apitd1,Hells,Mcm6                 -1.529702e-02  -1.281960e-01   [-2.259267e+00, +2.002875e+00]  1.000000e+00  1.087301e+00       True       True
+Gins2 <- Cdca8,Pbk,Ube2c,Ccna2                  +1.870798e-01  -2.134305e+00   [-4.858590e+00, +5.899810e-01]  1.000000e+00  1.389967e+00       True       True
+Gins2 <- Cdca8,Pbk,Ube2c,Apitd1                 +2.443405e-01  +1.267231e+00   [-2.739112e+00, +5.273574e+00]  1.000000e+00  2.044090e+00       True       True
+Gins2 <- Cdca8,Pbk,Ube2c,Hells                  -1.869913e-01  -2.702451e+00   [-5.214881e+00, -1.900200e-01]  1.000000e+00  1.281876e+00       True       True
+Gins2 <- Cdca8,Pbk,Ube2c,Mcm6                   -2.732922e-01  +2.361948e+00   [+7.195129e-02, +4.651944e+00]  1.000000e+00  1.168387e+00       True       True
+Gins2 <- Cdca8,Pbk,Ccna2,Apitd1                 -1.612130e-01  -5.159347e-01   [-3.591013e+00, +2.559144e+00]  1.000000e+00  1.568946e+00       True       True
+Gins2 <- Cdca8,Pbk,Ccna2,Hells                  +5.208396e-02  -3.053793e+00   [-5.985011e+00, -1.225749e-01]  1.000000e+00  1.495547e+00       True       True
+Gins2 <- Cdca8,Pbk,Ccna2,Mcm6                   -4.625364e-01  +1.758473e+00   [-1.374026e+00, +4.890972e+00]  1.000000e+00  1.598243e+00       True       True
+Gins2 <- Cdca8,Pbk,Apitd1,Hells                 +1.550565e-01  +7.520341e-01   [-2.341698e+00, +3.845767e+00]  1.000000e+00  1.578464e+00       True       True
+Gins2 <- Cdca8,Pbk,Apitd1,Mcm6                  +3.128057e-01  +1.860665e+00   [-1.775756e+00, +5.497087e+00]  1.000000e+00  1.855351e+00       True       True
+Gins2 <- Cdca8,Pbk,Hells,Mcm6                   -1.977489e-01  -3.266042e+00   [-5.817418e+00, -7.146662e-01]  7.678199e-01  1.301746e+00       True       True
+Gins2 <- Cdca8,Ube2c,Ccna2,Apitd1               +1.951791e-01  +3.654445e-01   [-4.654055e+00, +5.384944e+00]  1.000000e+00  2.561016e+00       True       True
+Gins2 <- Cdca8,Ube2c,Ccna2,Hells                +3.201327e-02  +4.330054e+00   [+1.600889e+00, +7.059218e+00]  3.080079e-01  1.392457e+00       True       True
+Gins2 <- Cdca8,Ube2c,Ccna2,Mcm6                 -2.281838e-01  +3.225318e+00   [+4.255027e-01, +6.025133e+00]  1.000000e+00  1.428503e+00       True       True
+Gins2 <- Cdca8,Ube2c,Apitd1,Hells               +2.045732e-01  +5.565006e+00   [+1.634741e+00, +9.495272e+00]  5.201364e-01  2.005274e+00       True       True
+Gins2 <- Cdca8,Ube2c,Apitd1,Mcm6                +1.742861e-01  +2.857058e+00   [-2.215906e+00, +7.930023e+00]  1.000000e+00  2.588295e+00       True       True
+Gins2 <- Cdca8,Ube2c,Hells,Mcm6                 -2.409058e-01  +3.020026e+00   [+3.014510e-01, +5.738601e+00]  1.000000e+00  1.387053e+00       True       True
+Gins2 <- Cdca8,Ccna2,Apitd1,Hells               +3.623542e-02  +2.446694e+00   [-5.581093e-01, +5.451498e+00]  1.000000e+00  1.533091e+00       True       True
+Gins2 <- Cdca8,Ccna2,Apitd1,Mcm6                +3.651086e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Ccna2,Hells,Mcm6                 -6.257433e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Apitd1,Hells,Mcm6                +1.352860e-01  +3.319768e+00   [-1.313248e-01, +6.770861e+00]  1.000000e+00  1.760794e+00       True       True
+Gins2 <- Pbk,Ube2c,Ccna2,Apitd1                 -2.909239e-02  -3.477508e+00   [-7.834915e+00, +8.798984e-01]  1.000000e+00  2.223207e+00       True       True
+Gins2 <- Pbk,Ube2c,Ccna2,Hells                  -1.355968e-01  -3.047349e+00   [-6.091203e+00, -3.494476e-03]  1.000000e+00  1.553015e+00       True       True
+Gins2 <- Pbk,Ube2c,Ccna2,Mcm6                   -2.246693e-02  -1.315499e+00   [-4.072316e+00, +1.441317e+00]  1.000000e+00  1.406565e+00       True       True
+Gins2 <- Pbk,Ube2c,Apitd1,Hells                 +1.413122e-01  +1.968960e-03   [-6.503024e+00, +6.506962e+00]  1.000000e+00  3.318935e+00       True       True
+Gins2 <- Pbk,Ube2c,Apitd1,Mcm6                  -5.867035e-02  +9.802806e-02   [-2.765687e+00, +2.961743e+00]  1.000000e+00  1.461106e+00       True       True
+Gins2 <- Pbk,Ube2c,Hells,Mcm6                   +1.096919e-01  +9.934715e-01   [-1.733789e+00, +3.720732e+00]  1.000000e+00  1.391485e+00       True       True
+Gins2 <- Pbk,Ccna2,Apitd1,Hells                 -1.029862e-01  -1.409337e+00   [-4.957270e+00, +2.138596e+00]  1.000000e+00  1.810203e+00       True       True
+Gins2 <- Pbk,Ccna2,Apitd1,Mcm6                  +4.458892e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Pbk,Ccna2,Hells,Mcm6                   -1.777668e-02  +1.923838e-01   [-2.924810e+00, +3.309578e+00]  1.000000e+00  1.590434e+00       True       True
+Gins2 <- Pbk,Apitd1,Hells,Mcm6                  -2.960770e-01  -1.648697e+00   [-4.763332e+00, +1.465938e+00]  1.000000e+00  1.589129e+00       True       True
+Gins2 <- Ube2c,Ccna2,Apitd1,Hells               +1.462098e-01  -4.959800e+00   [-8.846433e+00, -1.073167e+00]  7.678199e-01  1.983012e+00       True       True
+Gins2 <- Ube2c,Ccna2,Apitd1,Mcm6                -1.955687e-02  -3.631671e+00   [-9.161702e+00, +1.898360e+00]  1.000000e+00  2.821496e+00       True       True
+Gins2 <- Ube2c,Ccna2,Hells,Mcm6                 -3.520059e-01  +3.777735e-01   [-3.200925e+00, +3.956472e+00]  1.000000e+00  1.825900e+00       True       True
+Gins2 <- Ube2c,Apitd1,Hells,Mcm6                -1.275155e-01  +2.010870e+00   [-7.157884e-01, +4.737529e+00]  1.000000e+00  1.391178e+00       True       True
+Gins2 <- Ccna2,Apitd1,Hells,Mcm6                -4.158462e-02             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Ccna2                   +9.123690e-01  +1.150433e+00   [-2.089328e+00, +4.390194e+00]  1.000000e+00  1.652970e+00       True       True
+Cks2 <- Cdca8,Pbk,Ube2c,Apitd1                  +2.332014e-01  +1.430666e+00   [-2.658524e+00, +5.519856e+00]  1.000000e+00  2.086360e+00       True       True
+Cks2 <- Cdca8,Pbk,Ube2c,Hells                   +3.022275e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Mcm6                    -1.215936e-01  -1.427574e+00   [-3.666049e+00, +8.109009e-01]  1.000000e+00  1.142100e+00       True       True
+Cks2 <- Cdca8,Pbk,Ccna2,Apitd1                  +6.925815e-02  +1.045457e+00   [-2.384447e+00, +4.475361e+00]  1.000000e+00  1.749983e+00       True       True
+Cks2 <- Cdca8,Pbk,Ccna2,Hells                   -2.139790e-02  +1.650053e+00   [-1.909224e+00, +5.209330e+00]  1.000000e+00  1.815991e+00       True       True
+Cks2 <- Cdca8,Pbk,Ccna2,Mcm6                    +1.561890e-01  +1.044693e+00   [-1.720071e+00, +3.809456e+00]  1.000000e+00  1.410620e+00       True       True
+Cks2 <- Cdca8,Pbk,Apitd1,Hells                  -2.386510e-01  +1.442378e+00   [-1.719009e+00, +4.603764e+00]  1.000000e+00  1.612982e+00       True       True
+Cks2 <- Cdca8,Pbk,Apitd1,Mcm6                   -7.467995e-02  +5.155943e-01   [-2.804665e+00, +3.835854e+00]  1.000000e+00  1.694041e+00       True       True
+Cks2 <- Cdca8,Pbk,Hells,Mcm6                    -1.248939e-01  +1.870074e+00   [-5.845183e-01, +4.324667e+00]  1.000000e+00  1.252366e+00       True       True
+Cks2 <- Cdca8,Ube2c,Ccna2,Apitd1                +6.166141e-01  -5.362603e+00   [-9.749536e+00, -9.756698e-01]  8.995802e-01  2.238272e+00       True       True
+Cks2 <- Cdca8,Ube2c,Ccna2,Hells                 +5.907379e-01  -4.687528e-01   [-4.454170e+00, +3.516664e+00]  1.000000e+00  2.033413e+00       True       True
+Cks2 <- Cdca8,Ube2c,Ccna2,Mcm6                  +3.322020e-01  +2.410739e+00   [-1.449850e+00, +6.271327e+00]  1.000000e+00  1.969724e+00       True       True
+Cks2 <- Cdca8,Ube2c,Apitd1,Hells                +1.214612e-01  +2.908233e+00   [-2.012043e+00, +7.828509e+00]  1.000000e+00  2.510391e+00       True       True
+Cks2 <- Cdca8,Ube2c,Apitd1,Mcm6                 +6.492707e-02  +2.582398e+00   [-1.699004e+00, +6.863800e+00]  1.000000e+00  2.184429e+00       True       True
+Cks2 <- Cdca8,Ube2c,Hells,Mcm6                  -2.103458e-01  +5.734908e+00   [+3.004974e+00, +8.464842e+00]  2.373963e-02  1.392849e+00       True       True
+Cks2 <- Cdca8,Ccna2,Apitd1,Hells                -5.233955e-02             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Ccna2,Apitd1,Mcm6                 +1.267501e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Ccna2,Hells,Mcm6                  -4.943699e-01  +1.541393e+00   [-1.732815e+00, +4.815602e+00]  1.000000e+00  1.670545e+00       True       True
+Cks2 <- Cdca8,Apitd1,Hells,Mcm6                 -2.182234e-01  -7.995320e-01   [-3.938876e+00, +2.339812e+00]  1.000000e+00  1.601736e+00       True       True
+Cks2 <- Pbk,Ube2c,Ccna2,Apitd1                  +1.639750e-03  -6.749759e-01   [-6.866981e+00, +5.517029e+00]  1.000000e+00  3.159244e+00       True       True
+Cks2 <- Pbk,Ube2c,Ccna2,Hells                   +2.030768e-01  +2.533768e+00   [-8.231055e-01, +5.890641e+00]  1.000000e+00  1.712722e+00       True       True
+Cks2 <- Pbk,Ube2c,Ccna2,Mcm6                    +9.317983e-02  -1.543271e+00   [-5.444615e+00, +2.358072e+00]  1.000000e+00  1.990518e+00       True       True
+Cks2 <- Pbk,Ube2c,Apitd1,Hells                  -6.540196e-02  -2.977109e+00   [-7.078183e+00, +1.123964e+00]  1.000000e+00  2.092423e+00       True       True
+Cks2 <- Pbk,Ube2c,Apitd1,Mcm6                   -9.553654e-02  -8.005883e-01   [-3.498725e+00, +1.897548e+00]  1.000000e+00  1.376625e+00       True       True
+Cks2 <- Pbk,Ube2c,Hells,Mcm6                    +2.779760e-01  +1.480533e+00   [-9.147734e-01, +3.875840e+00]  1.000000e+00  1.222118e+00       True       True
+Cks2 <- Pbk,Ccna2,Apitd1,Hells                  -2.970769e-01  -3.753220e+00   [-7.584161e+00, +7.772179e-02]  1.000000e+00  1.954598e+00       True       True
+Cks2 <- Pbk,Ccna2,Apitd1,Mcm6                   -2.575834e-01  -2.293172e+00   [-5.188534e+00, +6.021896e-01]  1.000000e+00  1.477253e+00       True       True
+Cks2 <- Pbk,Ccna2,Hells,Mcm6                    -4.395254e-02  -3.601024e+00   [-6.422045e+00, -7.800029e-01]  7.678199e-01  1.439323e+00       True       True
+Cks2 <- Pbk,Apitd1,Hells,Mcm6                   -1.080460e-01  -1.099484e+00   [-5.386039e+00, +3.187071e+00]  1.000000e+00  2.187058e+00       True       True
+Cks2 <- Ube2c,Ccna2,Apitd1,Hells                +4.712113e-02             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Ube2c,Ccna2,Apitd1,Mcm6                 -7.006906e-02  -2.243585e+00   [-5.900743e+00, +1.413572e+00]  1.000000e+00  1.865931e+00       True       True
+Cks2 <- Ube2c,Ccna2,Hells,Mcm6                  -1.849875e-01  -2.354624e+00   [-5.672269e+00, +9.630220e-01]  1.000000e+00  1.692707e+00       True       True
+Cks2 <- Ube2c,Apitd1,Hells,Mcm6                 +4.106321e-02  -2.496360e+00   [-6.010094e+00, +1.017375e+00]  1.000000e+00  1.792755e+00       True       True
+Cks2 <- Ccna2,Apitd1,Hells,Mcm6                 -2.181718e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ube2c,Ccna2,Apitd1                 -2.818478e-01  -3.745549e+00   [-6.802052e+00, -6.890458e-01]  8.995802e-01  1.559469e+00       True       True
+Cdca8 <- Pbk,Ube2c,Ccna2,Hells                  -7.954400e-02             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ube2c,Ccna2,Mcm6                   +2.102951e-02  -3.115555e-01   [-2.800467e+00, +2.177356e+00]  1.000000e+00  1.269876e+00       True       True
+Cdca8 <- Pbk,Ube2c,Apitd1,Hells                 +4.753016e-02             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ube2c,Apitd1,Mcm6                  -1.248941e-01  +4.695792e-02   [-2.864658e+00, +2.958573e+00]  1.000000e+00  1.485545e+00       True       True
+Cdca8 <- Pbk,Ube2c,Hells,Mcm6                   -7.659986e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ccna2,Apitd1,Hells                 -1.522088e-01  +4.007119e+00   [+2.411252e-01, +7.773114e+00]  1.000000e+00  1.921461e+00       True       True
+Cdca8 <- Pbk,Ccna2,Apitd1,Mcm6                  -1.010912e-01  +2.892756e+00   [-1.200830e-01, +5.905594e+00]  1.000000e+00  1.537191e+00       True       True
+Cdca8 <- Pbk,Ccna2,Hells,Mcm6                   -2.167416e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Apitd1,Hells,Mcm6                  +2.075835e-02  +2.124833e+00   [-1.915028e+00, +6.164693e+00]  1.000000e+00  2.061191e+00       True       True
+Cdca8 <- Ube2c,Ccna2,Apitd1,Hells               -3.007733e-02  -5.686155e+00   [-8.744190e+00, -2.628120e+00]  1.056723e-01  1.560251e+00       True       True
+Cdca8 <- Ube2c,Ccna2,Apitd1,Mcm6                -9.504256e-02  +1.430596e-01   [-3.482161e+00, +3.768280e+00]  1.000000e+00  1.849636e+00       True       True
+Cdca8 <- Ube2c,Ccna2,Hells,Mcm6                 -1.352659e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Ube2c,Apitd1,Hells,Mcm6                +3.641731e-02  +2.495793e+00   [-4.853907e-01, +5.476976e+00]  1.000000e+00  1.521040e+00       True       True
+Cdca8 <- Ccna2,Apitd1,Hells,Mcm6                -2.180459e-02  +8.706948e-01   [-2.133399e+00, +3.874789e+00]  1.000000e+00  1.532729e+00       True       True
+Pbk <- Ube2c,Ccna2,Apitd1,Hells                 -2.220708e-01  -9.962826e+00   [-1.313228e+01, -6.793372e+00]  1.978443e-06  1.617098e+00       True       True
+Pbk <- Ube2c,Ccna2,Apitd1,Mcm6                  -3.381300e-01  -3.185087e+00   [-6.170688e+00, -1.994870e-01]  1.000000e+00  1.523293e+00       True       True
+Pbk <- Ube2c,Ccna2,Hells,Mcm6                   -1.529211e-01             NA            no finite fluctuation          NA           NA      False      False
+Pbk <- Ube2c,Apitd1,Hells,Mcm6                  -1.333818e-01  -9.771071e-01   [-3.616473e+00, +1.662259e+00]  1.000000e+00  1.346640e+00       True       True
+Pbk <- Ccna2,Apitd1,Hells,Mcm6                  +1.065302e-01  -4.393275e-01   [-2.855674e+00, +1.977019e+00]  1.000000e+00  1.232853e+00       True       True
+Ube2c <- Ccna2,Apitd1,Hells,Mcm6                -5.136894e-02             NA            no finite fluctuation          NA           NA      False      False
+Wrote interaction plots: analyses/twelve_genes/plots/5_pt_conditional_interactions_12_genes.png, analyses/twelve_genes/plots/5_pt_conditional_interactions_12_genes_overview.png, analyses/twelve_genes/plots/5_pt_conditional_interactions_12_genes_forest.png, analyses/twelve_genes/plots/5_pt_conditional_interactions_12_genes_hypergraph.png
+Wrote analyses/twelve_genes/output/5_pt_conditional_interactions_12_genes.pt
+
+==============================================================================
+Analysis completed.
+Interaction-analysis runtime: 4m 6.17s

@@ -1,0 +1,986 @@
+Cross-fitted interaction analysis
+Started: 2026-10-19T13:58:00.679891+01:00
+Analysis: 12-gene
+Run settings
+  analysis: 12
+  data: input/trainingData_11950Cells_1000Genes.csv
+  model: None
+  interaction-order: 6
+  genes: None
+  output: None
+  log: None
+  batch-size: 512
+  nuisance-sample-batch-size: 64
+  probability-clip: 1e-06
+  fluctuation-iterations: 64
+  max-samples: None
+  device: cpu
+  plots-dir: None
+  forest-top-n: 25
+  network-max-items: 25
+  network-max-degree: 4
+  no-plots: False
+  plot: None
+  max-genes: None
+  pairwise-output: None
+  candidates: None
+  candidates-csv: None
+  screened-pairs-csv: None
+  screen-max-q: 0.05
+  screen-min-abs-log-interaction: 0.25
+  max-degree: 20
+  edge-policy: mutual
+  max-candidates: 100000
+Training provenance
+  Cross-fitted PC checkpoint: analyses/twelve_genes/output/cross_fitted_pcs_12_genes.pt
+  Checkpoint format: 4
+  Training data shape: (11950, 12) (cells, genes)
+  Model: architecture=mixture-chow-liu; components=32
+  Cross-fitting folds: 2 (held out: 5975, 5975 cells)
+  Training settings: epochs=20; batch_size=128; learning_rate=0.02; weight_decay=1e-05; seed=0; device=cpu
+  Training runtime: 1.18s
+  Final training NLL: fold 1: 4.024783, fold 2: 4.044821
+==============================================================================
+Conditional TMLE: 924 ordered targets across 2 folds.
+
+TMLE targeting
+  Finite point estimates in every cross-targeted fold: 64 / 924
+  Finite conditional fluctuations: 64 / 924
+  No finite fluctuation: 860
+  No empirical four-cell support gate is applied on this branch.
+  Conditional outcome/propensity clip: 1e-06
+  Raw PC propensities below the clip in any fold: 6
+
+TMLE results on the log-interaction scale (all 924 targets)
+Target                                                Plug-in           TMLE                      TMLE 95% CI     q value           SE   Targeted  Supported
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Spc24 <- Gmnn,Prim2,Gins2,Cks2,Cdca8            -1.622104e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cks2,Pbk              -6.457901e-01  -3.914591e-01   [-9.515007e+00, +8.732089e+00]  1.000000e+00  4.654957e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Cks2,Ube2c            -7.503645e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cks2,Ccna2            -7.521265e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cks2,Apitd1           -6.676480e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cks2,Hells            -1.815198e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cks2,Mcm6             +2.222052e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cdca8,Pbk             -1.243208e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cdca8,Ube2c           -1.064668e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cdca8,Ccna2           +2.746140e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cdca8,Apitd1          -4.195476e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cdca8,Hells           -1.096285e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Cdca8,Mcm6            -3.774385e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Pbk,Ube2c             -1.495880e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Pbk,Ccna2             -1.144732e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Pbk,Apitd1            +2.113694e-01  -7.084678e+00   [-1.310857e+01, -1.060785e+00]  1.000000e+00  3.073471e+00       True       True
+Spc24 <- Gmnn,Prim2,Gins2,Pbk,Hells             +1.268349e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Pbk,Mcm6              -2.418770e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Ube2c,Ccna2           -1.347248e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Ube2c,Apitd1          -3.691629e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Ube2c,Hells           -7.402862e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Ube2c,Mcm6            -3.366523e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Ccna2,Apitd1          -1.732203e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Ccna2,Hells           +6.373565e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Ccna2,Mcm6            +6.413118e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Apitd1,Hells          +2.150247e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Apitd1,Mcm6           +2.690973e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Gins2,Hells,Mcm6            +3.540117e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Cdca8,Pbk              +9.999269e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Cdca8,Ube2c            +2.229592e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Cdca8,Ccna2            +3.616027e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Cdca8,Apitd1           +1.030754e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Cdca8,Hells            -7.465089e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Cdca8,Mcm6             -1.095441e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Pbk,Ube2c              +2.931436e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Pbk,Ccna2              -6.533718e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Pbk,Apitd1             -5.445284e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Pbk,Hells              +6.565786e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Pbk,Mcm6               -2.589369e-02  -4.638298e+00   [-1.035510e+01, +1.078501e+00]  1.000000e+00  2.916788e+00       True       True
+Spc24 <- Gmnn,Prim2,Cks2,Ube2c,Ccna2            +1.878705e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Ube2c,Apitd1           +8.126809e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Ube2c,Hells            +1.555630e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Ube2c,Mcm6             +9.321860e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Ccna2,Apitd1           +1.220603e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Ccna2,Hells            +1.592299e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Ccna2,Mcm6             -4.098425e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Apitd1,Hells           -7.565081e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Apitd1,Mcm6            -2.182331e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cks2,Hells,Mcm6             -1.349058e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Pbk,Ube2c             +4.215435e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Pbk,Ccna2             -1.469791e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Pbk,Apitd1            -5.571023e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Pbk,Hells             -2.029300e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Pbk,Mcm6              -2.292049e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Ube2c,Ccna2           +8.540903e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Ube2c,Apitd1          -1.961349e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Ube2c,Hells           -2.461646e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Ube2c,Mcm6            -1.416707e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Ccna2,Apitd1          +9.017238e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Ccna2,Hells           -3.542790e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Ccna2,Mcm6            -3.968263e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Apitd1,Hells          -1.585712e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Apitd1,Mcm6           -1.806687e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Cdca8,Hells,Mcm6            -1.882509e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Ube2c,Ccna2             -5.256977e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Ube2c,Apitd1            -1.881038e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Ube2c,Hells             +3.162429e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Ube2c,Mcm6              -1.031989e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Ccna2,Apitd1            -1.317956e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Ccna2,Hells             -1.598161e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Ccna2,Mcm6              -1.264106e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Apitd1,Hells            -1.842414e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Apitd1,Mcm6             +1.300788e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Pbk,Hells,Mcm6              -2.225106e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Ccna2,Apitd1          +5.086622e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Ccna2,Hells           +5.934211e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Ccna2,Mcm6            -1.490357e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Apitd1,Hells          -5.852286e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Apitd1,Mcm6           -2.247907e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ube2c,Hells,Mcm6            -1.301275e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ccna2,Apitd1,Hells          -3.890886e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ccna2,Apitd1,Mcm6           -1.397498e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Ccna2,Hells,Mcm6            +5.817184e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Prim2,Apitd1,Hells,Mcm6           -6.656906e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Cdca8,Pbk              -5.898865e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Cdca8,Ube2c            +1.014426e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Cdca8,Ccna2            +2.938421e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Cdca8,Apitd1           +5.934899e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Cdca8,Hells            -2.312262e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Cdca8,Mcm6             +4.242646e-01  +5.146859e+00   [-5.363156e-01, +1.083003e+01]  1.000000e+00  2.899632e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Pbk,Ube2c              -2.533353e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Pbk,Ccna2              -3.495300e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Pbk,Apitd1             -1.299178e-02  +3.059355e+00   [-2.083081e+00, +8.201791e+00]  1.000000e+00  2.623740e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Pbk,Hells              -6.969139e-01  +2.044283e+00   [-2.753112e+00, +6.841678e+00]  1.000000e+00  2.447696e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Pbk,Mcm6               -1.786404e-01  -3.982870e-01   [-5.953830e+00, +5.157256e+00]  1.000000e+00  2.834513e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Ube2c,Ccna2            -8.830858e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Ube2c,Apitd1           +9.199526e-02  +4.335529e+00   [-2.296401e+00, +1.096746e+01]  1.000000e+00  3.383700e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Ube2c,Hells            -3.202084e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Ube2c,Mcm6             -1.774382e-02  -7.120908e-01   [-6.397488e+00, +4.973306e+00]  1.000000e+00  2.900766e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Ccna2,Apitd1           +1.780505e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Ccna2,Hells            -2.494709e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Ccna2,Mcm6             +2.086307e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cks2,Apitd1,Hells           +4.580258e-02  +3.845594e+00   [-1.153915e+00, +8.845104e+00]  1.000000e+00  2.550817e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Apitd1,Mcm6            +3.311010e-01  -2.411821e+00   [-6.884400e+00, +2.060758e+00]  1.000000e+00  2.281970e+00       True       True
+Spc24 <- Gmnn,Gins2,Cks2,Hells,Mcm6             +5.023000e-01  +4.447332e-02   [-4.149404e+00, +4.238351e+00]  1.000000e+00  2.139773e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Pbk,Ube2c             -3.037727e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Pbk,Ccna2             +2.514297e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Pbk,Apitd1            +2.343090e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Pbk,Hells             +6.559903e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Pbk,Mcm6              -2.870675e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Ube2c,Ccna2           +1.413144e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Ube2c,Apitd1          +1.370959e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Ube2c,Hells           -2.204762e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Ube2c,Mcm6            -2.781862e-01  -5.026845e+00   [-1.065759e+01, +6.038962e-01]  1.000000e+00  2.872880e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Ccna2,Apitd1          +2.238937e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Ccna2,Hells           +1.045682e+00             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Ccna2,Mcm6            +1.255907e-01  -1.571551e+00   [-1.096600e+01, +7.822903e+00]  1.000000e+00  4.793176e+00       True       True
+Spc24 <- Gmnn,Gins2,Cdca8,Apitd1,Hells          -3.178857e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Apitd1,Mcm6           +6.457081e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Cdca8,Hells,Mcm6            -2.928602e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Ube2c,Ccna2             +1.199668e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Ube2c,Apitd1            -8.004567e-02  +3.182283e+00   [-3.057993e+00, +9.422559e+00]  1.000000e+00  3.183873e+00       True       True
+Spc24 <- Gmnn,Gins2,Pbk,Ube2c,Hells             +3.532874e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Ube2c,Mcm6              -3.610908e-01  +1.686769e+00   [-3.023494e+00, +6.397032e+00]  1.000000e+00  2.403240e+00       True       True
+Spc24 <- Gmnn,Gins2,Pbk,Ccna2,Apitd1            +6.420904e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Ccna2,Hells             -5.796568e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Ccna2,Mcm6              -7.366599e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Apitd1,Hells            -1.939615e-01  +2.991517e+00   [-3.602012e+00, +9.585045e+00]  1.000000e+00  3.364107e+00       True       True
+Spc24 <- Gmnn,Gins2,Pbk,Apitd1,Mcm6             -1.092880e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Pbk,Hells,Mcm6              -7.781443e-01  +2.221980e+00   [-2.555389e+00, +6.999349e+00]  1.000000e+00  2.437478e+00       True       True
+Spc24 <- Gmnn,Gins2,Ube2c,Ccna2,Apitd1          +2.033971e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ube2c,Ccna2,Hells           +5.518652e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ube2c,Ccna2,Mcm6            -1.318891e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ube2c,Apitd1,Hells          -4.122319e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ube2c,Apitd1,Mcm6           -2.750036e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ube2c,Hells,Mcm6            -1.113064e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ccna2,Apitd1,Hells          -1.626072e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ccna2,Apitd1,Mcm6           -1.458475e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Ccna2,Hells,Mcm6            +2.307406e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Gins2,Apitd1,Hells,Mcm6           +3.920880e-01  +6.747598e-01   [-3.741399e+00, +5.090918e+00]  1.000000e+00  2.253183e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Pbk,Ube2c              -1.858858e-01  +7.733858e-01   [-3.824422e+00, +5.371194e+00]  1.000000e+00  2.345863e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Pbk,Ccna2              +9.836667e-01  -2.954514e-01   [-6.750969e+00, +6.160066e+00]  1.000000e+00  3.293692e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Pbk,Apitd1             +5.592675e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Pbk,Hells              +1.655604e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Pbk,Mcm6               -1.670056e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Ube2c,Ccna2            +2.987732e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Ube2c,Apitd1           +3.495908e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Ube2c,Hells            +1.234820e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Ube2c,Mcm6             +9.573139e-02  +1.701674e+00   [-3.749964e+00, +7.153311e+00]  1.000000e+00  2.781499e+00       True       True
+Spc24 <- Gmnn,Cks2,Cdca8,Ccna2,Apitd1           +5.888713e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Ccna2,Hells            +4.683504e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Ccna2,Mcm6             +4.683493e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Apitd1,Hells           +2.081406e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Apitd1,Mcm6            +3.698950e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Cdca8,Hells,Mcm6             -2.096265e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Pbk,Ube2c,Ccna2              +8.087427e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Pbk,Ube2c,Apitd1             +2.293901e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Pbk,Ube2c,Hells              -2.418249e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Pbk,Ube2c,Mcm6               -3.935992e-01  -3.907468e+00   [-8.681994e+00, +8.670574e-01]  1.000000e+00  2.436027e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Ccna2,Apitd1             -7.491757e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Pbk,Ccna2,Hells              -7.038758e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Pbk,Ccna2,Mcm6               -1.894079e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Pbk,Apitd1,Hells             -2.097377e-01  +6.868483e+00   [+1.622038e-01, +1.357476e+01]  1.000000e+00  3.421634e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Apitd1,Mcm6              +2.008780e-02  -2.850145e-02   [-5.649248e+00, +5.592245e+00]  1.000000e+00  2.867780e+00       True       True
+Spc24 <- Gmnn,Cks2,Pbk,Hells,Mcm6               -3.008265e-01  -1.606003e+00   [-6.741970e+00, +3.529964e+00]  1.000000e+00  2.620439e+00       True       True
+Spc24 <- Gmnn,Cks2,Ube2c,Ccna2,Apitd1           +1.385317e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Ube2c,Ccna2,Hells            +9.765645e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Ube2c,Ccna2,Mcm6             -4.810922e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Ube2c,Apitd1,Hells           +2.889674e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Ube2c,Apitd1,Mcm6            +1.090861e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Ube2c,Hells,Mcm6             +8.620365e-02  -3.005641e+00   [-8.417504e+00, +2.406223e+00]  1.000000e+00  2.761206e+00       True       True
+Spc24 <- Gmnn,Cks2,Ccna2,Apitd1,Hells           +8.077031e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Ccna2,Apitd1,Mcm6            +1.364386e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Ccna2,Hells,Mcm6             +2.078794e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cks2,Apitd1,Hells,Mcm6            -2.120114e-01  +2.418448e+00   [-2.703914e+00, +7.540811e+00]  1.000000e+00  2.613498e+00       True       True
+Spc24 <- Gmnn,Cdca8,Pbk,Ube2c,Ccna2             -1.091791e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Ube2c,Apitd1            +2.466117e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Ube2c,Hells             -5.684595e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Ube2c,Mcm6              +4.008180e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Ccna2,Apitd1            +4.221373e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Ccna2,Hells             +8.445263e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Ccna2,Mcm6              -1.699093e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Apitd1,Hells            -3.670755e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Apitd1,Mcm6             -7.417845e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Pbk,Hells,Mcm6              -6.358054e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Ube2c,Ccna2,Apitd1          +2.846638e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Ube2c,Ccna2,Hells           +2.201303e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Ube2c,Ccna2,Mcm6            +1.994991e-01  +7.316559e+00   [+1.382042e+00, +1.325108e+01]  1.000000e+00  3.027870e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ube2c,Apitd1,Hells          -2.669930e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Ube2c,Apitd1,Mcm6           -1.478130e-02  +2.980723e+00   [-2.330366e+00, +8.291813e+00]  1.000000e+00  2.709789e+00       True       True
+Spc24 <- Gmnn,Cdca8,Ube2c,Hells,Mcm6            -7.150924e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Ccna2,Apitd1,Hells          +1.303954e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Ccna2,Apitd1,Mcm6           +1.244065e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Ccna2,Hells,Mcm6            -4.111617e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Cdca8,Apitd1,Hells,Mcm6           -2.300659e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ube2c,Ccna2,Apitd1            +1.467137e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ube2c,Ccna2,Hells             -1.629151e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ube2c,Ccna2,Mcm6              -6.843344e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ube2c,Apitd1,Hells            -1.734096e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ube2c,Apitd1,Mcm6             -2.343569e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ube2c,Hells,Mcm6              -4.142499e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ccna2,Apitd1,Hells            -3.162826e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ccna2,Apitd1,Mcm6             +6.013518e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Ccna2,Hells,Mcm6              -4.725177e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Pbk,Apitd1,Hells,Mcm6             -1.651117e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Ube2c,Ccna2,Apitd1,Hells          +1.399770e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Ube2c,Ccna2,Apitd1,Mcm6           +2.209487e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Ube2c,Ccna2,Hells,Mcm6            +1.625875e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Ube2c,Apitd1,Hells,Mcm6           -3.738027e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gmnn,Ccna2,Apitd1,Hells,Mcm6           -3.487951e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Cdca8,Pbk             -4.171751e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Cdca8,Ube2c           +4.265912e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Cdca8,Ccna2           +9.658185e-04             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Cdca8,Apitd1          -8.042955e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Cdca8,Hells           -2.561398e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Cdca8,Mcm6            +1.823780e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Pbk,Ube2c             -1.533800e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Pbk,Ccna2             -1.793752e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Pbk,Apitd1            +7.995163e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Pbk,Hells             +2.479009e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Pbk,Mcm6              -3.488202e-02  +2.357650e+00   [-7.642044e+00, +1.235734e+01]  1.000000e+00  5.101979e+00       True       True
+Spc24 <- Prim2,Gins2,Cks2,Ube2c,Ccna2           +6.409259e-04             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Ube2c,Apitd1          +8.609537e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Ube2c,Hells           +1.325145e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Ube2c,Mcm6            +1.617951e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Ccna2,Apitd1          +2.643730e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Ccna2,Hells           +8.670273e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Ccna2,Mcm6            +5.111235e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Apitd1,Hells          +4.341237e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Apitd1,Mcm6           +2.974318e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cks2,Hells,Mcm6            +3.761223e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Pbk,Ube2c            +3.761004e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Pbk,Ccna2            +1.096555e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Pbk,Apitd1           -1.108064e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Pbk,Hells            +9.839775e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Pbk,Mcm6             +1.968448e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Ube2c,Ccna2          +1.809541e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Ube2c,Apitd1         +9.877767e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Ube2c,Hells          +4.462088e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Ube2c,Mcm6           +2.093627e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Ccna2,Apitd1         +1.293691e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Ccna2,Hells          +1.739168e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Ccna2,Mcm6           +2.238597e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Apitd1,Hells         -4.808584e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Apitd1,Mcm6          -9.288514e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Cdca8,Hells,Mcm6           -7.327251e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Ube2c,Ccna2            -6.850424e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Ube2c,Apitd1           +2.002961e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Ube2c,Hells            +1.788268e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Ube2c,Mcm6             +5.021826e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Ccna2,Apitd1           +1.907889e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Ccna2,Hells            +1.057333e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Ccna2,Mcm6             +1.292978e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Apitd1,Hells           +2.526548e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Apitd1,Mcm6            +4.842676e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Pbk,Hells,Mcm6             -1.130409e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Ccna2,Apitd1         +1.090464e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Ccna2,Hells          +2.014829e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Ccna2,Mcm6           +3.288162e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Apitd1,Hells         -4.604817e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Apitd1,Mcm6          -8.392728e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ube2c,Hells,Mcm6           +6.901710e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ccna2,Apitd1,Hells         -1.221403e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ccna2,Apitd1,Mcm6          +8.540161e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Ccna2,Hells,Mcm6           +2.867114e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Gins2,Apitd1,Hells,Mcm6          +1.235126e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Pbk,Ube2c             +2.027402e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Pbk,Ccna2             +1.076721e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Pbk,Apitd1            +1.763932e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Pbk,Hells             +8.612761e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Pbk,Mcm6              +1.065485e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Ube2c,Ccna2           +8.108600e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Ube2c,Apitd1          +1.855921e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Ube2c,Hells           +1.437602e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Ube2c,Mcm6            +1.677464e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Ccna2,Apitd1          +1.953844e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Ccna2,Hells           +2.374925e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Ccna2,Mcm6            +2.176458e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Apitd1,Hells          +5.339928e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Apitd1,Mcm6           -2.528860e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Cdca8,Hells,Mcm6            -4.941799e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Ube2c,Ccna2             +6.328269e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Ube2c,Apitd1            +1.482772e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Ube2c,Hells             -1.056861e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Ube2c,Mcm6              +3.741849e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Ccna2,Apitd1            +3.053982e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Ccna2,Hells             +1.558646e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Ccna2,Mcm6              +2.265409e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Apitd1,Hells            +1.202585e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Apitd1,Mcm6             +2.335732e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Pbk,Hells,Mcm6              -8.273018e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Ccna2,Apitd1          +8.151884e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Ccna2,Hells           +3.591349e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Ccna2,Mcm6            +7.546422e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Apitd1,Hells          +1.636135e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Apitd1,Mcm6           +2.479314e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ube2c,Hells,Mcm6            +1.072363e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ccna2,Apitd1,Hells          +1.205549e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ccna2,Apitd1,Mcm6           +1.168706e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Ccna2,Hells,Mcm6            +1.108832e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cks2,Apitd1,Hells,Mcm6           -3.407060e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Ube2c,Ccna2            +2.182382e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Ube2c,Apitd1           +1.100009e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Ube2c,Hells            +1.116595e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Ube2c,Mcm6             +7.438469e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Ccna2,Apitd1           +1.796382e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Ccna2,Hells            +1.362431e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Ccna2,Mcm6             +5.912660e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Apitd1,Hells           -2.922040e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Apitd1,Mcm6            -8.869375e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Pbk,Hells,Mcm6             -2.436676e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Ccna2,Apitd1         +1.794632e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Ccna2,Hells          +2.177982e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Ccna2,Mcm6           +2.010717e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Apitd1,Hells         -1.336796e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Apitd1,Mcm6          -1.597210e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ube2c,Hells,Mcm6           +6.885422e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ccna2,Apitd1,Hells         +7.287004e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ccna2,Apitd1,Mcm6          -3.734372e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Ccna2,Hells,Mcm6           +7.567612e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Cdca8,Apitd1,Hells,Mcm6          -1.777429e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ube2c,Ccna2,Apitd1           +1.038098e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ube2c,Ccna2,Hells            +5.801001e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ube2c,Ccna2,Mcm6             +7.491092e-05             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ube2c,Apitd1,Hells           -1.948435e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ube2c,Apitd1,Mcm6            -6.471112e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ube2c,Hells,Mcm6             -1.935959e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ccna2,Apitd1,Hells           +1.723708e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ccna2,Apitd1,Mcm6            +2.219445e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Ccna2,Hells,Mcm6             -9.165376e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Pbk,Apitd1,Hells,Mcm6            +1.546919e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Ccna2,Apitd1,Hells         +4.193264e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Ccna2,Apitd1,Mcm6          -3.560276e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Ccna2,Hells,Mcm6           +5.047810e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ube2c,Apitd1,Hells,Mcm6          -8.293850e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Prim2,Ccna2,Apitd1,Hells,Mcm6          -3.618479e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Pbk,Ube2c             -3.640000e-01  +2.038285e-01   [-5.408893e+00, +5.816550e+00]  1.000000e+00  2.863686e+00       True       True
+Spc24 <- Gins2,Cks2,Cdca8,Pbk,Ccna2             -5.816019e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Pbk,Apitd1            -2.673567e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Pbk,Hells             -5.849602e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Pbk,Mcm6              +6.465028e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Ube2c,Ccna2           -7.271212e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Ube2c,Apitd1          -2.814281e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Ube2c,Hells           -4.863180e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Ube2c,Mcm6            -1.709777e-02  +7.440323e-01   [-5.180981e+00, +6.669046e+00]  1.000000e+00  3.023022e+00       True       True
+Spc24 <- Gins2,Cks2,Cdca8,Ccna2,Apitd1          -3.142721e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Ccna2,Hells           -4.298745e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Ccna2,Mcm6            +2.825536e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Apitd1,Hells          +4.241749e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Apitd1,Mcm6           -5.322458e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Cdca8,Hells,Mcm6            +1.955735e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Ube2c,Ccna2             -4.486100e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Ube2c,Apitd1            -8.451742e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Ube2c,Hells             -4.531654e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Ube2c,Mcm6              +2.918321e-01  +3.385627e-01   [-6.128758e+00, +6.805883e+00]  1.000000e+00  3.299714e+00       True       True
+Spc24 <- Gins2,Cks2,Pbk,Ccna2,Apitd1            -5.573029e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Ccna2,Hells             -1.458614e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Ccna2,Mcm6              -4.108876e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Apitd1,Hells            +1.100034e-01  +9.858437e+00   [+4.631200e+00, +1.508567e+01]  6.638156e-02  2.667007e+00       True       True
+Spc24 <- Gins2,Cks2,Pbk,Apitd1,Mcm6             +4.695197e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Pbk,Hells,Mcm6              -9.549219e-02  +2.844651e+00   [-3.244696e+00, +8.933999e+00]  1.000000e+00  3.106867e+00       True       True
+Spc24 <- Gins2,Cks2,Ube2c,Ccna2,Apitd1          -3.338031e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Ube2c,Ccna2,Hells           -4.551615e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Ube2c,Ccna2,Mcm6            -2.012014e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Ube2c,Apitd1,Hells          -1.095683e-01  -3.862162e+00   [-9.747934e+00, +2.023610e+00]  1.000000e+00  3.003000e+00       True       True
+Spc24 <- Gins2,Cks2,Ube2c,Apitd1,Mcm6           +2.890691e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Ube2c,Hells,Mcm6            +1.867126e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Ccna2,Apitd1,Hells          +1.493677e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Ccna2,Apitd1,Mcm6           +3.949218e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Ccna2,Hells,Mcm6            +1.856623e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cks2,Apitd1,Hells,Mcm6           +1.538148e-01  +4.377785e+00   [-7.643336e-01, +9.519904e+00]  1.000000e+00  2.623578e+00       True       True
+Spc24 <- Gins2,Cdca8,Pbk,Ube2c,Ccna2            +1.317247e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Ube2c,Apitd1           -1.662674e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Ube2c,Hells            -2.297532e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Ube2c,Mcm6             +2.913464e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Ccna2,Apitd1           +7.005245e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Ccna2,Hells            -2.144031e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Ccna2,Mcm6             +1.796278e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Apitd1,Hells           -1.261611e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Apitd1,Mcm6            -2.805273e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Pbk,Hells,Mcm6             +2.126834e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ube2c,Ccna2,Apitd1         -1.409564e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ube2c,Ccna2,Hells          -2.231931e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ube2c,Ccna2,Mcm6           -5.117092e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ube2c,Apitd1,Hells         +6.070260e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ube2c,Apitd1,Mcm6          +4.297987e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ube2c,Hells,Mcm6           +3.282507e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ccna2,Apitd1,Hells         +1.108392e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ccna2,Apitd1,Mcm6          +1.150846e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Ccna2,Hells,Mcm6           +1.655448e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Cdca8,Apitd1,Hells,Mcm6          -1.034397e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ube2c,Ccna2,Apitd1           -6.744496e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ube2c,Ccna2,Hells            -2.655435e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ube2c,Ccna2,Mcm6             -2.234758e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ube2c,Apitd1,Hells           -1.768335e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ube2c,Apitd1,Mcm6            -9.800762e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ube2c,Hells,Mcm6             -4.206691e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ccna2,Apitd1,Hells           -1.959018e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ccna2,Apitd1,Mcm6            -1.986467e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Ccna2,Hells,Mcm6             -2.671614e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Pbk,Apitd1,Hells,Mcm6            +1.246623e-01  +5.717270e+00   [+5.265074e-01, +1.090803e+01]  1.000000e+00  2.648397e+00       True       True
+Spc24 <- Gins2,Ube2c,Ccna2,Apitd1,Hells         +4.056265e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Ube2c,Ccna2,Apitd1,Mcm6          -2.268716e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Ube2c,Ccna2,Hells,Mcm6           +1.335088e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Ube2c,Apitd1,Hells,Mcm6          -6.212946e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Gins2,Ccna2,Apitd1,Hells,Mcm6          +7.546168e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Ube2c,Ccna2             +7.640017e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Ube2c,Apitd1            +6.929293e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Ube2c,Hells             -4.617814e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Ube2c,Mcm6              +9.523999e-02  +2.039267e+00   [-2.511068e+00, +6.589601e+00]  1.000000e+00  2.321642e+00       True       True
+Spc24 <- Cks2,Cdca8,Pbk,Ccna2,Apitd1            -1.819241e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Ccna2,Hells             +1.105144e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Ccna2,Mcm6              +4.611783e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Apitd1,Hells            +2.276378e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Apitd1,Mcm6             +6.192775e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Pbk,Hells,Mcm6              -1.696375e-02  -7.314123e-01   [-6.633773e+00, +5.170949e+00]  1.000000e+00  3.011464e+00       True       True
+Spc24 <- Cks2,Cdca8,Ube2c,Ccna2,Apitd1          -2.091033e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Ube2c,Ccna2,Hells           -3.058497e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Ube2c,Ccna2,Mcm6            -4.496488e-01  +4.096837e-01   [-5.391898e+00, +6.211265e+00]  1.000000e+00  2.960045e+00       True       True
+Spc24 <- Cks2,Cdca8,Ube2c,Apitd1,Hells          -2.249643e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Ube2c,Apitd1,Mcm6           -9.934198e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Ube2c,Hells,Mcm6            -1.925990e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Ccna2,Apitd1,Hells          +6.169596e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Ccna2,Apitd1,Mcm6           -7.630325e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Ccna2,Hells,Mcm6            +2.075815e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Cdca8,Apitd1,Hells,Mcm6           +5.420709e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ube2c,Ccna2,Apitd1            -1.662606e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ube2c,Ccna2,Hells             -2.089926e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ube2c,Ccna2,Mcm6              -6.464093e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ube2c,Apitd1,Hells            -2.308110e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ube2c,Apitd1,Mcm6             +6.349595e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ube2c,Hells,Mcm6              +1.629298e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ccna2,Apitd1,Hells            +1.428023e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ccna2,Apitd1,Mcm6             +2.358294e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Ccna2,Hells,Mcm6              -1.456969e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Pbk,Apitd1,Hells,Mcm6             -4.912007e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Ube2c,Ccna2,Apitd1,Hells          -1.670325e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Ube2c,Ccna2,Apitd1,Mcm6           -1.752434e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Ube2c,Ccna2,Hells,Mcm6            -1.365074e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Ube2c,Apitd1,Hells,Mcm6           +7.298855e-03             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cks2,Ccna2,Apitd1,Hells,Mcm6           +1.156414e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ube2c,Ccna2,Apitd1           +2.318123e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ube2c,Ccna2,Hells            +2.229264e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ube2c,Ccna2,Mcm6             +2.738935e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ube2c,Apitd1,Hells           +4.061635e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ube2c,Apitd1,Mcm6            +8.244277e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ube2c,Hells,Mcm6             +1.146028e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ccna2,Apitd1,Hells           +1.966112e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ccna2,Apitd1,Mcm6            +1.124064e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Ccna2,Hells,Mcm6             +6.482096e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Pbk,Apitd1,Hells,Mcm6            -1.586741e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Ube2c,Ccna2,Apitd1,Hells         +1.507201e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Ube2c,Ccna2,Apitd1,Mcm6          +7.889220e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Ube2c,Ccna2,Hells,Mcm6           +4.759746e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Ube2c,Apitd1,Hells,Mcm6          +9.733666e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Cdca8,Ccna2,Apitd1,Hells,Mcm6          +1.829765e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Pbk,Ube2c,Ccna2,Apitd1,Hells           +1.993184e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Pbk,Ube2c,Ccna2,Apitd1,Mcm6            -2.082094e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Pbk,Ube2c,Ccna2,Hells,Mcm6             -8.783747e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Pbk,Ube2c,Apitd1,Hells,Mcm6            +1.318842e-02             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Pbk,Ccna2,Apitd1,Hells,Mcm6            -1.412938e-01             NA            no finite fluctuation          NA           NA      False      False
+Spc24 <- Ube2c,Ccna2,Apitd1,Hells,Mcm6          +3.784170e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Cdca8,Pbk              -2.408362e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Cdca8,Ube2c            +1.645833e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Cdca8,Ccna2            -2.439842e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Cdca8,Apitd1           -2.196509e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Cdca8,Hells            -3.430861e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Cdca8,Mcm6             -3.282472e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Pbk,Ube2c              -2.932554e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Pbk,Ccna2              -1.714488e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Pbk,Apitd1             -1.417048e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Pbk,Hells              +6.977494e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Pbk,Mcm6               -1.174682e-01  +2.198554e+00   [-2.546929e+00, +6.944037e+00]  1.000000e+00  2.421209e+00       True       True
+Gmnn <- Prim2,Gins2,Cks2,Ube2c,Ccna2            -1.220226e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Ube2c,Apitd1           -7.749343e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Ube2c,Hells            -7.236298e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Ube2c,Mcm6             -4.747556e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Ccna2,Apitd1           -2.494783e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Ccna2,Hells            -1.949726e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Ccna2,Mcm6             -1.211854e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Apitd1,Hells           -3.557848e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Apitd1,Mcm6            -7.800411e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cks2,Hells,Mcm6             +1.597559e-01  +2.810025e+00   [-2.323404e+00, +7.943454e+00]  1.000000e+00  2.619144e+00       True       True
+Gmnn <- Prim2,Gins2,Cdca8,Pbk,Ube2c             +3.600865e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Pbk,Ccna2             -2.431781e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Pbk,Apitd1            +2.067320e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Pbk,Hells             +1.188575e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Pbk,Mcm6              -6.270398e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Ube2c,Ccna2           +1.080553e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Ube2c,Apitd1          -4.945262e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Ube2c,Hells           +6.774460e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Ube2c,Mcm6            +1.208861e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Ccna2,Apitd1          +9.978230e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Ccna2,Hells           -9.335527e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Ccna2,Mcm6            -2.967216e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Apitd1,Hells          +8.376494e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Apitd1,Mcm6           -1.112034e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Cdca8,Hells,Mcm6            -3.801562e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Ube2c,Ccna2             +3.590875e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Ube2c,Apitd1            +2.674671e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Ube2c,Hells             +1.872064e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Ube2c,Mcm6              +1.265093e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Ccna2,Apitd1            -1.500869e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Ccna2,Hells             -3.378756e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Ccna2,Mcm6              -1.046447e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Apitd1,Hells            +7.802764e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Apitd1,Mcm6             +1.158435e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Pbk,Hells,Mcm6              -2.697381e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Ccna2,Apitd1          -1.198236e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Ccna2,Hells           -4.400375e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Ccna2,Mcm6            -5.300918e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Apitd1,Hells          -6.076577e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Apitd1,Mcm6           -7.207909e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ube2c,Hells,Mcm6            +8.190440e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ccna2,Apitd1,Hells          +8.535945e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ccna2,Apitd1,Mcm6           -2.849891e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Ccna2,Hells,Mcm6            +4.655524e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Gins2,Apitd1,Hells,Mcm6           +4.598734e-01  -2.046812e+00   [-7.625348e+00, +3.531723e+00]  1.000000e+00  2.846244e+00       True       True
+Gmnn <- Prim2,Cks2,Cdca8,Pbk,Ube2c              +1.353619e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Pbk,Ccna2              -1.326353e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Pbk,Apitd1             +4.599759e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Pbk,Hells              -7.669503e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Pbk,Mcm6               -3.026954e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Ube2c,Ccna2            +2.093511e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Ube2c,Apitd1           +1.281857e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Ube2c,Hells            +9.135384e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Ube2c,Mcm6             +9.214607e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Ccna2,Apitd1           -1.429451e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Ccna2,Hells            +1.104145e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Ccna2,Mcm6             +2.280482e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Apitd1,Hells           +9.477539e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Apitd1,Mcm6            +4.862889e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Cdca8,Hells,Mcm6             -1.093076e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Ube2c,Ccna2              +1.379591e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Ube2c,Apitd1             +9.125510e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Ube2c,Hells              +1.636393e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Ube2c,Mcm6               -3.460726e-04             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Ccna2,Apitd1             -4.765848e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Ccna2,Hells              +6.924768e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Ccna2,Mcm6               -9.273706e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Apitd1,Hells             +3.030897e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Apitd1,Mcm6              +2.418005e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Pbk,Hells,Mcm6               +9.675500e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Ccna2,Apitd1           +9.719055e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Ccna2,Hells            +1.264558e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Ccna2,Mcm6             +3.741824e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Apitd1,Hells           +8.858889e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Apitd1,Mcm6            -1.740700e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ube2c,Hells,Mcm6             -8.569042e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ccna2,Apitd1,Hells           -2.831290e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ccna2,Apitd1,Mcm6            -1.461385e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Ccna2,Hells,Mcm6             -4.942679e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cks2,Apitd1,Hells,Mcm6            -2.505000e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Ube2c,Ccna2             -6.710617e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Ube2c,Apitd1            +3.158666e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Ube2c,Hells             -2.230482e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Ube2c,Mcm6              -3.132994e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Ccna2,Apitd1            +8.998710e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Ccna2,Hells             +4.069673e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Ccna2,Mcm6              -3.433929e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Apitd1,Hells            +2.464401e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Apitd1,Mcm6             +3.308039e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Pbk,Hells,Mcm6              -3.596597e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Ccna2,Apitd1          -1.232092e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Ccna2,Hells           -1.544927e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Ccna2,Mcm6            -7.957298e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Apitd1,Hells          +7.718251e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Apitd1,Mcm6           +6.623245e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ube2c,Hells,Mcm6            -1.629620e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ccna2,Apitd1,Hells          +5.528985e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ccna2,Apitd1,Mcm6           -1.302374e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Ccna2,Hells,Mcm6            -1.538915e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Cdca8,Apitd1,Hells,Mcm6           -1.735570e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Ccna2,Apitd1            +1.727303e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Ccna2,Hells             +1.209225e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Ccna2,Mcm6              -8.965635e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Apitd1,Hells            +1.416029e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Apitd1,Mcm6             +1.871851e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ube2c,Hells,Mcm6              -1.746639e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ccna2,Apitd1,Hells            +5.529688e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ccna2,Apitd1,Mcm6             +2.153912e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Ccna2,Hells,Mcm6              +9.061536e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Pbk,Apitd1,Hells,Mcm6             +1.305847e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Ccna2,Apitd1,Hells          -9.585185e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Ccna2,Apitd1,Mcm6           -1.104638e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Ccna2,Hells,Mcm6            -1.526718e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ube2c,Apitd1,Hells,Mcm6           -1.904576e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Prim2,Ccna2,Apitd1,Hells,Mcm6           -5.065140e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Pbk,Ube2c              -4.104265e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Pbk,Ccna2              -4.215633e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Pbk,Apitd1             +1.380544e-01  -3.302943e+00   [-1.133487e+01, +4.728985e+00]  1.000000e+00  4.097998e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Pbk,Hells              +2.345474e-01  +4.674418e+00   [-4.168870e-01, +9.765723e+00]  1.000000e+00  2.597652e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Pbk,Mcm6               -2.694440e-01  +3.914356e+00   [-7.832160e-01, +8.611929e+00]  1.000000e+00  2.396765e+00       True       True
+Gmnn <- Gins2,Cks2,Cdca8,Ube2c,Ccna2            -5.437126e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Ube2c,Apitd1           +1.601169e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Ube2c,Hells            +1.206810e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Ube2c,Mcm6             +3.190680e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Ccna2,Apitd1           +6.040000e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Ccna2,Hells            +3.133985e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Ccna2,Mcm6             -5.736094e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Apitd1,Hells           -2.008436e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Apitd1,Mcm6            -3.222895e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Cdca8,Hells,Mcm6             -7.228247e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Ube2c,Ccna2              -3.552136e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Ube2c,Apitd1             +8.319005e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Ube2c,Hells              -1.789983e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Ube2c,Mcm6               +7.804034e-03  -2.451379e-01   [-5.242226e+00, +4.751950e+00]  1.000000e+00  2.549581e+00       True       True
+Gmnn <- Gins2,Cks2,Pbk,Ccna2,Apitd1             -1.559885e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Ccna2,Hells              -1.445091e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Ccna2,Mcm6               -4.216755e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Apitd1,Hells             -3.038635e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Apitd1,Mcm6              -8.034141e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Pbk,Hells,Mcm6               -3.995132e-01  -2.624731e+00   [-7.447862e+00, +2.198399e+00]  1.000000e+00  2.460826e+00       True       True
+Gmnn <- Gins2,Cks2,Ube2c,Ccna2,Apitd1           +1.669820e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Ube2c,Ccna2,Hells            +4.745613e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Ube2c,Ccna2,Mcm6             +8.531095e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Ube2c,Apitd1,Hells           -2.712555e-02  -4.122496e-01   [-6.394314e+00, +5.569815e+00]  1.000000e+00  3.052130e+00       True       True
+Gmnn <- Gins2,Cks2,Ube2c,Apitd1,Mcm6            +9.984948e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Ube2c,Hells,Mcm6             +6.824719e-03  -5.317069e+00   [-1.095922e+01, +3.250779e-01]  1.000000e+00  2.878699e+00       True       True
+Gmnn <- Gins2,Cks2,Ccna2,Apitd1,Hells           -2.936410e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Ccna2,Apitd1,Mcm6            -1.879284e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Ccna2,Hells,Mcm6             -1.352619e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cks2,Apitd1,Hells,Mcm6            +1.861350e-01  +1.806603e-01   [-3.791136e+00, +4.152457e+00]  1.000000e+00  2.026464e+00       True       True
+Gmnn <- Gins2,Cdca8,Pbk,Ube2c,Ccna2             +3.777487e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Ube2c,Apitd1            +2.429291e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Ube2c,Hells             -4.508512e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Ube2c,Mcm6              +2.801868e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Ccna2,Apitd1            +3.405006e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Ccna2,Hells             +1.569190e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Ccna2,Mcm6              -3.724772e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Apitd1,Hells            -2.809905e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Apitd1,Mcm6             -1.827727e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Pbk,Hells,Mcm6              -7.492420e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ube2c,Ccna2,Apitd1          +1.351663e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ube2c,Ccna2,Hells           -8.026689e-04             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ube2c,Ccna2,Mcm6            +1.802993e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ube2c,Apitd1,Hells          -3.603929e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ube2c,Apitd1,Mcm6           +1.958968e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ube2c,Hells,Mcm6            +1.097676e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ccna2,Apitd1,Hells          +1.478844e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ccna2,Apitd1,Mcm6           -5.085526e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Ccna2,Hells,Mcm6            -4.966389e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Cdca8,Apitd1,Hells,Mcm6           -3.630407e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ube2c,Ccna2,Apitd1            +5.723319e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ube2c,Ccna2,Hells             -3.325533e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ube2c,Ccna2,Mcm6              -7.090764e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ube2c,Apitd1,Hells            -5.317860e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ube2c,Apitd1,Mcm6             +1.794488e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ube2c,Hells,Mcm6              -3.440327e-01  -1.669511e+00   [-6.665584e+00, +3.326562e+00]  1.000000e+00  2.549064e+00       True       True
+Gmnn <- Gins2,Pbk,Ccna2,Apitd1,Hells            -3.719081e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ccna2,Apitd1,Mcm6             -6.154033e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Ccna2,Hells,Mcm6              -8.157555e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Pbk,Apitd1,Hells,Mcm6             -2.476079e-01  +1.365026e+00   [-4.675048e+00, +7.405101e+00]  1.000000e+00  3.081727e+00       True       True
+Gmnn <- Gins2,Ube2c,Ccna2,Apitd1,Hells          -3.947344e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Ube2c,Ccna2,Apitd1,Mcm6           -1.412821e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Ube2c,Ccna2,Hells,Mcm6            -2.060479e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Ube2c,Apitd1,Hells,Mcm6           -5.143347e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Gins2,Ccna2,Apitd1,Hells,Mcm6           -9.133498e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Ube2c,Ccna2              -7.593812e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Ube2c,Apitd1             +3.771262e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Ube2c,Hells              +2.859637e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Ube2c,Mcm6               +1.400720e-01  +3.700974e+00   [-2.583655e-01, +7.660314e+00]  1.000000e+00  2.020108e+00       True       True
+Gmnn <- Cks2,Cdca8,Pbk,Ccna2,Apitd1             +2.358424e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Ccna2,Hells              +1.716646e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Ccna2,Mcm6               +2.289868e-02  -2.342187e+00   [-7.897712e+00, +3.213338e+00]  1.000000e+00  2.834504e+00       True       True
+Gmnn <- Cks2,Cdca8,Pbk,Apitd1,Hells             -2.386077e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Apitd1,Mcm6              +3.939987e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Pbk,Hells,Mcm6               +5.161389e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ube2c,Ccna2,Apitd1           +1.797468e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ube2c,Ccna2,Hells            +2.633706e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ube2c,Ccna2,Mcm6             +2.609030e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ube2c,Apitd1,Hells           -1.552756e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ube2c,Apitd1,Mcm6            +1.512523e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ube2c,Hells,Mcm6             +1.253961e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ccna2,Apitd1,Hells           +2.862061e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ccna2,Apitd1,Mcm6            -4.907053e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Ccna2,Hells,Mcm6             +1.840819e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Cdca8,Apitd1,Hells,Mcm6            +3.162822e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ube2c,Ccna2,Apitd1             +1.408036e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ube2c,Ccna2,Hells              +1.710254e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ube2c,Ccna2,Mcm6               +9.867468e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ube2c,Apitd1,Hells             -5.194603e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ube2c,Apitd1,Mcm6              -5.645904e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ube2c,Hells,Mcm6               -1.167483e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ccna2,Apitd1,Hells             -2.024044e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ccna2,Apitd1,Mcm6              -9.879863e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Ccna2,Hells,Mcm6               -4.020345e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Pbk,Apitd1,Hells,Mcm6              +7.559988e-02  +3.631831e+00   [-3.135256e+00, +1.039892e+01]  1.000000e+00  3.452659e+00       True       True
+Gmnn <- Cks2,Ube2c,Ccna2,Apitd1,Hells           +1.217311e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Ube2c,Ccna2,Apitd1,Mcm6            +1.983755e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Ube2c,Ccna2,Hells,Mcm6             +9.993266e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Ube2c,Apitd1,Hells,Mcm6            -1.081533e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cks2,Ccna2,Apitd1,Hells,Mcm6            -9.059488e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ube2c,Ccna2,Apitd1            +1.274475e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ube2c,Ccna2,Hells             -1.708020e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ube2c,Ccna2,Mcm6              +5.955751e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ube2c,Apitd1,Hells            -6.818481e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ube2c,Apitd1,Mcm6             +3.102042e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ube2c,Hells,Mcm6              -4.458417e-03             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ccna2,Apitd1,Hells            -1.169787e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ccna2,Apitd1,Mcm6             -3.349973e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Ccna2,Hells,Mcm6              +1.409841e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Pbk,Apitd1,Hells,Mcm6             +2.480087e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Ube2c,Ccna2,Apitd1,Hells          -4.007817e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Ube2c,Ccna2,Apitd1,Mcm6           -6.537261e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Ube2c,Ccna2,Hells,Mcm6            -1.465244e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Ube2c,Apitd1,Hells,Mcm6           -1.689850e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Cdca8,Ccna2,Apitd1,Hells,Mcm6           -1.448035e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ube2c,Ccna2,Apitd1,Hells            -2.423396e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ube2c,Ccna2,Apitd1,Mcm6             -8.981521e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ube2c,Ccna2,Hells,Mcm6              -7.157026e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ube2c,Apitd1,Hells,Mcm6             -4.060479e-02             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Pbk,Ccna2,Apitd1,Hells,Mcm6             -1.929089e-01             NA            no finite fluctuation          NA           NA      False      False
+Gmnn <- Ube2c,Ccna2,Apitd1,Hells,Mcm6           -3.005048e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Pbk,Ube2c             -3.116428e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Pbk,Ccna2             -2.947151e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Pbk,Apitd1            -8.715331e-03             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Pbk,Hells             +1.490031e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Pbk,Mcm6              -1.239163e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Ube2c,Ccna2           -2.500722e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Ube2c,Apitd1          -1.362008e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Ube2c,Hells           +9.300556e-03             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Ube2c,Mcm6            +9.584384e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Ccna2,Apitd1          -7.786313e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Ccna2,Hells           +3.456710e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Ccna2,Mcm6            -1.954575e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Apitd1,Hells          -1.660090e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Apitd1,Mcm6           -3.105969e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Cdca8,Hells,Mcm6            -6.961102e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Ube2c,Ccna2             -1.678497e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Ube2c,Apitd1            -2.511107e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Ube2c,Hells             +4.803707e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Ube2c,Mcm6              -2.744596e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Ccna2,Apitd1            +7.988055e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Ccna2,Hells             +2.135354e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Ccna2,Mcm6              -1.996104e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Apitd1,Hells            -1.103349e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Apitd1,Mcm6             -2.485769e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Pbk,Hells,Mcm6              -1.103742e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ube2c,Ccna2,Apitd1          -2.236137e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ube2c,Ccna2,Hells           +2.515597e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ube2c,Ccna2,Mcm6            -2.542047e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ube2c,Apitd1,Hells          -1.211947e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ube2c,Apitd1,Mcm6           -1.428894e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ube2c,Hells,Mcm6            -1.382326e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ccna2,Apitd1,Hells          -6.009986e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ccna2,Apitd1,Mcm6           -4.889142e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Ccna2,Hells,Mcm6            -5.815269e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cks2,Apitd1,Hells,Mcm6           +1.539896e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Ube2c,Ccna2            +3.469323e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Ube2c,Apitd1           +2.432188e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Ube2c,Hells            +5.380403e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Ube2c,Mcm6             +1.762350e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Ccna2,Apitd1           -2.133679e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Ccna2,Hells            -2.259410e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Ccna2,Mcm6             -2.052172e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Apitd1,Hells           +1.227466e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Apitd1,Mcm6            +2.384204e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Pbk,Hells,Mcm6             -4.495048e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Ccna2,Apitd1         +7.075554e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Ccna2,Hells          +3.544477e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Ccna2,Mcm6           +2.533092e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Apitd1,Hells         -5.022641e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Apitd1,Mcm6          -1.120989e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ube2c,Hells,Mcm6           -6.678210e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ccna2,Apitd1,Hells         +1.134716e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ccna2,Apitd1,Mcm6          +1.383409e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Ccna2,Hells,Mcm6           -8.354260e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Cdca8,Apitd1,Hells,Mcm6          -2.650734e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Ccna2,Apitd1           +2.379733e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Ccna2,Hells            +1.924629e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Ccna2,Mcm6             +1.886858e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Apitd1,Hells           +3.621812e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Apitd1,Mcm6            +4.494779e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ube2c,Hells,Mcm6             +4.990521e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ccna2,Apitd1,Hells           -5.723456e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ccna2,Apitd1,Mcm6            -2.104290e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Ccna2,Hells,Mcm6             -4.874735e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Pbk,Apitd1,Hells,Mcm6            +6.876280e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ube2c,Ccna2,Apitd1,Hells         -5.068896e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ube2c,Ccna2,Apitd1,Mcm6          -1.969993e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ube2c,Ccna2,Hells,Mcm6           -4.992074e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ube2c,Apitd1,Hells,Mcm6          +5.277507e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Gins2,Ccna2,Apitd1,Hells,Mcm6          +3.185196e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Ube2c,Ccna2             -1.096201e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Ube2c,Apitd1            +2.977443e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Ube2c,Hells             +2.489317e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Ube2c,Mcm6              +2.037532e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Ccna2,Apitd1            +1.388469e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Ccna2,Hells             +1.295121e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Ccna2,Mcm6              +1.300243e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Apitd1,Hells            +1.905579e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Apitd1,Mcm6             +8.253529e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Pbk,Hells,Mcm6              +1.866541e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Ccna2,Apitd1          +1.796941e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Ccna2,Hells           +2.202260e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Ccna2,Mcm6            +3.715220e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Apitd1,Hells          +7.771209e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Apitd1,Mcm6           -5.757295e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ube2c,Hells,Mcm6            +2.654078e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ccna2,Apitd1,Hells          +2.627990e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ccna2,Apitd1,Mcm6           +8.643498e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Ccna2,Hells,Mcm6            +2.209855e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Cdca8,Apitd1,Hells,Mcm6           -2.299015e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ube2c,Ccna2,Apitd1            +2.989846e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ube2c,Ccna2,Hells             +2.130010e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ube2c,Ccna2,Mcm6              +2.673209e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ube2c,Apitd1,Hells            +9.093221e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ube2c,Apitd1,Mcm6             +9.388733e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ube2c,Hells,Mcm6              +1.575795e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ccna2,Apitd1,Hells            +1.018950e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ccna2,Apitd1,Mcm6             +1.172510e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Ccna2,Hells,Mcm6              +1.356068e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Pbk,Apitd1,Hells,Mcm6             +1.395583e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Ccna2,Apitd1,Hells          +2.043778e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Ccna2,Apitd1,Mcm6           +1.416486e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Ccna2,Hells,Mcm6            +1.668618e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ube2c,Apitd1,Hells,Mcm6           -2.443745e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cks2,Ccna2,Apitd1,Hells,Mcm6           +3.217377e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Ccna2,Apitd1           +1.390110e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Ccna2,Hells            +4.081749e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Ccna2,Mcm6             -8.297435e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Apitd1,Hells           -4.899062e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Apitd1,Mcm6            -1.356786e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ube2c,Hells,Mcm6             -2.061651e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ccna2,Apitd1,Hells           +1.579526e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ccna2,Apitd1,Mcm6            -4.762748e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Ccna2,Hells,Mcm6             -2.914077e-03             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Pbk,Apitd1,Hells,Mcm6            -1.248206e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Ccna2,Apitd1,Hells         -6.988205e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Ccna2,Apitd1,Mcm6          -1.856689e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Ccna2,Hells,Mcm6           -3.582176e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ube2c,Apitd1,Hells,Mcm6          -1.847497e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Cdca8,Ccna2,Apitd1,Hells,Mcm6          -1.938511e-01             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ube2c,Ccna2,Apitd1,Hells           -3.099439e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ube2c,Ccna2,Apitd1,Mcm6            -7.873518e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ube2c,Ccna2,Hells,Mcm6             -8.102266e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ube2c,Apitd1,Hells,Mcm6            -6.189623e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Pbk,Ccna2,Apitd1,Hells,Mcm6            +6.998213e-02             NA            no finite fluctuation          NA           NA      False      False
+Prim2 <- Ube2c,Ccna2,Apitd1,Hells,Mcm6          -8.027440e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Ube2c,Ccna2             -5.609165e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Ube2c,Apitd1            -2.834863e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Ube2c,Hells             +4.636999e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Ube2c,Mcm6              -7.065924e-03  -6.321665e-01   [-5.204900e+00, +3.940567e+00]  1.000000e+00  2.333070e+00       True       True
+Gins2 <- Cks2,Cdca8,Pbk,Ccna2,Apitd1            +5.923709e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Ccna2,Hells             +8.749382e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Ccna2,Mcm6              -2.465125e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Apitd1,Hells            +2.000044e-03             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Apitd1,Mcm6             -8.964495e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Pbk,Hells,Mcm6              -5.822722e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ube2c,Ccna2,Apitd1          -4.652308e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ube2c,Ccna2,Hells           +3.350455e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ube2c,Ccna2,Mcm6            -1.119800e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ube2c,Apitd1,Hells          -1.960386e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ube2c,Apitd1,Mcm6           -2.056097e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ube2c,Hells,Mcm6            +3.641163e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ccna2,Apitd1,Hells          +5.446632e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ccna2,Apitd1,Mcm6           -2.700942e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Ccna2,Hells,Mcm6            -1.247096e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Cdca8,Apitd1,Hells,Mcm6           -2.017975e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ube2c,Ccna2,Apitd1            -4.107023e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ube2c,Ccna2,Hells             +2.351770e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ube2c,Ccna2,Mcm6              -2.068053e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ube2c,Apitd1,Hells            +1.028210e-01  -3.982652e+00   [-1.462983e+01, +6.664522e+00]  1.000000e+00  5.432331e+00       True       True
+Gins2 <- Cks2,Pbk,Ube2c,Apitd1,Mcm6             +1.875042e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ube2c,Hells,Mcm6              -2.801298e-01  -4.018597e+00   [-9.391959e+00, +1.354765e+00]  1.000000e+00  2.741562e+00       True       True
+Gins2 <- Cks2,Pbk,Ccna2,Apitd1,Hells            +1.617643e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ccna2,Apitd1,Mcm6             -9.583113e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Ccna2,Hells,Mcm6              -1.907087e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Pbk,Apitd1,Hells,Mcm6             +1.439602e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Ube2c,Ccna2,Apitd1,Hells          +1.482878e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Ube2c,Ccna2,Apitd1,Mcm6           +1.379584e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Ube2c,Ccna2,Hells,Mcm6            +3.390869e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cks2,Ube2c,Apitd1,Hells,Mcm6           +2.563546e-02  -7.549181e-01   [-8.895274e+00, +7.385437e+00]  1.000000e+00  4.153319e+00       True       True
+Gins2 <- Cks2,Ccna2,Apitd1,Hells,Mcm6           +2.410592e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ube2c,Ccna2,Apitd1           +8.466237e-03             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ube2c,Ccna2,Hells            -9.841668e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ube2c,Ccna2,Mcm6             +1.039731e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ube2c,Apitd1,Hells           -4.357662e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ube2c,Apitd1,Mcm6            +4.506680e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ube2c,Hells,Mcm6             +6.085727e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ccna2,Apitd1,Hells           +1.735844e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ccna2,Apitd1,Mcm6            +6.687430e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Ccna2,Hells,Mcm6             +3.972696e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Pbk,Apitd1,Hells,Mcm6            +1.459861e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Ube2c,Ccna2,Apitd1,Hells         -1.465057e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Ube2c,Ccna2,Apitd1,Mcm6          +4.989508e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Ube2c,Ccna2,Hells,Mcm6           +5.632064e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Ube2c,Apitd1,Hells,Mcm6          -3.634157e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Cdca8,Ccna2,Apitd1,Hells,Mcm6          -2.094247e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Pbk,Ube2c,Ccna2,Apitd1,Hells           -1.154491e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Pbk,Ube2c,Ccna2,Apitd1,Mcm6            +1.211439e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Pbk,Ube2c,Ccna2,Hells,Mcm6             +1.084916e-01             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Pbk,Ube2c,Apitd1,Hells,Mcm6            -2.015451e-01  -4.625865e+00   [-1.331316e+01, +4.061428e+00]  1.000000e+00  4.432374e+00       True       True
+Gins2 <- Pbk,Ccna2,Apitd1,Hells,Mcm6            +4.869271e-02             NA            no finite fluctuation          NA           NA      False      False
+Gins2 <- Ube2c,Ccna2,Apitd1,Hells,Mcm6          +1.518456e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Ccna2,Apitd1            -1.565330e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Ccna2,Hells             -3.580449e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Ccna2,Mcm6              -1.965320e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Apitd1,Hells            +2.628078e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Apitd1,Mcm6             +3.966767e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ube2c,Hells,Mcm6              +1.717662e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ccna2,Apitd1,Hells            +6.187248e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ccna2,Apitd1,Mcm6             +2.457555e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Ccna2,Hells,Mcm6              +1.636896e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Pbk,Apitd1,Hells,Mcm6             +1.645077e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Ube2c,Ccna2,Apitd1,Hells          -1.849418e-02             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Ube2c,Ccna2,Apitd1,Mcm6           +5.503947e-02             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Ube2c,Ccna2,Hells,Mcm6            +2.815573e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Ube2c,Apitd1,Hells,Mcm6           +2.003841e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Cdca8,Ccna2,Apitd1,Hells,Mcm6           +5.082979e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Pbk,Ube2c,Ccna2,Apitd1,Hells            +4.437156e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Pbk,Ube2c,Ccna2,Apitd1,Mcm6             +4.911922e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Pbk,Ube2c,Ccna2,Hells,Mcm6              +1.183767e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Pbk,Ube2c,Apitd1,Hells,Mcm6             +6.392890e-02  +6.615907e+00   [-3.613332e-01, +1.359315e+01]  1.000000e+00  3.559882e+00       True       True
+Cks2 <- Pbk,Ccna2,Apitd1,Hells,Mcm6             +2.930174e-01             NA            no finite fluctuation          NA           NA      False      False
+Cks2 <- Ube2c,Ccna2,Apitd1,Hells,Mcm6           +3.057110e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ube2c,Ccna2,Apitd1,Hells           +4.089776e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ube2c,Ccna2,Apitd1,Mcm6            +5.298704e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ube2c,Ccna2,Hells,Mcm6             +5.349101e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ube2c,Apitd1,Hells,Mcm6            +2.343939e-01             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Pbk,Ccna2,Apitd1,Hells,Mcm6            +1.195095e-02             NA            no finite fluctuation          NA           NA      False      False
+Cdca8 <- Ube2c,Ccna2,Apitd1,Hells,Mcm6          +1.574236e-01             NA            no finite fluctuation          NA           NA      False      False
+Pbk <- Ube2c,Ccna2,Apitd1,Hells,Mcm6            +1.652101e-01             NA            no finite fluctuation          NA           NA      False      False
+Wrote interaction plots: analyses/twelve_genes/plots/6_pt_conditional_interactions_12_genes.png, analyses/twelve_genes/plots/6_pt_conditional_interactions_12_genes_overview.png, analyses/twelve_genes/plots/6_pt_conditional_interactions_12_genes_forest.png, analyses/twelve_genes/plots/6_pt_conditional_interactions_12_genes_hypergraph.png
+Wrote analyses/twelve_genes/output/6_pt_conditional_interactions_12_genes.pt
+
+==============================================================================
+Analysis completed.
+Interaction-analysis runtime: 10m 21.66s

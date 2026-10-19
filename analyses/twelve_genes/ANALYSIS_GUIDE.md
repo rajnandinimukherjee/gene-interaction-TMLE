@@ -20,6 +20,44 @@ python cross_fitted_interactions.py --analysis 12 --interaction-order 3 \
 
 For a default panel combination, the genes are in panel order, so the first member of that combination is the outcome. An explicit `--genes` list preserves the specified outcome/exposure order.
 
+## Fresh full-panel run and timings
+
+On 19 October 2026, the complete 12-gene conditional workflow was run on all
+11,950 cells with a fresh two-fold `mixture-chow-liu` checkpoint (32
+components, 20 epochs, batch size 128, seed 0, CPU). The interaction commands
+used `--batch-size 512`, `--nuisance-sample-batch-size 64`, 64 fluctuation
+bisections, the default probability clip of `1e-6`, and the default full and
+summary plots. No prior conditional result table or conditional interaction
+cache was used.
+
+The table reports complete `/usr/bin/time -p` wall-clock time (`real`) for
+each Python command. It includes process startup, input/checkpoint loading,
+conditional nuisance evaluation, targeting, result/log saving, and rendering
+all four plots. The fresh-fit column adds the once-only training command; do
+not sum it down the rows. `Finite targets` is the number with a finite
+unregularized cross-targeted fluctuation (`tmle_targeted`), not a count of
+statistically significant interactions.
+
+| Order | Ordered panel targets | Finite targets | Fresh PC training (once) | Full interaction command | Fresh fit + one order |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 2-point | 66 | 66 | 1.97 s | 4.03 s | 6.00 s |
+| 3-point | 220 | 220 | 1.97 s | 19.99 s | 21.96 s |
+| 4-point | 495 | 494 | 1.97 s | 77.09 s | 79.06 s |
+| 5-point | 792 | 619 | 1.97 s | 247.13 s | 249.10 s |
+| 6-point | 924 | 64 | 1.97 s | 622.78 s | 624.75 s |
+| 7-point | 792 | 0 | 1.97 s | 1,060.62 s | 1,062.59 s |
+
+Training once and running every order took 2,033.61 s (33 m 53.61 s) in
+total; the six interaction commands alone took 2,031.64 s (33 m 51.64 s).
+The detailed, timestamped per-order logs are in `logs/` with the name pattern
+`cross_fitted_interactions_12_genes_order_<order>_submitted_<timestamp>.txt`.
+
+Higher-order availability is limited by missing treatment strata or complete
+outcome separation in at least one held-out fold: this run has one unavailable
+order-4 target, 173 unavailable order-5 targets, 860 unavailable order-6
+targets, and no finite order-7 fluctuations. These rows remain in the saved
+tables and plots with `NA` inference; they were not discarded or regularized.
+
 ## Estimand
 
 For an ordered set `(Y, A_1, ..., A_k)`, let `A` denote the binary exposure vector and let `W` be every gene outside that set. The cross-fitted PC estimates
