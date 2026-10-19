@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cross-fitted-gene-interactions"
+version = "0.1.0"
+description = "Cross-fitted probabilistic-circuit analysis of binary gene interactions."
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "matplotlib==3.11.0",
+    "numpy==2.2.2",
+    "torch==2.6.0",
+]
+
+[project.scripts]
+cross-fitted-interactions = "analyses.cross_fitted_interactions:main"
+sweep-pc-architectures = "analyses.sweep_architectures:main"
+train-cross-fitted-pcs = "analyses.train:main"
+
+[tool.setuptools.packages.find]
+include = ["analyses*", "pc_core*"]
+

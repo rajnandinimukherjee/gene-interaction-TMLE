@@ -1,5 +1,46 @@
 # Cross-fitted gene-interaction analysis
 
+## Install from a fresh clone
+
+This repository includes the input dataset and saved analysis artifacts.  You
+need Python 3.10 through 3.13 and an internet connection the first time so `pip`
+can download the tested PyTorch, NumPy, and Matplotlib versions.  From the repository root, the
+cross-platform bootstrap command creates an isolated `.venv` and installs this
+checkout together with all runtime dependencies:
+
+```bash
+python scripts/bootstrap.py
+```
+
+Activate the environment after it completes:
+
+```bash
+# macOS / Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+```
+
+The installed commands can then be run from the repository root:
+
+```bash
+train-cross-fitted-pcs --analysis 12 --epochs 100
+sweep-pc-architectures --analysis 12
+cross-fitted-interactions --analysis 12 --interaction-order 3
+```
+
+If you prefer to manage environments yourself, `python -m pip install .`
+installs the same package and commands; `python -m pip install -r
+requirements.txt` is an equivalent requirements-file workflow.  The original
+`python train_cross_fitted_pcs.py`, `python sweep_pc_architectures.py`, and
+`python cross_fitted_interactions.py` entry points remain supported.
+
+By default `--device auto` uses CUDA, Apple Metal (MPS), or CPU in that order.
+CPU works without additional configuration.  For a particular NVIDIA/CUDA
+installation, use the PyTorch wheel selector if its required CUDA build differs
+from the default wheel that `pip` selects.
+
 There are two public commands.  Select the gene set with `--analysis`; the
 implementation and checkpoint format are shared internally by `pc_core`.
 

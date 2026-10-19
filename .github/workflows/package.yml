@@ -1,0 +1,23 @@
+name: Package
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  install-and-smoke-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install .
+      - run: train-cross-fitted-pcs --help
+      - run: sweep-pc-architectures --help
+      - run: cross-fitted-interactions --help
+      - run: python -m pc_core.interaction_plots --help
