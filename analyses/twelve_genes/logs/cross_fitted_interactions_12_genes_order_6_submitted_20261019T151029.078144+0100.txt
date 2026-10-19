@@ -1,0 +1,49 @@
+Cross-fitted interaction analysis
+Started: 2026-10-19T15:10:29.078144+01:00
+Analysis: 12-gene
+Run settings
+  analysis: 12
+  data: input/trainingData_11950Cells_1000Genes.csv
+  model: None
+  interaction-order: 6
+  genes: None
+  output: None
+  log: None
+  batch-size: 512
+  nuisance-sample-batch-size: 64
+  probability-clip: 1e-06
+  fluctuation-iterations: 64
+  max-samples: None
+  device: auto
+  plots-dir: None
+  forest-top-n: 25
+  network-max-items: 25
+  network-max-degree: 4
+  no-plots: False
+  plot: None
+  replot-results: analyses/twelve_genes/output/6_pt_conditional_interactions_12_genes.pt
+  max-genes: None
+  pairwise-output: None
+  candidates: None
+  candidates-csv: None
+  screened-pairs-csv: None
+  screen-max-q: 0.05
+  screen-min-abs-log-interaction: 0.25
+  max-degree: 20
+  edge-policy: mutual
+  max-candidates: 100000
+Training provenance
+  Cross-fitted PC checkpoint: analyses/twelve_genes/output/cross_fitted_pcs_12_genes.pt
+  Checkpoint format: 4
+  Training data shape: (11950, 12) (cells, genes)
+  Model: architecture=mixture-chow-liu; components=32
+  Cross-fitting folds: 2 (held out: 5975, 5975 cells)
+  Training settings: epochs=20; batch_size=128; learning_rate=0.02; weight_decay=1e-05; seed=0; device=cpu
+  Training runtime: 1.18s
+  Final training NLL: fold 1: 4.024783, fold 2: 4.044821
+==============================================================================
+Replotted analyses/twelve_genes/output/6_pt_conditional_interactions_12_genes.pt to analyses/twelve_genes/plots/6_pt_conditional_interactions_12_genes.png
+
+==============================================================================
+Analysis completed.
+Interaction-analysis runtime: 3.42s

@@ -43,6 +43,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-plots", action="store_true")
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--nuisance-sample-batch-size", type=int, default=64)
+    parser.add_argument(
+        "--progress-interval-seconds",
+        type=float,
+        default=30.0,
+        help="Emit conditional-TMLE progress and a rough ETA this often; 0 disables periodic updates.",
+    )
     parser.add_argument("--probability-clip", type=float, default=DEFAULT_PROBABILITY_CLIP)
     parser.add_argument("--fluctuation-iterations", type=int, default=64)
     parser.add_argument("--max-samples", type=int, default=None)
@@ -57,6 +63,7 @@ def plot_conditional_interactions(
     ci_low: torch.Tensor,
     ci_high: torch.Tensor,
     targeted: torch.Tensor,
+    q_value: torch.Tensor,
     order: int,
     output: Path,
 ) -> None:
@@ -67,7 +74,11 @@ def plot_conditional_interactions(
     low_values = ci_low.cpu().numpy()
     high_values = ci_high.cpu().numpy()
     valid = targeted.cpu().numpy() & np.isfinite(tmle_values) & np.isfinite(low_values) & np.isfinite(high_values)
-    ranking = np.argsort(-np.nan_to_num(np.abs(tmle_values), nan=-np.inf), kind="stable")
+    q_values = q_value.cpu().numpy()
+    # The BY-adjusted q-value is the analysis-wide evidence measure.  It is
+    # ranked in ascending order so the strongest evidence against a zero
+    # interaction appears at the top; unavailable inference remains last.
+    ranking = np.argsort(np.where(valid & np.isfinite(q_values), q_values, np.inf), kind="stable")
     y = np.arange(len(labels))
     height = len(labels) * 0.3 + 0.4
     figure, axis = plt.subplots(figsize=(7.5, height))
@@ -91,7 +102,7 @@ def plot_conditional_interactions(
         yticks=y,
         yticklabels=[labels[index] for index in ranking],
         xlabel="standardized conditional log interaction",
-        title=f"Cross-targeted conditional {order}-gene interactions",
+        title=f"Cross-targeted conditional {order}-gene interactions (BY q-value ascending)",
         xlim=(-1.05 * half_width, 1.05 * half_width),
     )
     axis.invert_yaxis()
@@ -118,6 +129,15 @@ def _gene_sets(args: argparse.Namespace, names: tuple[str, ...]) -> tuple[torch.
     return torch.tensor([[index[name] for name in requested]], dtype=torch.long), "_".join(requested)
 
 
+def _conditional_labels(gene_names: list[str] | tuple[str, ...], gene_sets: torch.Tensor) -> list[str]:
+    """Describe each ordered target as outcome <- joint exposures."""
+
+    return [
+        f"{gene_names[indices[0]]} <- " + ",".join(gene_names[index] for index in indices[1:])
+        for indices in gene_sets.tolist()
+    ]
+
+
 def main(args: argparse.Namespace | None = None) -> None:
     args = parse_args() if args is None else args
     data = load_panel(args.data, max_samples=args.max_samples)
@@ -128,10 +148,7 @@ def main(args: argparse.Namespace | None = None) -> None:
         device = torch.device("cpu")
     _, models, folds = load_cross_fitted_models(args.model, data, device)
     gene_sets, requested_label = _gene_sets(args, data.gene_names)
-    labels = [
-        f"{data.gene_names[indices[0]]} <- " + ",".join(data.gene_names[index] for index in indices[1:])
-        for indices in gene_sets.tolist()
-    ]
+    labels = _conditional_labels(data.gene_names, gene_sets)
     print(f"Conditional TMLE: {len(gene_sets):,} ordered targets across {len(models)} folds.")
     estimates = run_conditional_tmle(
         models,
@@ -143,6 +160,7 @@ def main(args: argparse.Namespace | None = None) -> None:
         nuisance_sample_batch_size=args.nuisance_sample_batch_size,
         probability_clip=args.probability_clip,
         fluctuation_iterations=args.fluctuation_iterations,
+        progress_interval_seconds=args.progress_interval_seconds,
     )
     if requested_label is None:
         stem = f"{args.interaction_order}_pt_conditional_interactions_{ANALYSIS_TAG}"
@@ -179,6 +197,7 @@ def main(args: argparse.Namespace | None = None) -> None:
             result["tmle_log_ci_low"],
             result["tmle_log_ci_high"],
             result["tmle_targeted"],
+            result["q_value"],
             args.interaction_order,
             plot,
         )

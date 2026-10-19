@@ -16,9 +16,12 @@ object for every treatment stratum.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
+import time
 
 import torch
+
+from .plaintext_reporting import format_duration
 
 
 NORMAL_95_CRITICAL_VALUE = 1.959963984540054
@@ -95,6 +98,7 @@ def conditional_nuisances(
     probability_clip: float,
     sample_batch_size: int,
     max_likelihood_elements: int = 16_000_000,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """Evaluate PC conditional outcomes and propensities for a target batch.
 
@@ -153,6 +157,8 @@ def conditional_nuisances(
         g_chunk = torch.softmax(treatment_log_mass, dim=-1)
         q[:, start:stop] = q_chunk.permute(1, 0, 2).to(dtype)
         g[:, start:stop] = g_chunk.permute(1, 0, 2).to(dtype)
+        if progress_callback is not None:
+            progress_callback(stop, n_cells)
 
     raw_minimum_q = q.amin(dim=(1, 2))
     raw_minimum_g = g.amin(dim=(1, 2))
@@ -293,6 +299,7 @@ def run_conditional_tmle(
     nuisance_sample_batch_size: int,
     probability_clip: float = DEFAULT_PROBABILITY_CLIP,
     fluctuation_iterations: int = 64,
+    progress_interval_seconds: float = 30.0,
 ) -> dict[str, torch.Tensor]:
     """Run fold-targeted, cross-fitted conditional TMLE for gene sets.
 
@@ -309,6 +316,8 @@ def run_conditional_tmle(
         raise ValueError("Each restored model must have one held-out fold.")
     if gene_sets_cpu.ndim != 2 or len(gene_sets_cpu) == 0:
         raise ValueError("gene_sets_cpu must contain at least one ordered target.")
+    if progress_interval_seconds < 0.0:
+        raise ValueError("progress_interval_seconds must be non-negative.")
 
     dtype = torch.float64
     order = gene_sets_cpu.shape[1]
@@ -323,6 +332,19 @@ def run_conditional_tmle(
         target_batch_size,
         max(1, max_block_elements // max(total_n * n_patterns * 2, 1)),
     )
+    block_count = (n_targets + bounded_batch_size - 1) // bounded_batch_size
+    started = time.perf_counter()
+    last_progress = started - progress_interval_seconds
+    print(
+        "Conditional-TMLE execution plan: "
+        f"{n_targets:,} targets in {block_count:,} target batches "
+        f"(up to {bounded_batch_size:,} targets), {len(folds)} folds, "
+        f"{total_n:,} held-out cells total. "
+        f"Progress interval: {progress_interval_seconds:g}s"
+        if progress_interval_seconds
+        else "Conditional-TMLE execution plan: periodic progress logging disabled.",
+        flush=True,
+    )
 
     plugin_log = torch.empty(n_targets, dtype=dtype)
     tmle_log = torch.empty(n_targets, dtype=dtype)
@@ -332,8 +354,11 @@ def run_conditional_tmle(
     minimum_q = torch.empty(n_targets, dtype=dtype)
     minimum_g = torch.empty(n_targets, dtype=dtype)
 
-    for start in range(0, n_targets, bounded_batch_size):
+    for block_number, start in enumerate(
+        range(0, n_targets, bounded_batch_size), start=1
+    ):
         stop = min(start + bounded_batch_size, n_targets)
+        target_count = stop - start
         gene_sets = gene_sets_cpu[start:stop].to(device=device, dtype=torch.long)
         q_minima: list[torch.Tensor] = []
         g_minima: list[torch.Tensor] = []
@@ -342,10 +367,50 @@ def run_conditional_tmle(
         block_eif_sum_total = torch.zeros_like(block_plugin_total)
         block_eif_square_sum_total = torch.zeros_like(block_plugin_total)
         block_targeted = torch.ones(stop - start, dtype=torch.bool, device=device)
-        for model, fold_indices in zip(models, folds):
+        processed_fold_cells = 0
+        for fold_number, (model, fold_indices) in enumerate(
+            zip(models, folds), start=1
+        ):
             held_out = torch.as_tensor(
                 values[fold_indices], dtype=torch.float32, device=device
             )
+            fold_started = time.perf_counter()
+            print(
+                f"[{format_duration(fold_started - started)}] target batch "
+                f"{block_number:,}/{block_count:,} (targets {start + 1:,}-{stop:,}), "
+                f"fold {fold_number}/{len(folds)}: conditional nuisance evaluation started "
+                f"for {len(held_out):,} cells.",
+                flush=True,
+            )
+
+            def report_nuisance_progress(completed_cells: int, fold_cells: int) -> None:
+                nonlocal last_progress
+                now = time.perf_counter()
+                if (
+                    progress_interval_seconds == 0.0
+                    or now - last_progress < progress_interval_seconds
+                ):
+                    return
+                completed_work = (
+                    start * total_n
+                    + target_count * (processed_fold_cells + completed_cells)
+                )
+                fraction = completed_work / (n_targets * total_n)
+                eta = (
+                    format_duration((now - started) * (1.0 - fraction) / fraction)
+                    if fraction > 0.0
+                    else "unavailable"
+                )
+                print(
+                    f"[{format_duration(now - started)}] target batch "
+                    f"{block_number:,}/{block_count:,}, fold {fold_number}/{len(folds)}: "
+                    f"nuisances {completed_cells:,}/{fold_cells:,} cells "
+                    f"({completed_cells / fold_cells:.0%}); overall {fraction:.2%}; "
+                    f"rough linear ETA {eta}.",
+                    flush=True,
+                )
+                last_progress = now
+
             q, g, raw_q_minimum, raw_g_minimum = conditional_nuisances(
                 model,
                 held_out,
@@ -353,6 +418,15 @@ def run_conditional_tmle(
                 patterns,
                 probability_clip=probability_clip,
                 sample_batch_size=nuisance_sample_batch_size,
+                progress_callback=report_nuisance_progress,
+            )
+            nuisance_finished = time.perf_counter()
+            print(
+                f"[{format_duration(nuisance_finished - started)}] target batch "
+                f"{block_number:,}/{block_count:,}, fold {fold_number}/{len(folds)}: "
+                f"conditional nuisances complete in {format_duration(nuisance_finished - fold_started)}; "
+                "TMLE targeting started.",
+                flush=True,
             )
             outcome, treatment_code = _observed_outcome_and_treatment(
                 held_out, gene_sets
@@ -376,6 +450,15 @@ def run_conditional_tmle(
             block_targeted &= fold_targeted
             q_minima.append(raw_q_minimum)
             g_minima.append(raw_g_minimum)
+            targeting_finished = time.perf_counter()
+            print(
+                f"[{format_duration(targeting_finished - started)}] target batch "
+                f"{block_number:,}/{block_count:,}, fold {fold_number}/{len(folds)}: "
+                f"TMLE targeting complete in {format_duration(targeting_finished - nuisance_finished)}; "
+                f"finite fluctuations {int(fold_targeted.sum()):,}/{target_count:,}.",
+                flush=True,
+            )
+            processed_fold_cells += len(held_out)
         block_plugin = block_plugin_total / total_n
         block_tmle = block_tmle_total / total_n
         block_tmle[~block_targeted] = float("nan")
@@ -401,6 +484,11 @@ def run_conditional_tmle(
     )
     p_value[~targeted] = float("nan")
     q_value = benjamini_yekutieli(p_value, targeted)
+    print(
+        "Conditional-TMLE targeting, uncertainty, and BY adjustment complete "
+        f"in {format_duration(time.perf_counter() - started)}.",
+        flush=True,
+    )
     return {
         "plugin_log_interaction": plugin_log,
         "tmle_log_interaction": tmle_log,

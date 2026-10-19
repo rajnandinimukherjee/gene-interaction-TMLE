@@ -52,6 +52,7 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
         nuisance_sample_batch_size=args.nuisance_sample_batch_size,
         probability_clip=args.probability_clip,
         fluctuation_iterations=args.fluctuation_iterations,
+        progress_interval_seconds=getattr(args, "progress_interval_seconds", 30.0),
     )
     valid = estimates["tmle_supported"]
     screened = (
@@ -170,6 +171,12 @@ def parse_args() -> argparse.Namespace:
         help="Outcome/exposure targets per conditional-TMLE block.",
     )
     parser.add_argument("--nuisance-sample-batch-size", type=int, default=64)
+    parser.add_argument(
+        "--progress-interval-seconds",
+        type=float,
+        default=30.0,
+        help="Emit conditional-TMLE progress and a rough ETA this often; 0 disables periodic updates.",
+    )
     parser.add_argument(
         "--probability-clip", type=float, default=DEFAULT_PROBABILITY_CLIP
     )

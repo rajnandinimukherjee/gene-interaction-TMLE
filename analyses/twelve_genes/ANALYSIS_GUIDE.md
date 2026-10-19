@@ -30,25 +30,25 @@ bisections, the default probability clip of `1e-6`, and the default full and
 summary plots. No prior conditional result table or conditional interaction
 cache was used.
 
-The table reports complete `/usr/bin/time -p` wall-clock time (`real`) for
-each Python command. It includes process startup, input/checkpoint loading,
-conditional nuisance evaluation, targeting, result/log saving, and rendering
-all four plots. The fresh-fit column adds the once-only training command; do
+The table reports the logged in-process runtime for each completed Python
+command. It covers input/checkpoint loading, conditional nuisance evaluation,
+targeting, result/log saving, and rendering all four plots, but excludes
+process startup. The fresh-fit column adds the once-only training command; do
 not sum it down the rows. `Finite targets` is the number with a finite
 unregularized cross-targeted fluctuation (`tmle_targeted`), not a count of
 statistically significant interactions.
 
-| Order | Ordered panel targets | Finite targets | Fresh PC training (once) | Full interaction command | Fresh fit + one order |
+| Order | Ordered panel targets | Finite targets | Fresh PC training (once) | Interaction-analysis runtime | Training + one order |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2-point | 66 | 66 | 1.97 s | 4.03 s | 6.00 s |
-| 3-point | 220 | 220 | 1.97 s | 19.99 s | 21.96 s |
-| 4-point | 495 | 494 | 1.97 s | 77.09 s | 79.06 s |
-| 5-point | 792 | 619 | 1.97 s | 247.13 s | 249.10 s |
-| 6-point | 924 | 64 | 1.97 s | 622.78 s | 624.75 s |
-| 7-point | 792 | 0 | 1.97 s | 1,060.62 s | 1,062.59 s |
+| 2-point | 66 | 66 | 1.18 s | 3.20 s | 4.38 s |
+| 3-point | 220 | 220 | 1.18 s | 19.16 s | 20.34 s |
+| 4-point | 495 | 494 | 1.18 s | 76.01 s | 77.19 s |
+| 5-point | 792 | 619 | 1.18 s | 246.17 s | 247.35 s |
+| 6-point | 924 | 64 | 1.18 s | 621.66 s | 622.84 s |
+| 7-point | 792 | 0 | 1.18 s | 1,059.39 s | 1,060.57 s |
 
-Training once and running every order took 2,033.61 s (33 m 53.61 s) in
-total; the six interaction commands alone took 2,031.64 s (33 m 51.64 s).
+Training once and running every order took 2,026.77 s (33 m 46.77 s) in
+total; the six interaction commands alone took 2,025.59 s (33 m 45.59 s).
 The detailed, timestamped per-order logs are in `logs/` with the name pattern
 `cross_fitted_interactions_12_genes_order_<order>_submitted_<timestamp>.txt`.
 
@@ -163,4 +163,4 @@ A result is unavailable only when a fold lacks an exposure pattern or has comple
 
 The result table stores the ordered `gene_sets`, PC plug-in and TMLE log interactions, log-scale SE/CI, p- and BY q-values, targeting status, and minimum raw conditional outcome/propensity predictions. Pair labels use `outcome <- exposure`; higher-order labels use `outcome <- exposure_1,exposure_2,...`.
 
-The overview and forest plot this standardized conditional log interaction. Pair networks use arrows from exposure to outcome to preserve the selected estimand direction; the arrows do not assert biological causality.
+The full labelled comparison plot orders rows by ascending BY q-value (strongest multiplicity-adjusted evidence against a zero interaction first); rows without finite inference appear last. The overview and forest plot this standardized conditional log interaction. Pair networks use arrows from exposure to outcome to preserve the selected estimand direction; the arrows do not assert biological causality.

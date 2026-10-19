@@ -61,6 +61,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     shared.add_argument("--batch-size", type=int, default=512)
     shared.add_argument("--nuisance-sample-batch-size", type=int, default=64)
+    shared.add_argument(
+        "--progress-interval-seconds",
+        type=float,
+        default=30.0,
+        help="Emit flushed conditional-TMLE progress and a rough ETA this often; 0 disables periodic updates.",
+    )
     shared.add_argument("--probability-clip", type=float, default=1e-6)
     shared.add_argument("--fluctuation-iterations", type=int, default=64)
     shared.add_argument("--max-samples", type=int, default=None)
@@ -192,6 +198,7 @@ def _run_twelve(args: argparse.Namespace) -> None:
             no_plots=args.no_plots,
             batch_size=args.batch_size,
             nuisance_sample_batch_size=args.nuisance_sample_batch_size,
+            progress_interval_seconds=args.progress_interval_seconds,
             probability_clip=args.probability_clip,
             fluctuation_iterations=args.fluctuation_iterations,
             max_samples=args.max_samples,
@@ -220,6 +227,7 @@ def _run_all_genes(args: argparse.Namespace) -> None:
             network_max_degree=args.network_max_degree,
             no_plots=args.no_plots,
             nuisance_sample_batch_size=args.nuisance_sample_batch_size,
+            progress_interval_seconds=args.progress_interval_seconds,
             probability_clip=args.probability_clip,
             fluctuation_iterations=args.fluctuation_iterations,
             screen_max_q=args.screen_max_q,

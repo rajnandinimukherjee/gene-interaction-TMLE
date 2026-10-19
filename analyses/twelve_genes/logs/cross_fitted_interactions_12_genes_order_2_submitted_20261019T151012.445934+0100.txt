@@ -1,0 +1,129 @@
+Cross-fitted interaction analysis
+Started: 2026-10-19T15:10:12.445934+01:00
+Analysis: 12-gene
+Run settings
+  analysis: 12
+  data: input/trainingData_11950Cells_1000Genes.csv
+  model: None
+  interaction-order: 2
+  genes: None
+  output: None
+  log: None
+  batch-size: 512
+  nuisance-sample-batch-size: 64
+  probability-clip: 1e-06
+  fluctuation-iterations: 64
+  max-samples: None
+  device: auto
+  plots-dir: None
+  forest-top-n: 25
+  network-max-items: 25
+  network-max-degree: 4
+  no-plots: False
+  plot: None
+  replot-results: None
+  max-genes: None
+  pairwise-output: None
+  candidates: None
+  candidates-csv: None
+  screened-pairs-csv: None
+  screen-max-q: 0.05
+  screen-min-abs-log-interaction: 0.25
+  max-degree: 20
+  edge-policy: mutual
+  max-candidates: 100000
+Training provenance
+  Cross-fitted PC checkpoint: analyses/twelve_genes/output/cross_fitted_pcs_12_genes.pt
+  Checkpoint format: 4
+  Training data shape: (11950, 12) (cells, genes)
+  Model: architecture=mixture-chow-liu; components=32
+  Cross-fitting folds: 2 (held out: 5975, 5975 cells)
+  Training settings: epochs=20; batch_size=128; learning_rate=0.02; weight_decay=1e-05; seed=0; device=cpu
+  Training runtime: 1.18s
+  Final training NLL: fold 1: 4.024783, fold 2: 4.044821
+==============================================================================
+Conditional TMLE: 66 ordered targets across 2 folds.
+
+TMLE targeting
+  Finite point estimates in every cross-targeted fold: 66 / 66
+  Finite conditional fluctuations: 66 / 66
+  No finite fluctuation: 0
+  No empirical four-cell support gate is applied on this branch.
+  Conditional outcome/propensity clip: 1e-06
+  Raw PC propensities below the clip in any fold: 0
+
+TMLE results on the log-interaction scale (all 66 targets)
+Target                                                Plug-in           TMLE                      TMLE 95% CI     q value           SE   Targeted  Supported
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Spc24 <- Gmnn                                   +5.852905e-01  +5.268867e-01   [+3.644795e-01, +6.892938e-01]  3.208268e-09  8.286231e-02       True       True
+Spc24 <- Prim2                                  +1.942665e-02  -4.631292e-02   [-2.679061e-01, +1.752803e-01]  1.000000e+00  1.130598e-01       True       True
+Spc24 <- Gins2                                  +4.034815e-01  +4.569766e-01   [+2.373512e-01, +6.766020e-01]  5.298830e-04  1.120558e-01       True       True
+Spc24 <- Cks2                                   +4.221920e-01  +4.401656e-01   [+2.959860e-01, +5.843451e-01]  3.126724e-08  7.356234e-02       True       True
+Spc24 <- Cdca8                                  +6.826942e-01  +6.602229e-01   [+3.693872e-01, +9.510586e-01]  1.085924e-04  1.483883e-01       True       True
+Spc24 <- Pbk                                    +9.613997e-01  +9.517289e-01   [+7.844613e-01, +1.118997e+00]  4.416657e-27  8.534219e-02       True       True
+Spc24 <- Ube2c                                  +5.445301e-01  +6.546180e-01   [+4.753965e-01, +8.338394e-01]  1.348827e-11  9.144118e-02       True       True
+Spc24 <- Ccna2                                  +4.820928e-01  +4.635162e-01   [+1.478180e-01, +7.792144e-01]  3.606911e-02  1.610735e-01       True       True
+Spc24 <- Apitd1                                 +3.598628e-01  +3.322684e-01   [+1.140816e-01, +5.504553e-01]  2.630316e-02  1.113219e-01       True       True
+Spc24 <- Hells                                  +3.187635e-01  +3.413873e-01   [+1.245577e-01, +5.582169e-01]  1.938050e-02  1.106294e-01       True       True
+Spc24 <- Mcm6                                   +2.015410e-01  +2.042839e-01   [+5.053375e-02, +3.580340e-01]  7.843849e-02  7.844539e-02       True       True
+Gmnn <- Prim2                                   +3.639358e-01  +4.451536e-01   [+2.848266e-01, +6.054807e-01]  7.221934e-07  8.180102e-02       True       True
+Gmnn <- Gins2                                   +9.342224e-01  +9.012756e-01   [+7.288180e-01, +1.073733e+00]  6.688191e-23  8.799020e-02       True       True
+Gmnn <- Cks2                                    +3.451979e-01  +2.528637e-01   [+1.286177e-01, +3.771097e-01]  7.470735e-04  6.339198e-02       True       True
+Gmnn <- Cdca8                                   +3.192336e-01  +4.360595e-01   [+1.933416e-01, +6.787775e-01]  4.512205e-03  1.238379e-01       True       True
+Gmnn <- Pbk                                     +7.460173e-02  +7.904180e-02   [-7.837376e-02, +2.364574e-01]  1.000000e+00  8.031554e-02       True       True
+Gmnn <- Ube2c                                   +5.771789e-02  +9.005620e-02   [-8.003589e-02, +2.601483e-01]  1.000000e+00  8.678327e-02       True       True
+Gmnn <- Ccna2                                   +2.523441e-01  +1.981712e-01   [-1.324972e-01, +5.288396e-01]  1.000000e+00  1.687114e-01       True       True
+Gmnn <- Apitd1                                  +7.123202e-01  +6.917636e-01   [+5.192859e-01, +8.642414e-01]  8.011345e-14  8.800047e-02       True       True
+Gmnn <- Hells                                   +7.208932e-01  +7.217049e-01   [+5.527709e-01, +8.906389e-01]  1.472648e-15  8.619239e-02       True       True
+Gmnn <- Mcm6                                    +5.071937e-01  +5.051189e-01   [+3.823396e-01, +6.278982e-01]  1.799027e-14  6.264364e-02       True       True
+Prim2 <- Gins2                                  +6.203371e-01  +5.956450e-01   [+3.715176e-01, +8.197725e-01]  2.495030e-06  1.143528e-01       True       True
+Prim2 <- Cks2                                   +5.059477e-03  -1.188566e-02   [-1.948975e-01, +1.711262e-01]  1.000000e+00  9.337510e-02       True       True
+Prim2 <- Cdca8                                  -1.202715e-01  -3.215751e-01   [-6.562939e-01, +1.314370e-02]  4.588365e-01  1.707780e-01       True       True
+Prim2 <- Pbk                                    -7.673019e-02  -3.401437e-02   [-2.613646e-01, +1.933359e-01]  1.000000e+00  1.159972e-01       True       True
+Prim2 <- Ube2c                                  -7.582156e-02  -2.070755e-03   [-2.617576e-01, +2.576161e-01]  1.000000e+00  1.324957e-01       True       True
+Prim2 <- Ccna2                                  +1.468169e-01  +2.554529e-01   [-1.938196e-01, +7.047255e-01]  1.000000e+00  2.292249e-01       True       True
+Prim2 <- Apitd1                                 +2.645223e-01  +2.627775e-01   [+7.196552e-03, +5.183584e-01]  3.457469e-01  1.304008e-01       True       True
+Prim2 <- Hells                                  +4.119149e-01  +2.954270e-01   [+5.243212e-02, +5.384219e-01]  1.424477e-01  1.239793e-01       True       True
+Prim2 <- Mcm6                                   +3.634112e-01  +3.330237e-01   [+1.608463e-01, +5.052012e-01]  1.630736e-03  8.784726e-02       True       True
+Gins2 <- Cks2                                   +1.148143e-01  +1.372288e-01   [+1.722291e-02, +2.572346e-01]  2.020735e-01  6.122861e-02       True       True
+Gins2 <- Cdca8                                  +7.317643e-02  +2.202658e-02   [-2.042752e-01, +2.483283e-01]  1.000000e+00  1.154622e-01       True       True
+Gins2 <- Pbk                                    -1.538943e-01  -2.615222e-01   [-4.225284e-01, -1.005159e-01]  1.432507e-02  8.214754e-02       True       True
+Gins2 <- Ube2c                                  -1.913134e-02  -1.558984e-01   [-3.311574e-01, +1.936058e-02]  6.096300e-01  8.941951e-02       True       True
+Gins2 <- Ccna2                                  +3.568298e-02  -7.462930e-02   [-4.302853e-01, +2.810267e-01]  1.000000e+00  1.814605e-01       True       True
+Gins2 <- Apitd1                                 +7.652537e-01  +7.524422e-01   [+5.813369e-01, +9.235474e-01]  1.934507e-16  8.730021e-02       True       True
+Gins2 <- Hells                                  +9.007767e-01  +8.297388e-01   [+6.693751e-01, +9.901024e-01]  1.634620e-22  8.181969e-02       True       True
+Gins2 <- Mcm6                                   +9.874620e-01  +1.001165e+00   [+8.841688e-01, +1.118162e+00]  6.178452e-61  5.969322e-02       True       True
+Cks2 <- Cdca8                                   +9.107474e-01  +7.914452e-01   [+6.119109e-01, +9.709794e-01]  1.768915e-16  9.160079e-02       True       True
+Cks2 <- Pbk                                     +5.159544e-01  +5.605372e-01   [+4.222094e-01, +6.988649e-01]  4.469067e-14  7.057667e-02       True       True
+Cks2 <- Ube2c                                   +4.465865e-01  +5.662552e-01   [+4.206463e-01, +7.118641e-01]  4.627650e-13  7.429162e-02       True       True
+Cks2 <- Ccna2                                   +6.139348e-01  +5.793543e-01   [+3.207178e-01, +8.379908e-01]  1.371354e-04  1.319598e-01       True       True
+Cks2 <- Apitd1                                  +1.868273e-01  +9.804321e-02   [-7.864531e-02, +2.747317e-01]  1.000000e+00  9.014886e-02       True       True
+Cks2 <- Hells                                   +2.339942e-01  +2.317050e-01   [+5.998215e-02, +4.034278e-01]  7.159546e-02  8.761529e-02       True       True
+Cks2 <- Mcm6                                    +6.832079e-02  +8.235932e-02   [-3.592683e-02, +2.006455e-01]  1.000000e+00  6.035119e-02       True       True
+Cdca8 <- Pbk                                    +1.674167e+00  +1.643916e+00   [+1.498554e+00, +1.789277e+00]  2.330205e-106  7.416551e-02       True       True
+Cdca8 <- Ube2c                                  +7.078893e-01  +7.189878e-01   [+5.733454e-01, +8.646302e-01]  1.506699e-20  7.430872e-02       True       True
+Cdca8 <- Ccna2                                  +8.709137e-01  +8.025450e-01   [+5.838605e-01, +1.021230e+00]  1.111032e-11  1.115758e-01       True       True
+Cdca8 <- Apitd1                                 +4.161494e-02  +1.542891e-01   [-2.828081e-02, +3.368590e-01]  6.993299e-01  9.314963e-02       True       True
+Cdca8 <- Hells                                  +7.845654e-02  +3.586086e-02   [-1.514772e-01, +2.231990e-01]  1.000000e+00  9.558242e-02       True       True
+Cdca8 <- Mcm6                                   +1.124193e-02  -4.577010e-03   [-1.412267e-01, +1.320727e-01]  1.000000e+00  6.972052e-02       True       True
+Pbk <- Ube2c                                    +1.009547e+00  +1.011603e+00   [+8.767219e-01, +1.146483e+00]  5.100702e-47  6.881791e-02       True       True
+Pbk <- Ccna2                                    +8.179020e-01  +8.393184e-01   [+5.797696e-01, +1.098867e+00]  3.491521e-09  1.324252e-01       True       True
+Pbk <- Apitd1                                   +3.220669e-02  +2.510194e-02   [-1.568522e-01, +2.070561e-01]  1.000000e+00  9.283545e-02       True       True
+Pbk <- Hells                                    +8.899397e-02  +1.181476e-01   [-7.056353e-02, +3.068587e-01]  1.000000e+00  9.628294e-02       True       True
+Pbk <- Mcm6                                     -2.871177e-03  -2.442875e-03   [-1.165513e-01, +1.116655e-01]  1.000000e+00  5.821964e-02       True       True
+Ube2c <- Ccna2                                  +5.736534e-01  +5.415162e-01   [+2.325476e-01, +8.504848e-01]  6.020012e-03  1.576399e-01       True       True
+Ube2c <- Apitd1                                 +6.666176e-02  +1.178868e-01   [-1.016216e-01, +3.373953e-01]  1.000000e+00  1.119962e-01       True       True
+Ube2c <- Hells                                  -8.697945e-03  -9.334141e-02   [-3.305170e-01, +1.438341e-01]  1.000000e+00  1.210102e-01       True       True
+Ube2c <- Mcm6                                   -1.061027e-01  -1.221096e-01   [-2.770187e-01, +3.279951e-02]  8.567744e-01  7.903670e-02       True       True
+Ccna2 <- Apitd1                                 +1.912786e-01  +2.679977e-01   [-3.661270e-02, +5.726081e-01]  6.202450e-01  1.554163e-01       True       True
+Ccna2 <- Hells                                  +2.033976e-01  +5.294905e-02   [-2.197005e-01, +3.255986e-01]  1.000000e+00  1.391095e-01       True       True
+Ccna2 <- Mcm6                                   +1.176086e-02  +4.812153e-02   [-1.709772e-01, +2.672202e-01]  1.000000e+00  1.117871e-01       True       True
+Apitd1 <- Hells                                 +7.270612e-01  +8.082818e-01   [+6.013310e-01, +1.015233e+00]  3.807972e-13  1.055891e-01       True       True
+Apitd1 <- Mcm6                                  +5.871724e-01  +6.869080e-01   [+5.310912e-01, +8.427248e-01]  1.768915e-16  7.949983e-02       True       True
+Hells <- Mcm6                                   +1.001380e+00  +1.059720e+00   [+9.187431e-01, +1.200696e+00]  4.154879e-47  7.192815e-02       True       True
+Wrote interaction plots: analyses/twelve_genes/plots/2_pt_conditional_interactions_12_genes.png, analyses/twelve_genes/plots/2_pt_conditional_interactions_12_genes_overview.png, analyses/twelve_genes/plots/2_pt_conditional_interactions_12_genes_forest.png, analyses/twelve_genes/plots/2_pt_conditional_interactions_12_genes_network.png
+Wrote analyses/twelve_genes/output/2_pt_conditional_interactions_12_genes.pt
+
+==============================================================================
+Analysis completed.
+Interaction-analysis runtime: 3.24s
