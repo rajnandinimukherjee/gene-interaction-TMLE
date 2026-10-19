@@ -159,6 +159,23 @@ Two statuses are intentionally distinct.
 
 Only supported targets receive an SE, confidence interval, p-value, and q-value. A finite but unsupported point can be descriptive but is not used for unregularized inference. The saved 2-point panel result uses minimum-cell-count=5 and minimum-probability=1e-12; all 66 pairs are supported. At high order, sparse 2^r tables are usually the scientific limit before compute is.
 
+> **Plain-language meaning in this project.** “Supported unregularized TMLE”
+> means the inference uses the raw held-out contingency-table counts exactly as
+> observed: it adds no pseudocount, continuity correction, probability floor,
+> ridge penalty, or variance regularization to rescue an empty or rare cell. For a
+> pair under this saved panel run, each of the four cells 00, 01, 10, and 11
+> must occur at least five times in F1 **and** at least five times in F2. The
+> PC must also assign every one of those four cells at least 1e-12 probability
+> in each fold. The thresholds are eligibility checks only: they do not alter
+> the estimate, replace a zero count, or clip a PC probability.
+>
+> A target can be “targeted” without being “supported.” The code can sometimes
+> solve the raw TMLE score equation and report a finite point estimate even
+> though a configuration is too sparse for the prespecified unregularized
+> inference rule. In that case the result deliberately has no SE, CI, p-value,
+> or q-value. If the raw data/model table cannot yield a strictly positive
+> bisection solution, it is not targeted either.
+
 BH adjusts p-values across supported targets in that run. A BH q-value controls the expected false-discovery proportion at a threshold such as 0.05 under its usual assumptions; it is not the posterior probability that a named edge is false and does not make an association causal.
 
 The stored empirical_log_interaction is only a full-data descriptive comparator. It uses all 11,950 cells, becomes NaN when any observed cell is empty, and is neither cross-fitted nor used for TMLE inference.

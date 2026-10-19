@@ -161,6 +161,29 @@ The result table distinguishes:
 
 Only supported pairs receive SEs, CIs, p-values, and q-values. A finite targeted estimate that fails support is descriptive only. Thus TMLE support is an unregularized positivity/stability condition, not a measure of biological relevance.
 
+> **Plain-language meaning in this project.** The log's “supported
+> unregularized targets” are targets for which the code can make inference from
+> the raw held-out four-cell table without adding a pseudocount, continuity
+> correction, probability floor, ridge penalty, or variance regularization. The
+> support threshold is a gate; it does not change a count, smooth a table, or
+> clip a probability before estimating the effect.
+>
+> In the current rerun, minimum-cell-count=1 has a very literal per-fold
+> meaning: for a pair to be supported, 00, 01, 10, and 11 must each occur at
+> least once in F1 **and** at least once in F2. Counts are not pooled across
+> the 11,950 cells for that decision. In each fold, the fitted PC must also
+> assign all four cells at least 1e-12 probability; values below the threshold
+> are excluded, not raised to 1e-12.
+>
+> “Targeted” is weaker than “supported.” A pair is targeted if its finite,
+> strictly positive model table admits a bisection root for the raw TMLE score.
+> It may still have a zero or otherwise under-threshold held-out cell and is
+> then denied an SE, CI, p-value, and q-value. In the current result, 389,779
+> pairs are targeted but only 389,725 are supported: 54 finite point estimates
+> therefore remain intentionally non-inferential. The 108,776 unsupported
+> pairs all fail the held-out count rule in at least one fold; none fails the
+> 1e-12 model-probability rule.
+
 The most recent table was deliberately rerun with minimum-cell-count=1 and minimum-probability=1e-12. It has 498,501 pairs, 389,779 finite targeted estimates, and 389,725 supported estimates. Lowering the threshold increased coverage but permits inference based on smaller cells; it is a scientific design choice, not a speed optimization.
 
 A BH q-value is a false-discovery-rate-adjusted p-value within this supported pair family. A threshold q <= 0.05 controls the expected false-discovery proportion under standard BH assumptions; it is neither a posterior probability that an edge is false nor a causal guarantee. The default screen also requires |TMLE log interaction| >= 0.25. In the current run, 132,169 pairs pass both cuts.

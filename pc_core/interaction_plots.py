@@ -179,12 +179,21 @@ def plot_effect_evidence_overview(
         evidence_cap = 50.0
         evidence = np.minimum(-np.log10(np.clip(q, floor, 1.0)), evidence_cap)
         positive = estimates[rows] >= 0.0
+        # A 12-gene panel has at most hundreds of points, whereas the
+        # all-gene pairwise plot has hundreds of thousands.  The latter needs
+        # transparency to reveal density; the former needs visible marks.
+        if len(rows) <= 1_000:
+            marker_size, marker_alpha = 24, 0.82
+        elif len(rows) <= 10_000:
+            marker_size, marker_alpha = 10, 0.42
+        else:
+            marker_size, marker_alpha = 5, 0.18
         axis.scatter(
-            estimates[rows][~positive], evidence[~positive], s=5, alpha=0.18,
+            estimates[rows][~positive], evidence[~positive], s=marker_size, alpha=marker_alpha,
             color=NEGATIVE_COLOUR, linewidths=0, rasterized=True, label="negative estimate",
         )
         axis.scatter(
-            estimates[rows][positive], evidence[positive], s=5, alpha=0.18,
+            estimates[rows][positive], evidence[positive], s=marker_size, alpha=marker_alpha,
             color=POSITIVE_COLOUR, linewidths=0, rasterized=True, label="positive estimate",
         )
         axis.axvline(0.0, color="black", linewidth=1)
