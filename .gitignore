@@ -1,5 +1,11 @@
 __pycache__
 .DS_Store
+.venv/
+.pytest_cache/
+.coverage
+build/
+dist/
+*.egg-info/
 GP__gene_flows.pdf
 pc_core/__pycache__
 analyses/__pycache__

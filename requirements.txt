@@ -1,0 +1,4 @@
+# The project metadata in pyproject.toml is the single source of truth for
+# runtime dependencies.  This file keeps the familiar requirements workflow
+# available while installing the local project and its command-line tools.
+-e .
