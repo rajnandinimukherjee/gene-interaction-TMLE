@@ -39,9 +39,11 @@ def treatment_patterns(
     """
 
     if order < 2:
-        raise ValueError("Conditional interactions require an outcome and at least one exposure.")
+        raise ValueError(
+            "Conditional interactions require an outcome and at least one exposure."
+        )
     treatment_order = order - 1
-    integers = torch.arange(2 ** treatment_order, device=device)
+    integers = torch.arange(2**treatment_order, device=device)
     shifts = torch.arange(treatment_order - 1, -1, -1, device=device)
     patterns = ((integers[:, None] >> shifts) & 1).to(dtype)
     signs = torch.where(
@@ -63,7 +65,7 @@ def _observed_outcome_and_treatment(
     shifts = torch.arange(
         gene_sets.shape[1] - 2, -1, -1, device=data.device, dtype=torch.long
     )
-    codes = (treatment * (2 ** shifts)).sum(dim=-1).T
+    codes = (treatment * (2**shifts)).sum(dim=-1).T
     return outcome, codes
 
 
@@ -108,7 +110,9 @@ def conditional_nuisances(
     if sample_batch_size < 1:
         raise ValueError("sample_batch_size must be positive.")
     if gene_sets.ndim != 2 or gene_sets.shape[1] < 2:
-        raise ValueError("gene_sets must be a [targets, outcome-plus-exposures] matrix.")
+        raise ValueError(
+            "gene_sets must be a [targets, outcome-plus-exposures] matrix."
+        )
 
     device = held_out.device
     target_count = len(gene_sets)
@@ -131,9 +135,13 @@ def conditional_nuisances(
     for start in range(0, n_cells, effective_sample_batch_size):
         stop = min(start + effective_sample_batch_size, n_cells)
         observed = held_out[start:stop]
-        completed = observed[:, None, :].expand(len(observed), configuration_count, -1).clone()
+        completed = (
+            observed[:, None, :].expand(len(observed), configuration_count, -1).clone()
+        )
         for position in range(gene_sets.shape[1]):
-            completed[:, rows, flat_genes[:, position]] = flat_values[:, position].to(completed.dtype)
+            completed[:, rows, flat_genes[:, position]] = flat_values[:, position].to(
+                completed.dtype
+            )
         log_joint = model.log_prob(completed.reshape(-1, completed.shape[-1])).reshape(
             len(observed), target_count, n_patterns, 2
         )
@@ -156,7 +164,9 @@ def conditional_nuisances(
     )
 
 
-def _log_interaction_from_means(means: torch.Tensor, signs: torch.Tensor, clip: float) -> torch.Tensor:
+def _log_interaction_from_means(
+    means: torch.Tensor, signs: torch.Tensor, clip: float
+) -> torch.Tensor:
     """Return the alternating standardized log-odds interaction."""
 
     return (torch.logit(means.clamp(clip, 1.0 - clip)) * signs).sum(dim=1)
@@ -192,12 +202,16 @@ def conditional_tmle_update(
 
     target_count, _, n_patterns = q.shape
     if len(signs) != n_patterns:
-        raise ValueError("The treatment-sign vector does not match the nuisance arrays.")
+        raise ValueError(
+            "The treatment-sign vector does not match the nuisance arrays."
+        )
     means = q.mean(dim=1)
     plugin_log = _log_interaction_from_means(means, signs, probability_clip)
     denominators = means * (1.0 - means)
     h = signs[None, None, :] / (denominators[:, None, :] * g)
-    observed = torch.nn.functional.one_hot(treatment_code, num_classes=n_patterns).to(q.dtype)
+    observed = torch.nn.functional.one_hot(treatment_code, num_classes=n_patterns).to(
+        q.dtype
+    )
     observed_count = observed.sum(dim=1)
     observed_success = (observed * outcome[:, :, None]).sum(dim=1)
     # The reference GLMs have no finite solution under complete outcome
@@ -261,7 +275,9 @@ def benjamini_yekutieli(p_values: torch.Tensor, valid: torch.Tensor) -> torch.Te
     ranks = torch.arange(1, m + 1, dtype=p.dtype, device=p.device)
     harmonic = (1.0 / ranks).sum()
     raw_q = sorted_p * m * harmonic / ranks
-    monotone_q = torch.flip(torch.cummin(torch.flip(raw_q, dims=(0,)), dim=0).values, dims=(0,)).clamp(max=1.0)
+    monotone_q = torch.flip(
+        torch.cummin(torch.flip(raw_q, dims=(0,)), dim=0).values, dims=(0,)
+    ).clamp(max=1.0)
     q_values[valid_indices[order]] = monotone_q
     return q_values
 
@@ -327,7 +343,9 @@ def run_conditional_tmle(
         block_eif_square_sum_total = torch.zeros_like(block_plugin_total)
         block_targeted = torch.ones(stop - start, dtype=torch.bool, device=device)
         for model, fold_indices in zip(models, folds):
-            held_out = torch.as_tensor(values[fold_indices], dtype=torch.float32, device=device)
+            held_out = torch.as_tensor(
+                values[fold_indices], dtype=torch.float32, device=device
+            )
             q, g, raw_q_minimum, raw_g_minimum = conditional_nuisances(
                 model,
                 held_out,
@@ -336,15 +354,19 @@ def run_conditional_tmle(
                 probability_clip=probability_clip,
                 sample_batch_size=nuisance_sample_batch_size,
             )
-            outcome, treatment_code = _observed_outcome_and_treatment(held_out, gene_sets)
-            fold_plugin, fold_tmle, fold_eif_sum, fold_eif_square_sum, fold_targeted = conditional_tmle_update(
-                q,
-                g,
-                outcome,
-                treatment_code,
-                signs,
-                probability_clip=probability_clip,
-                iterations=fluctuation_iterations,
+            outcome, treatment_code = _observed_outcome_and_treatment(
+                held_out, gene_sets
+            )
+            fold_plugin, fold_tmle, fold_eif_sum, fold_eif_square_sum, fold_targeted = (
+                conditional_tmle_update(
+                    q,
+                    g,
+                    outcome,
+                    treatment_code,
+                    signs,
+                    probability_clip=probability_clip,
+                    iterations=fluctuation_iterations,
+                )
             )
             fold_size = len(held_out)
             block_plugin_total += fold_size * fold_plugin
@@ -371,8 +393,12 @@ def run_conditional_tmle(
     se[~targeted] = float("nan")
     z = tmle_log / se
     p_value = torch.erfc(torch.abs(z) / torch.sqrt(torch.tensor(2.0, dtype=dtype)))
-    p_value = torch.where((se == 0.0) & (tmle_log == 0.0), torch.ones_like(p_value), p_value)
-    p_value = torch.where((se == 0.0) & (tmle_log != 0.0), torch.zeros_like(p_value), p_value)
+    p_value = torch.where(
+        (se == 0.0) & (tmle_log == 0.0), torch.ones_like(p_value), p_value
+    )
+    p_value = torch.where(
+        (se == 0.0) & (tmle_log != 0.0), torch.zeros_like(p_value), p_value
+    )
     p_value[~targeted] = float("nan")
     q_value = benjamini_yekutieli(p_value, targeted)
     return {

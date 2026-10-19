@@ -16,7 +16,9 @@ def main() -> None:
     if args.output_plot == Path("plots/pc_hyperparameter_sweep_999_genes.png"):
         args.output_plot = Path("plots/pc_architecture_sweep_999_genes.png")
     if args.output_config == Path("output/pc_selected_config_999_genes.json"):
-        args.output_config = Path("output/pc_architecture_selected_config_999_genes.json")
+        args.output_config = Path(
+            "output/pc_architecture_selected_config_999_genes.json"
+        )
     args.plot_style = "parallel"
     run_sweep(args)
 

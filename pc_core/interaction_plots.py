@@ -56,27 +56,42 @@ def _interaction_indices(result: dict) -> np.ndarray:
     """Return one row of gene indices per interaction in a result table."""
 
     if "pair_i" in result and "pair_j" in result:
-        return np.column_stack((
-            _as_numpy(result["pair_i"], dtype=int),
-            _as_numpy(result["pair_j"], dtype=int),
-        ))
+        return np.column_stack(
+            (
+                _as_numpy(result["pair_i"], dtype=int),
+                _as_numpy(result["pair_j"], dtype=int),
+            )
+        )
     if "gene_sets" in result:
         indices = _as_numpy(result["gene_sets"], dtype=int)
         if indices.ndim != 2:
-            raise ValueError("Expected result['gene_sets'] to have one row per interaction.")
+            raise ValueError(
+                "Expected result['gene_sets'] to have one row per interaction."
+            )
         return indices
     raise ValueError("Result table must contain pair_i/pair_j or gene_sets.")
 
 
 def _result_arrays(
     result: dict,
-) -> tuple[tuple[str, ...], np.ndarray, list[str], np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray | None]:
+) -> tuple[
+    tuple[str, ...],
+    np.ndarray,
+    list[str],
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray | None,
+]:
     """Extract names, memberships, estimates, CIs, support, and q-values."""
 
     names = tuple(str(name) for name in result["gene_names"])
     memberships = _interaction_indices(result)
     estimates = _as_numpy(result["tmle_log_interaction"], dtype=float)
-    supported = _as_numpy(result.get("tmle_supported", np.isfinite(estimates)), dtype=bool)
+    supported = _as_numpy(
+        result.get("tmle_supported", np.isfinite(estimates)), dtype=bool
+    )
     if len(memberships) != len(estimates) or len(supported) != len(estimates):
         raise ValueError("Interaction result vectors have inconsistent lengths.")
 
@@ -97,10 +112,13 @@ def _result_arrays(
         if len(candidate_q) == len(estimates):
             q_values = candidate_q
 
-    conditional = result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    conditional = (
+        result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    )
     if conditional:
         labels = [
-            f"{names[int(row[0])]} <- " + ",".join(names[int(index)] for index in row[1:])
+            f"{names[int(row[0])]} <- "
+            + ",".join(names[int(index)] for index in row[1:])
             for row in memberships
         ]
     else:
@@ -108,7 +126,12 @@ def _result_arrays(
     return names, memberships, labels, estimates, ci_low, ci_high, supported, q_values
 
 
-def _supported_indices(estimates: np.ndarray, ci_low: np.ndarray, ci_high: np.ndarray, supported: np.ndarray) -> np.ndarray:
+def _supported_indices(
+    estimates: np.ndarray,
+    ci_low: np.ndarray,
+    ci_high: np.ndarray,
+    supported: np.ndarray,
+) -> np.ndarray:
     return np.flatnonzero(
         supported & np.isfinite(estimates) & np.isfinite(ci_low) & np.isfinite(ci_high)
     )
@@ -165,10 +188,16 @@ def plot_effect_evidence_overview(
     values = estimates[supported_indices]
     if q_values is None or not np.isfinite(q_values[supported_indices]).any():
         bins = min(70, max(15, int(np.sqrt(len(values)))))
-        axis.hist(values, bins=bins, color=NEUTRAL_COLOUR, edgecolor="white", linewidth=0.35)
+        axis.hist(
+            values, bins=bins, color=NEUTRAL_COLOUR, edgecolor="white", linewidth=0.35
+        )
         axis.axvline(0.0, color="black", linewidth=1)
-        axis.axvline(min_abs_log_interaction, color=POSITIVE_COLOUR, linestyle="--", linewidth=1)
-        axis.axvline(-min_abs_log_interaction, color=NEGATIVE_COLOUR, linestyle="--", linewidth=1)
+        axis.axvline(
+            min_abs_log_interaction, color=POSITIVE_COLOUR, linestyle="--", linewidth=1
+        )
+        axis.axvline(
+            -min_abs_log_interaction, color=NEGATIVE_COLOUR, linestyle="--", linewidth=1
+        )
         axis.set(
             title=title,
             xlabel="TMLE log(interaction)",
@@ -196,17 +225,35 @@ def plot_effect_evidence_overview(
         else:
             marker_size, marker_alpha = 5, 0.18
         axis.scatter(
-            estimates[rows][~positive], evidence[~positive], s=marker_size, alpha=marker_alpha,
-            color=NEGATIVE_COLOUR, linewidths=0, rasterized=True, label="negative estimate",
+            estimates[rows][~positive],
+            evidence[~positive],
+            s=marker_size,
+            alpha=marker_alpha,
+            color=NEGATIVE_COLOUR,
+            linewidths=0,
+            rasterized=True,
+            label="negative estimate",
         )
         axis.scatter(
-            estimates[rows][positive], evidence[positive], s=marker_size, alpha=marker_alpha,
-            color=POSITIVE_COLOUR, linewidths=0, rasterized=True, label="positive estimate",
+            estimates[rows][positive],
+            evidence[positive],
+            s=marker_size,
+            alpha=marker_alpha,
+            color=POSITIVE_COLOUR,
+            linewidths=0,
+            rasterized=True,
+            label="positive estimate",
         )
         axis.axvline(0.0, color="black", linewidth=1)
-        axis.axvline(min_abs_log_interaction, color=POSITIVE_COLOUR, linestyle="--", linewidth=1)
-        axis.axvline(-min_abs_log_interaction, color=NEGATIVE_COLOUR, linestyle="--", linewidth=1)
-        axis.axhline(-np.log10(max_q), color=NEUTRAL_COLOUR, linestyle="--", linewidth=1)
+        axis.axvline(
+            min_abs_log_interaction, color=POSITIVE_COLOUR, linestyle="--", linewidth=1
+        )
+        axis.axvline(
+            -min_abs_log_interaction, color=NEGATIVE_COLOUR, linestyle="--", linewidth=1
+        )
+        axis.axhline(
+            -np.log10(max_q), color=NEUTRAL_COLOUR, linestyle="--", linewidth=1
+        )
         axis.set(
             title=title,
             xlabel="TMLE log(interaction)",
@@ -219,8 +266,14 @@ def plot_effect_evidence_overview(
     plt.close(figure)
 
 
-def _top_by_sign(indices: np.ndarray, estimates: np.ndarray, *, positive: bool, top_n: int) -> np.ndarray:
-    direction = indices[estimates[indices] >= 0.0] if positive else indices[estimates[indices] < 0.0]
+def _top_by_sign(
+    indices: np.ndarray, estimates: np.ndarray, *, positive: bool, top_n: int
+) -> np.ndarray:
+    direction = (
+        indices[estimates[indices] >= 0.0]
+        if positive
+        else indices[estimates[indices] < 0.0]
+    )
     if positive:
         ordered = sorted(direction.tolist(), key=lambda row: (-estimates[row], row))
     else:
@@ -245,15 +298,21 @@ def plot_ranked_forest(
     negative = _top_by_sign(display_indices, estimates, positive=False, top_n=top_n)
     selected = np.concatenate((negative, positive))
     if not len(selected):
-        _write_empty_figure(output, title, "No interactions available for the ranked forest plot")
+        _write_empty_figure(
+            output, title, "No interactions available for the ranked forest plot"
+        )
         return
 
     extent = np.concatenate((ci_low[selected], ci_high[selected], np.array([0.0])))
     extent = extent[np.isfinite(extent)]
-    limit = max(abs(float(extent.min())), abs(float(extent.max()))) if len(extent) else 1.0
+    limit = (
+        max(abs(float(extent.min())), abs(float(extent.max()))) if len(extent) else 1.0
+    )
     limit = max(0.1, limit * 1.08)
     rows = max(len(positive), len(negative), 1)
-    figure, axes = plt.subplots(1, 2, figsize=(14, max(3.5, 0.34 * rows + 1.6)), sharex=True)
+    figure, axes = plt.subplots(
+        1, 2, figsize=(14, max(3.5, 0.34 * rows + 1.6)), sharex=True
+    )
     for axis, indices, colour, heading in (
         (axes[0], negative, NEGATIVE_COLOUR, "Strongest negative interactions"),
         (axes[1], positive, POSITIVE_COLOUR, "Strongest positive interactions"),
@@ -264,13 +323,26 @@ def plot_ranked_forest(
             lower_error = np.maximum(estimates[indices] - ci_low[indices], 0.0)
             upper_error = np.maximum(ci_high[indices] - estimates[indices], 0.0)
             axis.errorbar(
-                estimates[indices], y, xerr=np.vstack((lower_error, upper_error)),
-                fmt="o", color=colour, ecolor=colour, capsize=2, markersize=4,
+                estimates[indices],
+                y,
+                xerr=np.vstack((lower_error, upper_error)),
+                fmt="o",
+                color=colour,
+                ecolor=colour,
+                capsize=2,
+                markersize=4,
             )
             axis.set_yticks(y, [labels[row] for row in indices])
             axis.invert_yaxis()
         else:
-            axis.text(0.5, 0.5, "None selected", ha="center", va="center", transform=axis.transAxes)
+            axis.text(
+                0.5,
+                0.5,
+                "None selected",
+                ha="center",
+                va="center",
+                transform=axis.transAxes,
+            )
             axis.set_yticks([])
         axis.set(title=heading, xlabel="TMLE log(interaction)", xlim=(-limit, limit))
         axis.grid(axis="x", color="0.9", linewidth=0.8)
@@ -281,7 +353,9 @@ def plot_ranked_forest(
     plt.close(figure)
 
 
-def _component_spring_layout(nodes: np.ndarray, edges: list[tuple[int, int]]) -> dict[int, np.ndarray]:
+def _component_spring_layout(
+    nodes: np.ndarray, edges: list[tuple[int, int]]
+) -> dict[int, np.ndarray]:
     """Lay out one connected component with a small force simulation."""
 
     node_count = len(nodes)
@@ -299,7 +373,8 @@ def _component_spring_layout(nodes: np.ndarray, edges: list[tuple[int, int]]) ->
             distance = np.linalg.norm(delta, axis=1)
             nonzero = distance > 1e-9
             displacement[i] += (
-                delta[nonzero] / distance[nonzero, None]
+                delta[nonzero]
+                / distance[nonzero, None]
                 * (ideal * ideal / distance[nonzero, None])
             ).sum(axis=0)
         for i, j in edge_locations:
@@ -319,7 +394,9 @@ def _component_spring_layout(nodes: np.ndarray, edges: list[tuple[int, int]]) ->
     return {int(node): positions[location] for location, node in enumerate(nodes)}
 
 
-def _spring_layout(nodes: np.ndarray, edges: list[tuple[int, int]]) -> dict[int, np.ndarray]:
+def _spring_layout(
+    nodes: np.ndarray, edges: list[tuple[int, int]]
+) -> dict[int, np.ndarray]:
     """Return a deterministic layout, packing disconnected components apart."""
 
     adjacency = {int(node): set() for node in nodes}
@@ -343,14 +420,22 @@ def _spring_layout(nodes: np.ndarray, edges: list[tuple[int, int]]) -> dict[int,
         return _component_spring_layout(component, edges)
 
     positions: dict[int, np.ndarray] = {}
-    angles = np.linspace(np.pi / 2.0, np.pi / 2.0 + 2.0 * np.pi, len(components), endpoint=False)
+    angles = np.linspace(
+        np.pi / 2.0, np.pi / 2.0 + 2.0 * np.pi, len(components), endpoint=False
+    )
     for component, angle in zip(components, angles):
         component_set = set(component)
-        local_edges = [(first, second) for first, second in edges if first in component_set and second in component_set]
+        local_edges = [
+            (first, second)
+            for first, second in edges
+            if first in component_set and second in component_set
+        ]
         local = _component_spring_layout(np.asarray(component, dtype=int), local_edges)
         centre = np.array((0.72 * np.cos(angle), 0.72 * np.sin(angle)))
         radius = 0.14 + 0.045 * np.sqrt(len(component))
-        positions.update({node: centre + radius * point for node, point in local.items()})
+        positions.update(
+            {node: centre + radius * point for node, point in local.items()}
+        )
     return positions
 
 
@@ -364,7 +449,9 @@ def _bounded_pair_network_indices(
 ) -> np.ndarray:
     """Keep strong edges while preventing a single gene from filling the graph."""
 
-    ordered = sorted(display_indices.tolist(), key=lambda row: (-abs(estimates[row]), row))
+    ordered = sorted(
+        display_indices.tolist(), key=lambda row: (-abs(estimates[row]), row)
+    )
     degree: dict[int, int] = {}
     selected: list[int] = []
     for row in ordered:
@@ -392,7 +479,11 @@ def _plot_pair_network(
     output: Path,
 ) -> None:
     rows = _bounded_pair_network_indices(
-        display_indices, memberships, estimates, max_edges=max_edges, max_degree=max_degree,
+        display_indices,
+        memberships,
+        estimates,
+        max_edges=max_edges,
+        max_degree=max_degree,
     )
     if not len(rows):
         _write_empty_figure(output, title, "No interactions available for the network")
@@ -402,7 +493,9 @@ def _plot_pair_network(
     # For a compact panel, a circular layout gives every gene an unobscured
     # label.  Larger all-gene subsets benefit from component-aware placement.
     if len(nodes) <= 12:
-        angles = np.linspace(np.pi / 2.0, np.pi / 2.0 + 2.0 * np.pi, len(nodes), endpoint=False)
+        angles = np.linspace(
+            np.pi / 2.0, np.pi / 2.0 + 2.0 * np.pi, len(nodes), endpoint=False
+        )
         positions = {
             int(node): 0.86 * np.array((np.cos(angle), np.sin(angle)))
             for node, angle in zip(nodes, angles)
@@ -425,26 +518,74 @@ def _plot_pair_network(
             # from exposure to outcome.  This is a descriptive direction set
             # by the estimand, not a causal-direction claim.
             axis.annotate(
-                "", xy=start, xytext=end,
-                arrowprops={"arrowstyle": "->", "color": colour, "lw": width, "alpha": 0.68,
-                            "shrinkA": 12, "shrinkB": 12},
+                "",
+                xy=start,
+                xytext=end,
+                arrowprops={
+                    "arrowstyle": "->",
+                    "color": colour,
+                    "lw": width,
+                    "alpha": 0.68,
+                    "shrinkA": 12,
+                    "shrinkB": 12,
+                },
                 zorder=1,
             )
         else:
-            axis.plot((start[0], end[0]), (start[1], end[1]), color=colour, linewidth=width, alpha=0.68, zorder=1)
+            axis.plot(
+                (start[0], end[0]),
+                (start[1], end[1]),
+                color=colour,
+                linewidth=width,
+                alpha=0.68,
+                zorder=1,
+            )
     for node in nodes:
         point = positions[int(node)]
-        axis.scatter(point[0], point[1], s=80 + 32 * degrees[int(node)], color="white", edgecolor="black", linewidth=0.8, zorder=2)
+        axis.scatter(
+            point[0],
+            point[1],
+            s=80 + 32 * degrees[int(node)],
+            color="white",
+            edgecolor="black",
+            linewidth=0.8,
+            zorder=2,
+        )
         direction = point / max(float(np.linalg.norm(point)), 1e-9)
-        axis.text(point[0] + 0.055 * direction[0], point[1] + 0.055 * direction[1], names[int(node)],
-                  ha="center", va="center", fontsize=8, zorder=3)
-    axis.legend(handles=(
-        Line2D([0], [0], color=POSITIVE_COLOUR, linewidth=2, label="positive log interaction"),
-        Line2D([0], [0], color=NEGATIVE_COLOUR, linewidth=2, label="negative log interaction"),
-    ), frameon=False, loc="upper right")
+        axis.text(
+            point[0] + 0.055 * direction[0],
+            point[1] + 0.055 * direction[1],
+            names[int(node)],
+            ha="center",
+            va="center",
+            fontsize=8,
+            zorder=3,
+        )
+    axis.legend(
+        handles=(
+            Line2D(
+                [0],
+                [0],
+                color=POSITIVE_COLOUR,
+                linewidth=2,
+                label="positive log interaction",
+            ),
+            Line2D(
+                [0],
+                [0],
+                color=NEGATIVE_COLOUR,
+                linewidth=2,
+                label="negative log interaction",
+            ),
+        ),
+        frameon=False,
+        loc="upper right",
+    )
     axis.set(
         title=f"{title}\n(up to {len(rows)} screened edges; max degree {max_degree})",
-        xlim=(-1.25, 1.25), ylim=(-1.25, 1.25), aspect="equal",
+        xlim=(-1.25, 1.25),
+        ylim=(-1.25, 1.25),
+        aspect="equal",
     )
     axis.set_axis_off()
     figure.tight_layout()
@@ -465,14 +606,24 @@ def _plot_hypergraph(
     """Represent selected n-way interactions as signed polygons over genes."""
 
     rows = np.asarray(
-        sorted(display_indices.tolist(), key=lambda row: (-abs(estimates[row]), row))[:max_sets], dtype=int,
+        sorted(display_indices.tolist(), key=lambda row: (-abs(estimates[row]), row))[
+            :max_sets
+        ],
+        dtype=int,
     )
     if not len(rows):
-        _write_empty_figure(output, title, "No interactions available for the hypergraph")
+        _write_empty_figure(
+            output, title, "No interactions available for the hypergraph"
+        )
         return
     nodes = np.unique(memberships[rows].reshape(-1))
-    angles = np.linspace(np.pi / 2.0, np.pi / 2.0 + 2.0 * np.pi, len(nodes), endpoint=False)
-    positions = {int(node): np.array((np.cos(angle), np.sin(angle))) for node, angle in zip(nodes, angles)}
+    angles = np.linspace(
+        np.pi / 2.0, np.pi / 2.0 + 2.0 * np.pi, len(nodes), endpoint=False
+    )
+    positions = {
+        int(node): np.array((np.cos(angle), np.sin(angle)))
+        for node, angle in zip(nodes, angles)
+    }
 
     figure, axis = plt.subplots(figsize=(9, 8))
     maximum = max(abs(estimates[rows]).max(), 1e-12)
@@ -487,16 +638,57 @@ def _plot_hypergraph(
         width = 0.8 + 1.6 * abs(estimates[row]) / maximum
         # Filled polygons rapidly obscure one another for sets of three or
         # more genes.  Outlines retain each selected hyperedge's membership.
-        axis.add_patch(Polygon(vertices, closed=True, facecolor="none", edgecolor=colour,
-                               linewidth=width, alpha=0.65, zorder=1))
+        axis.add_patch(
+            Polygon(
+                vertices,
+                closed=True,
+                facecolor="none",
+                edgecolor=colour,
+                linewidth=width,
+                alpha=0.65,
+                zorder=1,
+            )
+        )
     for node in nodes:
         point = positions[int(node)]
-        axis.scatter(point[0], point[1], s=105, color="white", edgecolor="black", linewidth=0.8, zorder=2)
-        axis.text(point[0] * 1.12, point[1] * 1.12, names[int(node)], ha="center", va="center", fontsize=9, zorder=3)
-    axis.legend(handles=(
-        Line2D([0], [0], color=POSITIVE_COLOUR, linewidth=2, label="positive log interaction"),
-        Line2D([0], [0], color=NEGATIVE_COLOUR, linewidth=2, label="negative log interaction"),
-    ), frameon=False, loc="upper right")
+        axis.scatter(
+            point[0],
+            point[1],
+            s=105,
+            color="white",
+            edgecolor="black",
+            linewidth=0.8,
+            zorder=2,
+        )
+        axis.text(
+            point[0] * 1.12,
+            point[1] * 1.12,
+            names[int(node)],
+            ha="center",
+            va="center",
+            fontsize=9,
+            zorder=3,
+        )
+    axis.legend(
+        handles=(
+            Line2D(
+                [0],
+                [0],
+                color=POSITIVE_COLOUR,
+                linewidth=2,
+                label="positive log interaction",
+            ),
+            Line2D(
+                [0],
+                [0],
+                color=NEGATIVE_COLOUR,
+                linewidth=2,
+                label="negative log interaction",
+            ),
+        ),
+        frameon=False,
+        loc="upper right",
+    )
     axis.set(title=title, xlim=(-1.32, 1.32), ylim=(-1.32, 1.32), aspect="equal")
     axis.set_axis_off()
     figure.tight_layout()
@@ -521,24 +713,34 @@ def generate_interaction_plots(
         raise ValueError("forest_top_n must be at least one.")
     if network_max_items < 1 or network_max_degree < 1:
         raise ValueError("Network limits must be at least one.")
-    names, memberships, labels, estimates, ci_low, ci_high, supported, q_values = _result_arrays(result)
+    names, memberships, labels, estimates, ci_low, ci_high, supported, q_values = (
+        _result_arrays(result)
+    )
     supported_indices = _supported_indices(estimates, ci_low, ci_high, supported)
     display_indices = _screened_display_indices(
-        supported_indices, estimates, q_values,
-        max_q=max_q, min_abs_log_interaction=min_abs_log_interaction,
+        supported_indices,
+        estimates,
+        q_values,
+        max_q=max_q,
+        min_abs_log_interaction=min_abs_log_interaction,
     )
     order = int(memberships.shape[1])
     output_dir.mkdir(parents=True, exist_ok=True)
     overview = output_dir / f"{prefix}_overview.png"
     forest = output_dir / f"{prefix}_forest.png"
     network = output_dir / f"{prefix}_{'network' if order == 2 else 'hypergraph'}.png"
-    conditional = result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    conditional = (
+        result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    )
     quantity = (
         f"Cross-targeted standardized conditional {order}-point log interactions"
-        if conditional else f"Cross-fitted {order}-point log interactions"
+        if conditional
+        else f"Cross-fitted {order}-point log interactions"
     )
     plot_effect_evidence_overview(
-        estimates, supported_indices, q_values,
+        estimates,
+        supported_indices,
+        q_values,
         title=(
             f"{quantity}: effect and evidence"
             if q_values is not None and np.isfinite(q_values[supported_indices]).any()
@@ -549,14 +751,21 @@ def generate_interaction_plots(
         output=overview,
     )
     plot_ranked_forest(
-        labels, estimates, ci_low, ci_high, display_indices,
+        labels,
+        estimates,
+        ci_low,
+        ci_high,
+        display_indices,
         title=f"{quantity}: ranked TMLE estimates (95% CI)",
         top_n=forest_top_n,
         output=forest,
     )
     if order == 2:
         _plot_pair_network(
-            names, memberships, estimates, display_indices,
+            names,
+            memberships,
+            estimates,
+            display_indices,
             title=f"{quantity}: sparse signed network",
             max_edges=network_max_items,
             max_degree=network_max_degree,
@@ -565,7 +774,10 @@ def generate_interaction_plots(
         )
     else:
         _plot_hypergraph(
-            names, memberships, estimates, display_indices,
+            names,
+            memberships,
+            estimates,
+            display_indices,
             title=f"{quantity}: top signed {order}-way sets",
             # Polygon overlays become illegible much sooner than pairwise
             # edges; keep this focused on the strongest few n-way sets.
@@ -583,7 +795,12 @@ def _default_plot_directory(result_path: Path) -> Path:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results", type=Path, required=True, help="Saved .pt interaction result table.")
+    parser.add_argument(
+        "--results",
+        type=Path,
+        required=True,
+        help="Saved .pt interaction result table.",
+    )
     parser.add_argument("--plots-dir", type=Path, default=None)
     parser.add_argument("--prefix", type=str, default=None)
     parser.add_argument("--max-q", type=float, default=0.05)

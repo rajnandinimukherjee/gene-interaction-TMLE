@@ -23,14 +23,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--analysis", type=int, choices=(12, 999), required=True)
     parser.add_argument("--data", type=Path, default=panel_config.DATA)
-    parser.add_argument("--architectures", nargs="+", choices=ARCHITECTURES, default=ARCHITECTURES)
     parser.add_argument(
-        "--components", nargs="+", type=int, default=(4, 8, 16, 32),
+        "--architectures", nargs="+", choices=ARCHITECTURES, default=ARCHITECTURES
+    )
+    parser.add_argument(
+        "--components",
+        nargs="+",
+        type=int,
+        default=(4, 8, 16, 32),
         help="Root-component candidates for every non-factorized architecture.",
     )
-    parser.add_argument("--learning-rates", nargs="+", type=float, default=(0.005, 0.01, 0.02))
     parser.add_argument(
-        "--epochs", type=int, default=20,
+        "--learning-rates", nargs="+", type=float, default=(0.005, 0.01, 0.02)
+    )
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        default=20,
         help="Epochs per candidate; the default 20 is the selection protocol.",
     )
     parser.add_argument("--batch-size", type=int, default=1024)
@@ -38,12 +47,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--train-size", type=int, default=None)
     parser.add_argument("--validation-size", type=int, default=None)
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--max-samples", type=int, default=None, help="Development/testing only.")
     parser.add_argument(
-        "--max-genes", type=int, default=None,
+        "--max-samples", type=int, default=None, help="Development/testing only."
+    )
+    parser.add_argument(
+        "--max-genes",
+        type=int,
+        default=None,
         help="Development/testing only; valid with --analysis 999.",
     )
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     parser.add_argument("--output-csv", type=Path, default=None)
     parser.add_argument("--output-plot", type=Path, default=None)
     parser.add_argument("--output-config", type=Path, default=None)
@@ -69,7 +84,9 @@ def _load_study_data(args: argparse.Namespace):
         if args.max_genes is not None:
             raise ValueError("--max-genes is only valid with --analysis 999.")
         return load_panel(args.data, max_samples=args.max_samples)
-    return load_gene_data(args.data, max_samples=args.max_samples, max_genes=args.max_genes)
+    return load_gene_data(
+        args.data, max_samples=args.max_samples, max_genes=args.max_genes
+    )
 
 
 def main(args: argparse.Namespace | None = None) -> None:
@@ -78,7 +95,9 @@ def main(args: argparse.Namespace | None = None) -> None:
     default_csv, default_plot, default_config = _default_paths(args.analysis)
     args.output_csv = tagged_path(args.output_csv, args.analysis) or default_csv
     args.output_plot = tagged_path(args.output_plot, args.analysis) or default_plot
-    args.output_config = tagged_path(args.output_config, args.analysis) or default_config
+    args.output_config = (
+        tagged_path(args.output_config, args.analysis) or default_config
+    )
     args.plot_style = "parallel"
     args.plot_title = f"{args.analysis}-gene PC architecture and hyperparameter sweep"
     print(

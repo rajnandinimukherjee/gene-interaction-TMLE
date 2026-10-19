@@ -8,7 +8,14 @@ from pathlib import Path
 from pc_core.runtime import choose_device
 from pc_core.train_cross_fitted_pcs import train_cross_fitted_models
 
-from .config import ARCHITECTURE, COMPONENTS, DATA, LEARNING_RATE, MODEL_PATH, WEIGHT_DECAY
+from .config import (
+    ARCHITECTURE,
+    COMPONENTS,
+    DATA,
+    LEARNING_RATE,
+    MODEL_PATH,
+    WEIGHT_DECAY,
+)
 from .data import load_panel
 
 
@@ -25,7 +32,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-folds", type=int, default=2)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--max-samples", type=int, default=None)
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     parser.add_argument("--info", action="store_true")
     return parser.parse_args()
 
@@ -33,11 +42,18 @@ def parse_args() -> argparse.Namespace:
 def main(args: argparse.Namespace | None = None) -> None:
     args = parse_args() if args is None else args
     train_cross_fitted_models(
-        load_panel(args.data, max_samples=args.max_samples), output=args.output,
-        architecture=args.architecture, components=args.components, epochs=args.epochs,
-        batch_size=args.batch_size, learning_rate=args.learning_rate,
-        weight_decay=args.weight_decay, n_folds=args.n_folds, seed=args.seed,
-        device=choose_device(args.device), info=args.info,
+        load_panel(args.data, max_samples=args.max_samples),
+        output=args.output,
+        architecture=args.architecture,
+        components=args.components,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        weight_decay=args.weight_decay,
+        n_folds=args.n_folds,
+        seed=args.seed,
+        device=choose_device(args.device),
+        info=args.info,
     )
 
 

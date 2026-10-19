@@ -38,7 +38,11 @@ def build_pc(
         model.initialize_from_marginals(x)
         return model
     if architecture in TREE_ARCHITECTURES:
-        tree_parents = learn_chow_liu_tree(data) if parents is None else np.asarray(parents, dtype=np.int64)
+        tree_parents = (
+            learn_chow_liu_tree(data)
+            if parents is None
+            else np.asarray(parents, dtype=np.int64)
+        )
         if architecture == "mixture-chow-liu":
             model = MixtureChowLiuPC(n_genes, components, tree_parents).to(device)
         else:
@@ -63,7 +67,9 @@ def restore_pc(
         try:
             parents = state_dict["parents"].detach().cpu().numpy()
         except KeyError as error:
-            raise ValueError("Tree PC checkpoint is missing its learned parents buffer.") from error
+            raise ValueError(
+                "Tree PC checkpoint is missing its learned parents buffer."
+            ) from error
         if architecture == "mixture-chow-liu":
             model = MixtureChowLiuPC(num_genes, components, parents)
         else:

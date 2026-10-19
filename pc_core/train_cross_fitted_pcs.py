@@ -29,14 +29,22 @@ def effective_components(architecture: str, requested_components: int) -> int:
 
     if architecture == "factorized":
         return 1
-    if architecture in {"latent-class", "mixture-chow-liu", "latent-class-residual-tree"}:
+    if architecture in {
+        "latent-class",
+        "mixture-chow-liu",
+        "latent-class-residual-tree",
+    }:
         if requested_components < 2:
-            raise ValueError("latent-class architecture requires at least two components.")
+            raise ValueError(
+                "latent-class architecture requires at least two components."
+            )
         return requested_components
     raise ValueError(f"Unknown architecture {architecture!r}.")
 
 
-def architecture_parameter_count(architecture: str, components: int, num_genes: int) -> int:
+def architecture_parameter_count(
+    architecture: str, components: int, num_genes: int
+) -> int:
     """Return trainable parameters for the selected normalized PC."""
 
     if architecture in {"factorized", "latent-class"}:
@@ -89,10 +97,14 @@ def report_device_info(device: torch.device) -> None:
         properties = torch.cuda.get_device_properties(device)
         free, total = torch.cuda.mem_get_info(device)
         print(f"  GPU: {properties.name}")
-        print(f"  GPU memory: {_format_bytes(total)} total; {_format_bytes(free)} currently free")
+        print(
+            f"  GPU memory: {_format_bytes(total)} total; {_format_bytes(free)} currently free"
+        )
         print(f"  CUDA capability: {properties.major}.{properties.minor}")
     elif device.type == "mps":
-        print("  GPU: Apple Metal (MPS; unified memory with the system RAM shown above)")
+        print(
+            "  GPU: Apple Metal (MPS; unified memory with the system RAM shown above)"
+        )
     else:
         print("  GPU: not selected")
 
@@ -124,7 +136,7 @@ def _one_epoch_calibration(
     model.train()
     permutation = torch.randperm(len(x), device=device)
     for start in range(0, len(x), batch_size):
-        batch = x[permutation[start:start + batch_size]]
+        batch = x[permutation[start : start + batch_size]]
         loss = -model.log_prob(batch).mean()
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
@@ -156,15 +168,23 @@ def print_training_estimate(
     calibration_train = data.values[
         np.setdiff1d(all_indices, calibration_held_out, assume_unique=False)
     ]
-    parameter_count = architecture_parameter_count(args.architecture, components, data.shape[1])
+    parameter_count = architecture_parameter_count(
+        args.architecture, components, data.shape[1]
+    )
     resident_data_bytes = len(calibration_train) * data.shape[1] * 4
     optimizer_lower_bound = parameter_count * 4 * 4  # parameter, grad, Adam m/v
     print("\nTraining estimate (calibration only; no checkpoint will be created)")
     print(f"  Data: {data.shape[0]:,} cells x {data.shape[1]:,} named genes")
-    print(f"  Architecture: {args.architecture}; {components} root components; {parameter_count:,} trainable parameters")
+    print(
+        f"  Architecture: {args.architecture}; {components} root components; {parameter_count:,} trainable parameters"
+    )
     print(f"  Largest fold resident input: about {_format_bytes(resident_data_bytes)}")
-    print(f"  Optimizer/model lower bound: about {_format_bytes(optimizer_lower_bound)}")
-    print(f"  Timed calibration: one epoch on fold 1 ({len(calibration_train):,} training cells)")
+    print(
+        f"  Optimizer/model lower bound: about {_format_bytes(optimizer_lower_bound)}"
+    )
+    print(
+        f"  Timed calibration: one epoch on fold 1 ({len(calibration_train):,} training cells)"
+    )
 
     setup_seconds, epoch_seconds = _one_epoch_calibration(
         calibration_train,
@@ -185,11 +205,17 @@ def print_training_estimate(
         + epoch_seconds * total_training_cell_epochs / calibrated_cell_epochs
     )
     low_seconds, high_seconds = estimated_seconds * 0.7, estimated_seconds * 1.5
-    print(f"  Calibration setup: {setup_seconds:.2f} s; one epoch: {epoch_seconds:.2f} s")
-    print(f"  Requested work: {len(folds)} folds x {args.epochs} epochs = {total_training_cell_epochs:,} cell-epochs")
+    print(
+        f"  Calibration setup: {setup_seconds:.2f} s; one epoch: {epoch_seconds:.2f} s"
+    )
+    print(
+        f"  Requested work: {len(folds)} folds x {args.epochs} epochs = {total_training_cell_epochs:,} cell-epochs"
+    )
     print(f"  Estimated wall time: {estimated_seconds / 60:.1f} minutes")
     print(f"  Planning range: {low_seconds / 60:.1f}–{high_seconds / 60:.1f} minutes")
-    print("  The range reflects accelerator warm-up, competing load, and fold-to-fold variation.")
+    print(
+        "  The range reflects accelerator warm-up, competing load, and fold-to-fold variation."
+    )
 
 
 def fit_pc(
@@ -221,7 +247,7 @@ def fit_pc(
         permutation = torch.randperm(len(x), device=device)
         total_nll = 0.0
         for start in range(0, len(x), batch_size):
-            batch = x[permutation[start:start + batch_size]]
+            batch = x[permutation[start : start + batch_size]]
             loss = -model.log_prob(batch).mean()
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
@@ -262,8 +288,12 @@ def train_cross_fitted_models(
 
     if info:
         args = argparse.Namespace(
-            architecture=architecture, epochs=epochs, batch_size=batch_size,
-            learning_rate=learning_rate, weight_decay=weight_decay, seed=seed,
+            architecture=architecture,
+            epochs=epochs,
+            batch_size=batch_size,
+            learning_rate=learning_rate,
+            weight_decay=weight_decay,
+            seed=seed,
         )
         report_device_info(device)
         print_training_estimate(data, folds, args, device, components)
@@ -276,7 +306,9 @@ def train_cross_fitted_models(
 
     for fold, held_out in enumerate(folds):
         train_indices = np.setdiff1d(all_indices, held_out, assume_unique=False)
-        print(f"\nFold {fold + 1}/{len(folds)}: {len(train_indices):,} training / {len(held_out):,} held out")
+        print(
+            f"\nFold {fold + 1}/{len(folds)}: {len(train_indices):,} training / {len(held_out):,} held out"
+        )
         model, history = fit_pc(
             data.values[train_indices],
             architecture=architecture,
@@ -288,7 +320,9 @@ def train_cross_fitted_models(
             seed=seed + fold,
             device=device,
         )
-        state_dicts.append({key: value.detach().cpu() for key, value in model.state_dict().items()})
+        state_dicts.append(
+            {key: value.detach().cpu() for key, value in model.state_dict().items()}
+        )
         histories.append(history)
 
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -299,7 +333,9 @@ def train_cross_fitted_models(
             "gene_names": list(data.gene_names),
             "data_shape": tuple(data.shape),
             "data_fingerprint": data.fingerprint,
-            "fold_indices": [torch.as_tensor(fold, dtype=torch.int64) for fold in folds],
+            "fold_indices": [
+                torch.as_tensor(fold, dtype=torch.int64) for fold in folds
+            ],
             "state_dicts": state_dicts,
             "model": {"architecture": architecture, "components": components},
             "training": {
@@ -321,13 +357,21 @@ def train_cross_fitted_models(
 def train_cross_fitted_pcs(args: argparse.Namespace) -> None:
     """CLI adapter for the all-gene workflow."""
 
-    data = load_gene_data(args.data, max_samples=args.max_samples, max_genes=args.max_genes)
+    data = load_gene_data(
+        args.data, max_samples=args.max_samples, max_genes=args.max_genes
+    )
     train_cross_fitted_models(
         data,
-        output=Path(args.output), architecture=args.architecture,
-        components=args.components, epochs=args.epochs, batch_size=args.batch_size,
-        learning_rate=args.learning_rate, weight_decay=args.weight_decay,
-        n_folds=args.n_folds, seed=args.seed, device=choose_device(args.device),
+        output=Path(args.output),
+        architecture=args.architecture,
+        components=args.components,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        weight_decay=args.weight_decay,
+        n_folds=args.n_folds,
+        seed=args.seed,
+        device=choose_device(args.device),
         info=args.info,
     )
 
@@ -335,7 +379,9 @@ def train_cross_fitted_pcs(args: argparse.Namespace) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path(DEFAULT_DATA))
-    parser.add_argument("--output", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt"))
+    parser.add_argument(
+        "--output", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt")
+    )
     parser.add_argument(
         "--architecture",
         choices=ARCHITECTURES,
@@ -349,9 +395,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-5)
     parser.add_argument("--n-folds", type=int, default=2)
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--max-samples", type=int, default=None, help="Development/testing only.")
-    parser.add_argument("--max-genes", type=int, default=None, help="Development/testing only.")
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--max-samples", type=int, default=None, help="Development/testing only."
+    )
+    parser.add_argument(
+        "--max-genes", type=int, default=None, help="Development/testing only."
+    )
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     parser.add_argument(
         "--info",
         action="store_true",

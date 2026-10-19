@@ -31,7 +31,10 @@ def make_folds(n_rows: int, n_folds: int, seed: int) -> list[np.ndarray]:
     if n_folds > n_rows:
         raise ValueError("n_folds cannot exceed the number of cells.")
     rng = np.random.default_rng(seed)
-    return [np.asarray(fold, dtype=np.int64) for fold in np.array_split(rng.permutation(n_rows), n_folds)]
+    return [
+        np.asarray(fold, dtype=np.int64)
+        for fold in np.array_split(rng.permutation(n_rows), n_folds)
+    ]
 
 
 def load_torch_checkpoint(path: str | Path) -> dict:

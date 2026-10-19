@@ -23,23 +23,40 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
     """
 
     candidate = load_torch_checkpoint(args.candidates)
-    required = {"format_version", "data_fingerprint", "gene_names", "gene_sets", "settings"}
+    required = {
+        "format_version",
+        "data_fingerprint",
+        "gene_names",
+        "gene_sets",
+        "settings",
+    }
     missing = required - candidate.keys()
     if missing or candidate.get("format_version") != 1:
-        raise ValueError(f"Expected version-1 candidate file; missing: {', '.join(sorted(missing))}")
+        raise ValueError(
+            f"Expected version-1 candidate file; missing: {', '.join(sorted(missing))}"
+        )
     gene_sets_cpu = candidate["gene_sets"].to(torch.long)
     if gene_sets_cpu.ndim != 2 or len(gene_sets_cpu) == 0:
         raise ValueError("Candidate file has no gene sets to evaluate.")
     order = int(gene_sets_cpu.shape[1])
     if order < 3:
-        raise ValueError("This entry point is intended for interactions of order three or greater.")
+        raise ValueError(
+            "This entry point is intended for interactions of order three or greater."
+        )
 
-    data = load_gene_data(args.data, max_samples=args.max_samples, max_genes=args.max_genes)
+    data = load_gene_data(
+        args.data, max_samples=args.max_samples, max_genes=args.max_genes
+    )
     requested_device = choose_device(args.device)
     device = torch.device("cpu") if requested_device.type == "mps" else requested_device
     _, models, folds = load_cross_fitted_models(args.model, data, device)
-    if candidate["data_fingerprint"] != data.fingerprint or tuple(candidate["gene_names"]) != data.gene_names:
-        raise ValueError("Candidate file was built from different data or a different gene order.")
+    if (
+        candidate["data_fingerprint"] != data.fingerprint
+        or tuple(candidate["gene_names"]) != data.gene_names
+    ):
+        raise ValueError(
+            "Candidate file was built from different data or a different gene order."
+        )
 
     print(
         f"Conditional TMLE device: {device}; targeting {len(gene_sets_cpu):,} ordered "
@@ -82,9 +99,8 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
     names = result["gene_names"]
     print_tmle_result_summary(
         {**result, "output_path": str(output)},
-        lambda row: f"{names[int(gene_sets_cpu[row, 0])]} <- " + ",".join(
-            names[int(gene)] for gene in gene_sets_cpu[row, 1:]
-        ),
+        lambda row: f"{names[int(gene_sets_cpu[row, 0])]} <- "
+        + ",".join(names[int(gene)] for gene in gene_sets_cpu[row, 1:]),
         max_rows=25,
     )
     print(f"Saved conditional higher-order results to {output}")
@@ -92,17 +108,29 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data", type=Path, default=Path("input/trainingData_11950Cells_1000Genes.csv"))
-    parser.add_argument("--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt"))
-    parser.add_argument("--candidates", type=Path, default=Path("output/order3_candidates_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/order3_tmle_999_genes.pt"))
+    parser.add_argument(
+        "--data", type=Path, default=Path("input/trainingData_11950Cells_1000Genes.csv")
+    )
+    parser.add_argument(
+        "--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt")
+    )
+    parser.add_argument(
+        "--candidates", type=Path, default=Path("output/order3_candidates_999_genes.pt")
+    )
+    parser.add_argument(
+        "--output", type=Path, default=Path("output/order3_tmle_999_genes.pt")
+    )
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--nuisance-sample-batch-size", type=int, default=64)
-    parser.add_argument("--probability-clip", type=float, default=DEFAULT_PROBABILITY_CLIP)
+    parser.add_argument(
+        "--probability-clip", type=float, default=DEFAULT_PROBABILITY_CLIP
+    )
     parser.add_argument("--fluctuation-iterations", type=int, default=64)
     parser.add_argument("--max-samples", type=int, default=None)
     parser.add_argument("--max-genes", type=int, default=None)
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     return parser.parse_args()
 
 

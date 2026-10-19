@@ -6,8 +6,18 @@ from pathlib import Path
 # ``data_utils.py``.  Keeping it here makes the --analysis 12 selection
 # reproducible independently of the order of columns in the input CSV.
 GENE_NAMES = (
-    "Spc24", "Gmnn", "Prim2", "Gins2", "Cks2", "Cdca8",
-    "Pbk", "Ube2c", "Ccna2", "Apitd1", "Hells", "Mcm6",
+    "Spc24",
+    "Gmnn",
+    "Prim2",
+    "Gins2",
+    "Cks2",
+    "Cdca8",
+    "Pbk",
+    "Ube2c",
+    "Ccna2",
+    "Apitd1",
+    "Hells",
+    "Mcm6",
 )
 
 DATA = Path("input/trainingData_11950Cells_1000Genes.csv")
@@ -18,7 +28,9 @@ ANALYSIS_TAG = "12_genes"
 MODEL_PATH = OUTPUT_DIR / f"cross_fitted_pcs_{ANALYSIS_TAG}.pt"
 PAIR_CACHE_PATH = OUTPUT_DIR / f"pair_cache_{ANALYSIS_TAG}.pt"
 PAIRWISE_TMLE_PATH = OUTPUT_DIR / f"pairwise_tmle_{ANALYSIS_TAG}.pt"
-ARCHITECTURE_SELECTION_PATH = OUTPUT_DIR / f"pc_architecture_selected_config_{ANALYSIS_TAG}.json"
+ARCHITECTURE_SELECTION_PATH = (
+    OUTPUT_DIR / f"pc_architecture_selected_config_{ANALYSIS_TAG}.json"
+)
 
 # Winner of the 20-epoch 12-gene architecture sweep.  The matching saved
 # selection file is read by the unified CLI and is retained for provenance.

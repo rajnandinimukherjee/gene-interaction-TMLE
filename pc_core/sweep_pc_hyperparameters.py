@@ -22,7 +22,9 @@ import os
 import time
 from pathlib import Path
 
-os.environ.setdefault("MPLCONFIGDIR", str(Path(__file__).resolve().parent / ".matplotlib"))
+os.environ.setdefault(
+    "MPLCONFIGDIR", str(Path(__file__).resolve().parent / ".matplotlib")
+)
 os.environ.setdefault("XDG_CACHE_HOME", str(Path(__file__).resolve().parent / ".cache"))
 
 import matplotlib
@@ -42,15 +44,19 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 DEFAULT_DATA = "input/trainingData_11950Cells_1000Genes.csv"
+
+
 @torch.no_grad()
-def evaluate_nll(model: torch.nn.Module, values: np.ndarray, batch_size: int, device: torch.device) -> float:
+def evaluate_nll(
+    model: torch.nn.Module, values: np.ndarray, batch_size: int, device: torch.device
+) -> float:
     """Return held-out mean negative log likelihood without retaining gradients."""
 
     model.eval()
     x = torch.as_tensor(values, dtype=torch.float32, device=device)
     nll_sum = 0.0
     for start in range(0, len(x), batch_size):
-        batch = x[start:start + batch_size]
+        batch = x[start : start + batch_size]
         nll_sum -= model.log_prob(batch).sum().item()
     if device.type == "cuda":
         torch.cuda.synchronize(device)
@@ -59,7 +65,9 @@ def evaluate_nll(model: torch.nn.Module, values: np.ndarray, batch_size: int, de
     return nll_sum / len(x)
 
 
-def split_data(values: np.ndarray, train_size: int | None, validation_size: int | None, seed: int) -> tuple[np.ndarray, np.ndarray]:
+def split_data(
+    values: np.ndarray, train_size: int | None, validation_size: int | None, seed: int
+) -> tuple[np.ndarray, np.ndarray]:
     """Create a reproducible disjoint train/validation partition."""
 
     n_rows = len(values)
@@ -74,12 +82,22 @@ def split_data(values: np.ndarray, train_size: int | None, validation_size: int 
         if not 1 <= train_size < n_rows:
             raise ValueError("train_size must be between 1 and n_rows - 1.")
         validation_size = n_rows - train_size
-    if train_size is None or validation_size is None or train_size < 1 or validation_size < 1:
+    if (
+        train_size is None
+        or validation_size is None
+        or train_size < 1
+        or validation_size < 1
+    ):
         raise ValueError("Both train and validation partitions must be non-empty.")
     if train_size + validation_size > n_rows:
-        raise ValueError("Requested train_size + validation_size exceeds available cells.")
+        raise ValueError(
+            "Requested train_size + validation_size exceeds available cells."
+        )
     indices = np.random.default_rng(seed).permutation(n_rows)
-    return values[indices[:train_size]], values[indices[train_size:train_size + validation_size]]
+    return (
+        values[indices[:train_size]],
+        values[indices[train_size : train_size + validation_size]],
+    )
 
 
 def plot_results(rows: list[dict[str, str | int | float]], output: Path) -> None:
@@ -94,7 +112,8 @@ def plot_results(rows: list[dict[str, str | int | float]], output: Path) -> None
             values = [
                 float(row["validation_nll"])
                 for row in rows
-                if row["architecture"] == architecture and int(row["components"]) == width
+                if row["architecture"] == architecture
+                and int(row["components"]) == width
             ]
             if values:
                 matrix[y, x] = min(values)
@@ -149,20 +168,41 @@ def plot_architecture_results(
     """Write the parallel-coordinates architecture plot used by the 12-gene sweep."""
 
     architectures = list(dict.fromkeys(str(row["architecture"]) for row in rows))
-    architecture_values = {architecture: index for index, architecture in enumerate(architectures)}
-    fields = ("architecture", "components", "learning_rate", "parameters", "validation_nll")
-    titles = ("PC architecture", "root components", "learning rate", "parameters", "validation NLL")
+    architecture_values = {
+        architecture: index for index, architecture in enumerate(architectures)
+    }
+    fields = (
+        "architecture",
+        "components",
+        "learning_rate",
+        "parameters",
+        "validation_nll",
+    )
+    titles = (
+        "PC architecture",
+        "root components",
+        "learning rate",
+        "parameters",
+        "validation NLL",
+    )
     columns: list[np.ndarray] = []
     for field in fields:
         if field == "architecture":
-            columns.append(np.asarray([architecture_values[str(row[field])] for row in rows], dtype=float))
+            columns.append(
+                np.asarray(
+                    [architecture_values[str(row[field])] for row in rows], dtype=float
+                )
+            )
         elif field == "learning_rate":
             columns.append(np.log10(np.asarray([float(row[field]) for row in rows])))
         else:
             columns.append(np.asarray([float(row[field]) for row in rows]))
     normalized = [
-        np.full_like(column, 0.5) if column.min() == column.max()
-        else (column - column.min()) / (column.max() - column.min())
+        (
+            np.full_like(column, 0.5)
+            if column.min() == column.max()
+            else (column - column.min()) / (column.max() - column.min())
+        )
         for column in columns
     ]
     nll = columns[-1]
@@ -173,14 +213,20 @@ def plot_architecture_results(
     figure, axis = plt.subplots(figsize=(13, 6.5), constrained_layout=True)
     for row_index in np.argsort(nll)[::-1]:
         y = np.asarray([column[row_index] for column in normalized])
-        axis.plot(x, y, color=cmap(colour_norm(nll[row_index])), alpha=0.45, linewidth=1)
+        axis.plot(
+            x, y, color=cmap(colour_norm(nll[row_index])), alpha=0.45, linewidth=1
+        )
     winner_index = rows.index(winner)
     winner_y = np.asarray([column[winner_index] for column in normalized])
     axis.plot(x, winner_y, color="black", linewidth=3, zorder=5)
     axis.scatter(x, winner_y, color="black", s=30, zorder=6)
     axis.set(
-        xlim=(0, len(fields) - 1), ylim=(0, 1), xticks=x, xticklabels=titles,
-        yticks=[], title=title,
+        xlim=(0, len(fields) - 1),
+        ylim=(0, 1),
+        xticks=x,
+        xticklabels=titles,
+        yticks=[],
+        title=title,
     )
 
     for field_index, (field, column) in enumerate(zip(fields, columns)):
@@ -199,10 +245,19 @@ def plot_architecture_results(
         else:
             ticks = np.linspace(low, high, 5)
             labels = [f"{value:.2f}" for value in ticks]
-        positions = np.full(len(ticks), 0.5) if low == high else (ticks - low) / (high - low)
+        positions = (
+            np.full(len(ticks), 0.5) if low == high else (ticks - low) / (high - low)
+        )
         axis.vlines(field_index, 0, 1, color="0.75", linewidth=1, zorder=0)
         for position, label in zip(positions, labels):
-            axis.text(field_index + 0.03, position, label, va="center", fontsize=8, color="0.25")
+            axis.text(
+                field_index + 0.03,
+                position,
+                label,
+                va="center",
+                fontsize=8,
+                color="0.25",
+            )
 
     selected = (
         "SELECTED DEFAULT\n"
@@ -213,13 +268,25 @@ def plot_architecture_results(
         f"validation NLL {float(winner['validation_nll']):.6f}"
     )
     axis.text(
-        0.985, 0.98, selected, transform=axis.transAxes, ha="right", va="top",
-        fontsize=8, family="monospace", fontweight="bold",
-        bbox={"boxstyle": "round,pad=0.5", "facecolor": "white", "edgecolor": "black", "alpha": 0.92},
+        0.985,
+        0.98,
+        selected,
+        transform=axis.transAxes,
+        ha="right",
+        va="top",
+        fontsize=8,
+        family="monospace",
+        fontweight="bold",
+        bbox={
+            "boxstyle": "round,pad=0.5",
+            "facecolor": "white",
+            "edgecolor": "black",
+            "alpha": 0.92,
+        },
     )
-    figure.colorbar(ScalarMappable(norm=colour_norm, cmap=cmap), ax=axis, pad=0.02).set_label(
-        "validation NLL (lower is better)"
-    )
+    figure.colorbar(
+        ScalarMappable(norm=colour_norm, cmap=cmap), ax=axis, pad=0.02
+    ).set_label("validation NLL (lower is better)")
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output, dpi=180, bbox_inches="tight")
     plt.close(figure)
@@ -238,8 +305,12 @@ def run_sweep(
     """
 
     if data is None:
-        data = load_gene_data(args.data, max_samples=args.max_samples, max_genes=args.max_genes)
-    train, validation = split_data(data.values, args.train_size, args.validation_size, args.seed)
+        data = load_gene_data(
+            args.data, max_samples=args.max_samples, max_genes=args.max_genes
+        )
+    train, validation = split_data(
+        data.values, args.train_size, args.validation_size, args.seed
+    )
     device = choose_device(args.device)
     print(
         f"device: {device}; named genes: {data.shape[1]:,}; "
@@ -255,7 +326,9 @@ def run_sweep(
         print("Learning one shared Chow--Liu topology for tree candidates.")
         tree_parents = learn_chow_liu_tree(train)
     for architecture in args.architectures:
-        requested_widths = (1,) if architecture == "factorized" else tuple(args.components)
+        requested_widths = (
+            (1,) if architecture == "factorized" else tuple(args.components)
+        )
         for requested_components in requested_widths:
             components = effective_components(architecture, requested_components)
             for learning_rate in args.learning_rates:
@@ -270,15 +343,21 @@ def run_sweep(
                     weight_decay=args.weight_decay,
                     seed=args.seed,
                     device=device,
-                    parents=tree_parents if architecture in TREE_ARCHITECTURES else None,
+                    parents=(
+                        tree_parents if architecture in TREE_ARCHITECTURES else None
+                    ),
                     verbose=False,
                 )
-                validation_nll = evaluate_nll(model, validation, args.batch_size, device)
+                validation_nll = evaluate_nll(
+                    model, validation, args.batch_size, device
+                )
                 row: dict[str, str | int | float] = {
                     "architecture": architecture,
                     "components": components,
                     "learning_rate": learning_rate,
-                    "parameters": sum(parameter.numel() for parameter in model.parameters()),
+                    "parameters": sum(
+                        parameter.numel() for parameter in model.parameters()
+                    ),
                     "validation_nll": validation_nll,
                     "final_train_nll": history[-1],
                     "seconds": time.perf_counter() - started,
@@ -304,8 +383,12 @@ def run_sweep(
     winner = min(rows, key=lambda row: float(row["validation_nll"]))
     if args.plot_style == "parallel":
         plot_architecture_results(
-            rows, winner, Path(args.output_plot),
-            title=getattr(args, "plot_title", "PC architecture and hyperparameter sweep"),
+            rows,
+            winner,
+            Path(args.output_plot),
+            title=getattr(
+                args, "plot_title", "PC architecture and hyperparameter sweep"
+            ),
         )
     else:
         plot_results(rows, Path(args.output_plot))
@@ -337,7 +420,9 @@ def run_sweep(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path(DEFAULT_DATA))
-    parser.add_argument("--architectures", nargs="+", choices=ARCHITECTURES, default=ARCHITECTURES)
+    parser.add_argument(
+        "--architectures", nargs="+", choices=ARCHITECTURES, default=ARCHITECTURES
+    )
     parser.add_argument("--components", nargs="+", type=int, default=(2, 4, 8, 16, 32))
     parser.add_argument("--learning-rates", nargs="+", type=float, default=(0.01, 0.02))
     parser.add_argument("--epochs", type=int, default=8)
@@ -346,13 +431,33 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--train-size", type=int, default=None)
     parser.add_argument("--validation-size", type=int, default=None)
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--max-samples", type=int, default=None, help="Development/testing only.")
-    parser.add_argument("--max-genes", type=int, default=None, help="Development/testing only.")
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
-    parser.add_argument("--output-csv", type=Path, default=Path("output/pc_hyperparameter_sweep_999_genes.csv"))
-    parser.add_argument("--output-plot", type=Path, default=Path("plots/pc_hyperparameter_sweep_999_genes.png"))
-    parser.add_argument("--output-config", type=Path, default=Path("output/pc_selected_config_999_genes.json"))
-    parser.add_argument("--plot-style", choices=("heatmap", "parallel"), default="heatmap")
+    parser.add_argument(
+        "--max-samples", type=int, default=None, help="Development/testing only."
+    )
+    parser.add_argument(
+        "--max-genes", type=int, default=None, help="Development/testing only."
+    )
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
+    parser.add_argument(
+        "--output-csv",
+        type=Path,
+        default=Path("output/pc_hyperparameter_sweep_999_genes.csv"),
+    )
+    parser.add_argument(
+        "--output-plot",
+        type=Path,
+        default=Path("plots/pc_hyperparameter_sweep_999_genes.png"),
+    )
+    parser.add_argument(
+        "--output-config",
+        type=Path,
+        default=Path("output/pc_selected_config_999_genes.json"),
+    )
+    parser.add_argument(
+        "--plot-style", choices=("heatmap", "parallel"), default="heatmap"
+    )
     return parser.parse_args()
 
 

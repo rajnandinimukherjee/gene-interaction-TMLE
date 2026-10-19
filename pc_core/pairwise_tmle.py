@@ -31,7 +31,9 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
 
     data = getattr(args, "data_object", None)
     if data is None:
-        data = load_gene_data(args.data, max_samples=args.max_samples, max_genes=args.max_genes)
+        data = load_gene_data(
+            args.data, max_samples=args.max_samples, max_genes=args.max_genes
+        )
     requested_device = choose_device(args.device)
     device = torch.device("cpu") if requested_device.type == "mps" else requested_device
     _, models, folds = load_cross_fitted_models(args.model, data, device)
@@ -55,7 +57,10 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
     screened = (
         valid
         & (estimates["q_value"] <= args.screen_max_q)
-        & (torch.abs(estimates["tmle_log_interaction"]) >= args.screen_min_abs_log_interaction)
+        & (
+            torch.abs(estimates["tmle_log_interaction"])
+            >= args.screen_min_abs_log_interaction
+        )
     )
     result = {
         "format_version": 3,
@@ -90,7 +95,11 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
     print(f"Saved all conditional pairwise results to {output}")
 
     if not getattr(args, "no_plots", False):
-        default_plot_dir = output.parent.parent / "plots" if output.parent.name == "output" else output.parent / "plots"
+        default_plot_dir = (
+            output.parent.parent / "plots"
+            if output.parent.name == "output"
+            else output.parent / "plots"
+        )
         plot_paths = generate_interaction_plots(
             result,
             Path(getattr(args, "plots_dir", None) or default_plot_dir),
@@ -115,29 +124,55 @@ def write_screened_pairs_csv(result: dict, path: Path) -> None:
     names = result["gene_names"]
     with path.open("w", newline="") as handle:
         writer = csv.writer(handle)
-        writer.writerow(("outcome_gene", "exposure_gene", "tmle_log_interaction", "tmle_se", "q_value", "minimum_conditional_propensity"))
+        writer.writerow(
+            (
+                "outcome_gene",
+                "exposure_gene",
+                "tmle_log_interaction",
+                "tmle_se",
+                "q_value",
+                "minimum_conditional_propensity",
+            )
+        )
         for row in keep:
-            writer.writerow((
-                names[int(result["pair_i"][row])],
-                names[int(result["pair_j"][row])],
-                float(result["tmle_log_interaction"][row]),
-                float(result["tmle_se"][row]),
-                float(result["q_value"][row]),
-                float(result["minimum_conditional_propensity"][row]),
-            ))
+            writer.writerow(
+                (
+                    names[int(result["pair_i"][row])],
+                    names[int(result["pair_j"][row])],
+                    float(result["tmle_log_interaction"][row]),
+                    float(result["tmle_se"][row]),
+                    float(result["q_value"][row]),
+                    float(result["minimum_conditional_propensity"][row]),
+                )
+            )
     print(f"Wrote {len(keep):,} screened directional pairs to {path}")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data", type=Path, default=Path("input/trainingData_11950Cells_1000Genes.csv"))
-    parser.add_argument("--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/cross_fitted_conditional_pairwise_tmle_999_genes.pt"))
+    parser.add_argument(
+        "--data", type=Path, default=Path("input/trainingData_11950Cells_1000Genes.csv")
+    )
+    parser.add_argument(
+        "--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt")
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("output/cross_fitted_conditional_pairwise_tmle_999_genes.pt"),
+    )
     parser.add_argument("--max-samples", type=int, default=None)
     parser.add_argument("--max-genes", type=int, default=None)
-    parser.add_argument("--batch-size", type=int, default=512, help="Outcome/exposure targets per conditional-TMLE block.")
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=512,
+        help="Outcome/exposure targets per conditional-TMLE block.",
+    )
     parser.add_argument("--nuisance-sample-batch-size", type=int, default=64)
-    parser.add_argument("--probability-clip", type=float, default=DEFAULT_PROBABILITY_CLIP)
+    parser.add_argument(
+        "--probability-clip", type=float, default=DEFAULT_PROBABILITY_CLIP
+    )
     parser.add_argument("--fluctuation-iterations", type=int, default=64)
     parser.add_argument("--screen-max-q", type=float, default=0.05)
     parser.add_argument("--screen-min-abs-log-interaction", type=float, default=0.25)
@@ -147,7 +182,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--network-max-items", type=int, default=25)
     parser.add_argument("--network-max-degree", type=int, default=4)
     parser.add_argument("--no-plots", action="store_true")
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     return parser.parse_args()
 
 

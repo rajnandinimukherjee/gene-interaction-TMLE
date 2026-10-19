@@ -9,7 +9,9 @@ PLOTS_DIR = Path("analyses/nine_nine_nine_genes/plots")
 LOG_DIR = Path("analyses/nine_nine_nine_genes/logs")
 ANALYSIS_TAG = "999_genes"
 MODEL_PATH = OUTPUT_DIR / f"cross_fitted_pcs_{ANALYSIS_TAG}.pt"
-ARCHITECTURE_SELECTION_PATH = OUTPUT_DIR / f"pc_architecture_selected_config_{ANALYSIS_TAG}.json"
+ARCHITECTURE_SELECTION_PATH = (
+    OUTPUT_DIR / f"pc_architecture_selected_config_{ANALYSIS_TAG}.json"
+)
 
 # Winner of the 20-epoch 999-gene architecture sweep.  The matching saved
 # selection file is read by the unified CLI and is retained for provenance.

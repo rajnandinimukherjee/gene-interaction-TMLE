@@ -62,7 +62,9 @@ class LatentClassPC(nn.Module):
         log_theta = torch.nn.functional.logsigmoid(self.logits_theta)
         log_not_theta = torch.nn.functional.logsigmoid(-self.logits_theta)
         component_log_prob = (
-            x @ log_theta.T + (1.0 - x) @ log_not_theta.T + torch.log_softmax(self.logits_pi, dim=0)
+            x @ log_theta.T
+            + (1.0 - x) @ log_not_theta.T
+            + torch.log_softmax(self.logits_pi, dim=0)
         )
         return torch.logsumexp(component_log_prob, dim=1)
 
@@ -85,7 +87,9 @@ class LatentClassPC(nn.Module):
         return (pi[:, None, None] * factors.prod(dim=-1)).sum(dim=0)
 
     @torch.no_grad()
-    def pair_marginals(self, *, dtype: torch.dtype = torch.float64) -> tuple[torch.Tensor, torch.Tensor]:
+    def pair_marginals(
+        self, *, dtype: torch.dtype = torch.float64
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Return p(X_i=1) and p(X_i=1, X_j=1) for every i,j.
 
         Computation occurs in the requested precision.  The cache builder uses

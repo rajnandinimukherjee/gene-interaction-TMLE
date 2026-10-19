@@ -16,7 +16,9 @@ if __name__ == "__main__":
         args.data = DATA
     if args.model == Path("output/cross_fitted_pcs_999_genes.pt"):
         args.model = MODEL_PATH
-    if args.output == Path("output/cross_fitted_conditional_pairwise_tmle_999_genes.pt"):
+    if args.output == Path(
+        "output/cross_fitted_conditional_pairwise_tmle_999_genes.pt"
+    ):
         args.output = PAIRWISE_TMLE_PATH
     args.data_object = load_panel(args.data, max_samples=args.max_samples)
     compute_pairwise_tmle(args)

@@ -26,12 +26,16 @@ def _default_path(model: Path, suffix: str) -> Path:
     return model.parent / f"{model.stem}{suffix}"
 
 
-def _requested_gene_indices(args: argparse.Namespace, data: GeneData) -> tuple[int, ...] | None:
+def _requested_gene_indices(
+    args: argparse.Namespace, data: GeneData
+) -> tuple[int, ...] | None:
     if args.genes is None:
         return None
     requested = tuple(name.strip() for name in args.genes.split(",") if name.strip())
     if len(requested) != args.interaction_order:
-        raise ValueError("--genes must contain exactly --interaction-order comma-separated names.")
+        raise ValueError(
+            "--genes must contain exactly --interaction-order comma-separated names."
+        )
     if len(set(requested)) != len(requested):
         raise ValueError("--genes cannot contain duplicate names.")
     name_to_index = {name: index for index, name in enumerate(data.gene_names)}
@@ -66,7 +70,9 @@ def run_pairwise(args: argparse.Namespace, output_path: Path) -> dict:
         )
     )
     result = load_torch_checkpoint(output_path)
-    print(f"Conditional pairwise-TMLE stage runtime: {format_duration(time.perf_counter() - started)}")
+    print(
+        f"Conditional pairwise-TMLE stage runtime: {format_duration(time.perf_counter() - started)}"
+    )
     return result
 
 
@@ -80,9 +86,13 @@ def print_requested_pair(result: dict, gene_indices: tuple[int, ...]) -> None:
     row = int(rows.item())
     names = result["gene_names"]
     print(f"\nCross-fitted conditional interaction: {names[i]} <- {names[j]}")
-    print(f"  PC standardized log interaction: {float(result['plugin_log_interaction'][row]):.6g}")
+    print(
+        f"  PC standardized log interaction: {float(result['plugin_log_interaction'][row]):.6g}"
+    )
     if bool(result["tmle_supported"][row]):
-        print(f"  TMLE log interaction: {float(result['tmle_log_interaction'][row]):.6g}")
+        print(
+            f"  TMLE log interaction: {float(result['tmle_log_interaction'][row]):.6g}"
+        )
         print(
             "  TMLE 95% CI (log scale): "
             f"[{float(result['tmle_log_ci_low'][row]):.6g}, "
@@ -90,7 +100,9 @@ def print_requested_pair(result: dict, gene_indices: tuple[int, ...]) -> None:
         )
         print(f"  BY q-value: {float(result['q_value'][row]):.6g}")
     else:
-        print("  TMLE: not estimable because a treatment stratum has no finite fluctuation")
+        print(
+            "  TMLE: not estimable because a treatment stratum has no finite fluctuation"
+        )
 
 
 def write_direct_candidate(
@@ -116,27 +128,39 @@ def write_direct_candidate(
 def main(args: argparse.Namespace) -> None:
     if args.interaction_order < 2:
         raise ValueError("--interaction-order must be at least 2.")
-    data = load_gene_data(args.data, max_samples=args.max_samples, max_genes=args.max_genes)
+    data = load_gene_data(
+        args.data, max_samples=args.max_samples, max_genes=args.max_genes
+    )
     gene_indices = _requested_gene_indices(args, data)
     if args.interaction_order == 2:
-        output_path = args.output or _default_path(args.model, "_conditional_pairwise_tmle.pt")
+        output_path = args.output or _default_path(
+            args.model, "_conditional_pairwise_tmle.pt"
+        )
         result = run_pairwise(args, output_path)
         if gene_indices is not None:
             print_requested_pair(result, gene_indices)
         print(f"Pairwise cross-fitted interactions written to {output_path}")
         return
 
-    pairwise_output = args.pairwise_output or _default_path(args.model, "_conditional_pairwise_tmle.pt")
+    pairwise_output = args.pairwise_output or _default_path(
+        args.model, "_conditional_pairwise_tmle.pt"
+    )
     run_pairwise(args, pairwise_output)
     if gene_indices is not None:
         if args.candidates is not None:
-            raise ValueError("Use either --genes or --candidates for higher-order analysis, not both.")
-        candidate_path = _default_path(args.model, f"_order{args.interaction_order}_direct_candidate.pt")
+            raise ValueError(
+                "Use either --genes or --candidates for higher-order analysis, not both."
+            )
+        candidate_path = _default_path(
+            args.model, f"_order{args.interaction_order}_direct_candidate.pt"
+        )
         write_direct_candidate(candidate_path, data, gene_indices)
     elif args.candidates is not None:
         candidate_path = args.candidates
     else:
-        candidate_path = _default_path(args.model, f"_order{args.interaction_order}_candidates.pt")
+        candidate_path = _default_path(
+            args.model, f"_order{args.interaction_order}_candidates.pt"
+        )
         screen_higher_order(
             argparse.Namespace(
                 pairwise_results=pairwise_output,
@@ -170,8 +194,12 @@ def main(args: argparse.Namespace) -> None:
             device=args.device,
         )
     )
-    print(f"Higher-order-TMLE stage runtime: {format_duration(time.perf_counter() - higher_order_started)}")
-    print(f"Order-{args.interaction_order} cross-fitted interactions written to {output_path}")
+    print(
+        f"Higher-order-TMLE stage runtime: {format_duration(time.perf_counter() - higher_order_started)}"
+    )
+    print(
+        f"Order-{args.interaction_order} cross-fitted interactions written to {output_path}"
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -181,11 +209,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model", type=Path, default=Path(DEFAULT_MODEL))
     parser.add_argument("--max-samples", type=int, default=None)
     parser.add_argument("--interaction-order", type=int, default=2)
-    parser.add_argument("--genes", type=str, default=None, help="Comma-separated genes for one interaction.")
+    parser.add_argument(
+        "--genes",
+        type=str,
+        default=None,
+        help="Comma-separated genes for one interaction.",
+    )
     # Scalable-only controls.
     parser.add_argument("--output", type=Path, default=None)
-    parser.add_argument("--pairwise-output", type=Path, default=None,
-                        help="Intermediate all-pair TMLE output used for higher-order screening.")
+    parser.add_argument(
+        "--pairwise-output",
+        type=Path,
+        default=None,
+        help="Intermediate all-pair TMLE output used for higher-order screening.",
+    )
     parser.add_argument("--candidates", type=Path, default=None)
     parser.add_argument("--candidates-csv", type=Path, default=None)
     parser.add_argument("--screened-pairs-csv", type=Path, default=None)
@@ -201,10 +238,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--forest-top-n", type=int, default=25)
     parser.add_argument("--network-max-items", type=int, default=25)
     parser.add_argument("--network-max-degree", type=int, default=4)
-    parser.add_argument("--no-plots", action="store_true", help="Do not write pairwise overview, forest, and network figures.")
+    parser.add_argument(
+        "--no-plots",
+        action="store_true",
+        help="Do not write pairwise overview, forest, and network figures.",
+    )
     parser.add_argument("--batch-size", type=int, default=512)
-    parser.add_argument("--max-genes", type=int, default=None, help="Development/testing only.")
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--max-genes", type=int, default=None, help="Development/testing only."
+    )
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     return parser.parse_args()
 
 

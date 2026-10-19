@@ -88,7 +88,9 @@ def print_training_provenance(model_path: Path) -> None:
     fold_indices = checkpoint.get("fold_indices", ())
     if fold_indices:
         held_out_sizes = ", ".join(str(len(indices)) for indices in fold_indices)
-        print(f"  Cross-fitting folds: {len(fold_indices)} (held out: {held_out_sizes} cells)")
+        print(
+            f"  Cross-fitting folds: {len(fold_indices)} (held out: {held_out_sizes} cells)"
+        )
 
     training = checkpoint.get("training", {})
     if not training:
@@ -101,12 +103,15 @@ def print_training_provenance(model_path: Path) -> None:
     if details:
         print(f"  Training settings: {details}")
     if "elapsed_seconds" in training:
-        print(f"  Training runtime: {format_duration(float(training['elapsed_seconds']))}")
+        print(
+            f"  Training runtime: {format_duration(float(training['elapsed_seconds']))}"
+        )
     histories = training.get("nll_by_fold")
     if histories:
         final_nll = ", ".join(
             f"fold {fold + 1}: {float(history[-1]):.6f}"
-            for fold, history in enumerate(histories) if history
+            for fold, history in enumerate(histories)
+            if history
         )
         if final_nll:
             print(f"  Final training NLL: {final_nll}")
@@ -145,22 +150,34 @@ def print_tmle_result_summary(
     total = len(tmle)
 
     settings = result.get("settings", {})
-    conditional = result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    conditional = (
+        result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    )
     print("\nTMLE targeting")
-    print(f"  Finite point estimates in every cross-targeted fold: {int(targeted.sum()):,} / {total:,}")
+    print(
+        f"  Finite point estimates in every cross-targeted fold: {int(targeted.sum()):,} / {total:,}"
+    )
     if conditional:
-        print(f"  Finite conditional fluctuations: {int(supported.sum()):,} / {total:,}")
+        print(
+            f"  Finite conditional fluctuations: {int(supported.sum()):,} / {total:,}"
+        )
         print(f"  No finite fluctuation: {int((~supported).sum()):,}")
         print("  No empirical four-cell support gate is applied on this branch.")
         if settings.get("probability_clip") is not None:
-            print(f"  Conditional outcome/propensity clip: {settings['probability_clip']}")
+            print(
+                f"  Conditional outcome/propensity clip: {settings['probability_clip']}"
+            )
         minimum_propensity = result.get("minimum_conditional_propensity")
         if minimum_propensity is not None:
             floor = settings.get("probability_clip", 0.0)
             below_floor = minimum_propensity.cpu() < floor
-            print(f"  Raw PC propensities below the clip in any fold: {int(below_floor.sum()):,}")
+            print(
+                f"  Raw PC propensities below the clip in any fold: {int(below_floor.sum()):,}"
+            )
     else:
-        print(f"  Supported unregularized targets: {int(supported.sum()):,} / {total:,}")
+        print(
+            f"  Supported unregularized targets: {int(supported.sum()):,} / {total:,}"
+        )
         print(f"  Unsupported targets: {int((~supported).sum()):,}")
     if settings and not conditional:
         minimum_cell_count = settings.get("minimum_cell_count")
@@ -174,11 +191,20 @@ def print_tmle_result_summary(
     minimum_counts = result.get("minimum_heldout_cell_count")
     if minimum_counts is not None and settings.get("minimum_cell_count") is not None:
         below_count = minimum_counts.cpu() < settings["minimum_cell_count"]
-        print(f"  Below held-out cell-count threshold in any fold: {int(below_count.sum()):,}")
+        print(
+            f"  Below held-out cell-count threshold in any fold: {int(below_count.sum()):,}"
+        )
     minimum_probabilities = result.get("minimum_model_probability")
-    if minimum_probabilities is not None and settings.get("minimum_probability") is not None:
-        below_probability = minimum_probabilities.cpu() < settings["minimum_probability"]
-        print(f"  Below model-probability threshold in any fold: {int(below_probability.sum()):,}")
+    if (
+        minimum_probabilities is not None
+        and settings.get("minimum_probability") is not None
+    ):
+        below_probability = (
+            minimum_probabilities.cpu() < settings["minimum_probability"]
+        )
+        print(
+            f"  Below model-probability threshold in any fold: {int(below_probability.sum()):,}"
+        )
 
     supported_indices = torch.nonzero(supported, as_tuple=False).flatten()
     if max_rows is None:
@@ -187,7 +213,9 @@ def print_tmle_result_summary(
     elif len(supported_indices):
         ranked = torch.argsort(torch.abs(tmle[supported_indices]), descending=True)
         rows = supported_indices[ranked[:max_rows]]
-        description = f"top {len(rows):,} supported targets by absolute TMLE log interaction"
+        description = (
+            f"top {len(rows):,} supported targets by absolute TMLE log interaction"
+        )
     else:
         rows = torch.nonzero(targeted, as_tuple=False).flatten()[:max_rows]
         description = f"up to {len(rows):,} targetable but unsupported targets"
@@ -214,4 +242,6 @@ def print_tmle_result_summary(
             f"{str(bool(targeted[row])):>9}  {str(bool(supported[row])):>9}"
         )
     if max_rows is not None and total > len(rows):
-        print(f"  Full numerical results remain in the Torch table: {result.get('output_path', 'see saved output above')}")
+        print(
+            f"  Full numerical results remain in the Torch table: {result.get('output_path', 'see saved output above')}"
+        )
