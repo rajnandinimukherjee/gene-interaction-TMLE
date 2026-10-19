@@ -192,17 +192,66 @@ The most recent table used `minimum-cell-count=1` and `minimum-probability=1e-12
 
 Lowering the minimum count increases coverage, but it permits inference based on smaller cells. That is a scientific design choice, not a speed optimization.
 
-A BH q-value is a false-discovery-rate-adjusted p-value within this family of supported pairs. Under its usual assumptions, `q <= 0.05` controls the expected false-discovery proportion. It is not the probability that one named edge is false and it is not a causal guarantee. The default display screen additionally requires `|TMLE log interaction| >= 0.25`; 132,169 pairs pass both cuts in the current run.
+### What the BH q-value in the overview plot means
+
+BH is applied **only** to the 389,725 supported pairs in this run; targeted-but-unsupported pairs have no p-value or q-value and are not counted.  Let `m = 389,725`, let `p_h` be the two-sided Wald p-value for pair `h` under its null hypothesis of zero log interaction, and write the ordered p-values as
+
+~~~text
+p_(1) <= p_(2) <= ... <= p_(m).
+~~~
+
+For a chosen false-discovery-rate (FDR) level `alpha`, the BH procedure finds the largest rank `k` for which
+
+~~~text
+p_(k) <= k * alpha / m,
+~~~
+
+then calls ranks `1, ..., k` discoveries.  The reported value for the pair at rank `i` is the corresponding monotone BH-adjusted p-value:
+
+~~~text
+q_(i) = min_{j=i,...,m} min(1, m * p_(j) / j).
+~~~
+
+The value is then returned to its original pair.  Thus `q_h <= alpha` means exactly that pair `h` belongs to the BH discovery set if BH is run at level `alpha`; equivalently, `q_h` is the smallest BH FDR level at which it would be selected.  The name “q-value” here means this BH-adjusted p-value, not a posterior probability or a local false-discovery rate.
+
+In the overview plot, pair `h` has vertical coordinate
+
+~~~text
+y_h = -log10(q_h),
+~~~
+
+with values above 50 visually capped at 50.  Higher points have smaller BH-adjusted p-values: `q=0.05`, `0.01`, and `0.001` map to about `1.301`, `2`, and `3`, respectively.  The horizontal line is therefore at `-log10(0.05) = 1.301`; points on or above it meet the BH `q <= 0.05` criterion.  The x-coordinate and colour describe the estimated TMLE log interaction and its sign, respectively.  They do not change the q-value, which comes from a two-sided p-value.
+
+BH controls the FDR of the *set* selected at a fixed cutoff, where
+
+~~~text
+FDP = V / max(R, 1),       FDR = E[FDP],
+~~~
+
+`R` is the number of BH discoveries and `V` is the (unobserved) number of those discoveries whose null hypotheses are true.  Under valid null p-values and the usual BH dependence conditions (independence, or positive regression dependence on the true nulls), selecting every pair with `q <= 0.05` gives `FDR <= 0.05`.  It does **not** say that five percent of a particular subset, one plotted point, or one named edge is false, and it does not establish causation.  The pair tests share cells and genes, so they are dependent; the standard BH guarantee is not a guarantee under arbitrary dependence.  A confirmatory analysis needing protection under arbitrary dependence would need a different prespecified correction, such as Benjamini--Yekutieli.
+
+References: Benjamini and Hochberg, “Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing,” *Journal of the Royal Statistical Society: Series B* 57(1), 289--300 (1995), [doi:10.1111/j.2517-6161.1995.tb02031.x](https://doi.org/10.1111/j.2517-6161.1995.tb02031.x); Benjamini and Yekutieli, “The Control of the False Discovery Rate in Multiple Testing under Dependency,” *Annals of Statistics* 29(4), 1165--1188 (2001), [doi:10.1214/aos/1013699998](https://doi.org/10.1214/aos/1013699998).
+
+The default display screen additionally requires `|TMLE log interaction| >= 0.25`; 132,169 pairs pass both cuts in the current run.
 
 ## 5. Read the pairwise table and figures
 
 The pairwise table keeps every result: PC plug-in and TMLE log effects, SE, CIs, p-values, q-values, support flags, and the smallest count/probability. Exponentiate a pair's log effect to get its odds ratio. Consider its CI, q-value, raw support, and external validation before drawing a biological conclusion.
 
-The three figures are intentionally readable summaries rather than complete graphs:
+The three figures are intentionally readable summaries rather than complete graphs.  They begin with pairs that are supported and have finite TMLE estimates and confidence intervals.  With the default settings, their display set is
 
-- **Overview:** Includes all supported pairs. The x-axis is the TMLE log interaction; the y-axis is `-log10(BH q-value)`, capped at 50 only for display. Red means positive and blue means negative. Dashed vertical lines mark +/-0.25; the horizontal line marks q=0.05.
-- **Forest:** Starts with pairs that pass both display cuts, or all supported pairs if none pass. It shows the 25 most negative and 25 most positive. Points are TMLE log effects, bars are 95% CIs, and the black line marks zero.
-- **Network:** Starts with the same display set, ranks pairs by absolute effect, keeps at most 25 edges, and limits every gene to degree 4. Red/blue marks sign; edge width shows relative absolute effect; node size shows retained degree. It is not the complete screened graph.
+~~~text
+D = {h : supported, finite estimate/CI, q_h <= 0.05,
+          and |TMLE log interaction_h| >= 0.25}.
+~~~
+
+The two cuts have different jobs: `q <= 0.05` is the multiple-testing evidence screen, whereas `|log interaction| >= 0.25` is an effect-size screen (odds ratio at least `exp(0.25) ≈ 1.28`, or at most `exp(-0.25) ≈ 0.78`).  If no pair satisfies **both** cuts, the forest and network fall back to all supported finite pairs, so a figure is still available.  A fallback figure is therefore a ranking of supported pairs, not a set that passed both default cuts.  The overview does not use this screen: it always includes every supported pair.
+
+- **Overview:** Includes all supported pairs. The x-axis is the TMLE log interaction; the y-axis is `-log10(BH q-value)`, capped at 50 only for display. Red means positive and blue means negative. Dashed vertical lines mark +/-0.25; the horizontal line at 1.301 marks `q=0.05`. The BH family is all supported pairs, not only pairs passing the effect-size display cut.
+- **Forest:** Separates `D` into negative estimates (`theta < 0`) and non-negative estimates (`theta >= 0`). Within each sign it orders by the estimate itself—most negative first on the left and most positive first on the right—and takes `min(25, number available)`. The two panels are selected independently, not balanced to contain 25 each. Thus fewer than 25 points on a side means fewer than 25 display-set pairs have that sign (or, after the no-hit fallback, fewer than 25 supported finite pairs have that sign). It does not mean that a 25th pair failed an extra confidence-interval or significance test. A sign with no eligible pair is labelled “None selected.” Points are TMLE log effects, bars are 95% CIs, and the black line marks zero. The default 25-point limit can be changed with `--forest-top-n`.
+- **Network:** Starts with the same `D` (or the fallback set), ranks candidate pairs by decreasing `|TMLE log interaction|`, and processes them greedily. It adds a pair only while fewer than 25 edges have been kept **and** both of its genes currently have degree below 4; it then increments both degrees. A pair can therefore be absent despite passing the two display cuts because a gene in the pair already has four stronger retained neighbours. Fewer than 25 edges can remain if candidates run out or degree caps block the rest. These are sparse readability rules, not a global graph optimization or extra statistical tests. Red/blue marks sign, edge width shows relative absolute effect, and node size shows retained degree.
+
+The all-gene network may contain two or more **disjoint components**.  Only genes incident to a retained edge are drawn, and the code does not require retained edges to form a connected graph.  Separate components arise when high-ranking retained pairs do not share genes, when potential bridging pairs fail the q-value or effect-size cuts, or when a bridge is skipped after one of its endpoints reaches the degree cap (or the 25-edge limit is reached).  The plotting code deliberately lays disconnected components apart so their labels and edges remain readable.  Their separation is not evidence that the gene groups are biologically independent, nor evidence that no association exists between them; it is a consequence of screening and sparsification.
 
 ## 6. Screened higher-order interactions
 
