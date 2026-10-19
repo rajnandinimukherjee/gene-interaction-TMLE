@@ -137,7 +137,7 @@ The current saved run trained a new two-fold checkpoint from the full source CSV
 | Fresh pairwise command, complete | 3.50 s | Complete external Python-command time for cache construction, TMLE, final save, and plots, including startup/imports, input loading, validation, result reload, and wrapper overhead. Its internal interaction timer was 2.65 s. |
 | Fresh sequential pipeline | 15.66 s | `12.16 + 3.50`: one new PC fit followed by one new cache build and the all-pairs analysis. |
 
-The complete external command times are the `real` values from `/usr/bin/time -p`; the two substage rows are the program's own logged timers. Thus the cache-construction row is the recorded **data-generation and cache-saving** time, while the all-pairs row is the recorded **TMLE, final-result saving, and plotting** time. The log does not separately time each operation inside those rows, so it would be misleading to assign finer-grained values. The master log, `logs/end_to_end_fresh_999_gene_pairwise_20261019T093921+0100.txt`, includes the training and pairwise commands in sequence. A later run can reuse a matching cache, but this recorded run did not.
+The complete external command times are the `real` values from `/usr/bin/time -p`; the two substage rows are the program's own logged timers. Thus the cache-construction row is the recorded **data-generation and cache-saving** time, while the all-pairs row is the recorded **TMLE, final-result saving, and plotting** time. The log does not separately time each operation inside those rows, so it would be misleading to assign finer-grained values. A later marginal-estimand run can reuse a matching marginal-estimand cache, but this benchmark run did not.
 
 ### Why this is faster than the legacy workflow
 

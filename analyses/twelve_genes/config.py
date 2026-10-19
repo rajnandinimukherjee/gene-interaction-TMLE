@@ -16,8 +16,8 @@ PLOTS_DIR = Path("analyses/twelve_genes/plots")
 LOG_DIR = Path("analyses/twelve_genes/logs")
 ANALYSIS_TAG = "12_genes"
 MODEL_PATH = OUTPUT_DIR / f"cross_fitted_pcs_{ANALYSIS_TAG}.pt"
-PAIR_CACHE_PATH = OUTPUT_DIR / f"pair_cache_marginal_estimand_{ANALYSIS_TAG}.pt"
-PAIRWISE_TMLE_PATH = OUTPUT_DIR / f"pairwise_marginal_estimand_tmle_{ANALYSIS_TAG}.pt"
+PAIR_CACHE_PATH = OUTPUT_DIR / f"cross_fitted_pcs_{ANALYSIS_TAG}_marginal_estimand_pair_cache.pt"
+PAIRWISE_TMLE_PATH = OUTPUT_DIR / f"cross_fitted_pcs_{ANALYSIS_TAG}_marginal_estimand_pairwise_tmle.pt"
 ARCHITECTURE_SELECTION_PATH = OUTPUT_DIR / f"pc_architecture_selected_config_{ANALYSIS_TAG}.json"
 
 # Winner of the 20-epoch 12-gene architecture sweep.  The matching saved

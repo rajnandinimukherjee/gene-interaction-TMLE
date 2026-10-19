@@ -1,0 +1,108 @@
+Cross-fitted marginal-estimand interaction analysis
+Started: 2026-10-19T13:39:26.107030+01:00
+Analysis: 999-gene
+Estimand: marginal joint-cell log interaction
+Run settings
+  analysis: 999
+  data: input/trainingData_11950Cells_1000Genes.csv
+  model: None
+  interaction-order: 2
+  genes: None
+  output: None
+  log: None
+  batch-size: 512
+  minimum-cell-count: 5
+  minimum-probability: 1e-12
+  bisection-iterations: 64
+  max-samples: None
+  device: cpu
+  plots-dir: None
+  forest-top-n: 25
+  network-max-items: 25
+  network-max-degree: 4
+  no-plots: False
+  plot: None
+  max-genes: None
+  cache: None
+  rebuild-cache: True
+  pairwise-output: None
+  candidates: None
+  candidates-csv: None
+  screened-pairs-csv: None
+  screen-max-q: 0.05
+  screen-min-abs-log-interaction: 0.25
+  max-degree: 20
+  edge-policy: mutual
+  max-candidates: 100000
+Training provenance
+  Cross-fitted PC checkpoint: analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes.pt
+  Checkpoint format: 4
+  Training data shape: (11950, 999) (cells, genes)
+  Model: architecture=latent-class-residual-tree; components=32
+  Cross-fitting folds: 2 (held out: 5975, 5975 cells)
+  Training settings: epochs=10; batch_size=1024; learning_rate=0.01; weight_decay=1e-05; seed=0; device=cpu
+  Training runtime: 11.31s
+  Final training NLL: fold 1: 246.000771, fold 2: 246.297290
+==============================================================================
+Building marginal pair cache: analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes_marginal_estimand_pair_cache.pt
+device: cpu; caching marginal probabilities for 498,501 pairs across 2 folds
+/private/tmp/pc-marginal-estimand/pc_core/tree_models.py:177: RuntimeWarning: divide by zero encountered in matmul
+  p_one = pi_np @ means
+/private/tmp/pc-marginal-estimand/pc_core/tree_models.py:177: RuntimeWarning: overflow encountered in matmul
+  p_one = pi_np @ means
+/private/tmp/pc-marginal-estimand/pc_core/tree_models.py:177: RuntimeWarning: invalid value encountered in matmul
+  p_one = pi_np @ means
+  fold 1: cached marginal probabilities and counts for 5,975 held-out cells
+  fold 2: cached marginal probabilities and counts for 5,975 held-out cells
+Saved marginal pairwise probability/count cache to analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes_marginal_estimand_pair_cache.pt
+Marginal pair-cache stage runtime: 1.16s
+Marginal-TMLE device: cpu; evaluating 498,501 pairs across 2 folds
+  fold 1: 302,928 supported marginal-TMLE targets
+  fold 2: 304,429 supported marginal-TMLE targets
+
+Marginal-TMLE support
+  Finite marginal point estimates in every fold: 389,779 / 498,501
+  Supported unregularized marginal targets: 286,521 / 498,501
+  Unsupported marginal targets: 211,980
+  Support thresholds: minimum held-out cell count=5; minimum model probability=1e-12
+  Below held-out cell-count threshold in any fold: 211,980
+  Below model-probability threshold in any fold: 0
+
+Marginal-TMLE results on the marginal log-interaction scale (top 25 supported targets by absolute marginal-TMLE log interaction)
+Target                                           Marginal plug-in      Marginal TMLE                      TMLE 95% CI     q value           SE   Targeted  Supported
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Ifi44-Ifit1                                     +3.738341e+00  +6.324425e+00   [+5.476423e+00, +7.172427e+00]  1.140994e-46  4.326619e-01       True       True
+Ifit3-Ifit1                                     +3.009939e+00  +6.168742e+00   [+5.333178e+00, +7.004305e+00]  9.509736e-46  4.263156e-01       True       True
+Ccdc67-Ccno                                     +5.494743e+00  +5.930177e+00   [+4.938039e+00, +6.922314e+00]  2.670470e-30  5.062019e-01       True       True
+Ifi44-Ifit3                                     +5.846123e+00  +5.862471e+00   [+5.109993e+00, +6.614950e+00]  7.504398e-51  3.839246e-01       True       True
+Usp18-Ifit1                                     +3.138295e+00  +5.814259e+00   [+5.041225e+00, +6.587292e+00]  1.886824e-47  3.944123e-01       True       True
+Ccdc67-Shisa8                                   +5.663114e+00  +5.760789e+00   [+4.900423e+00, +6.621155e+00]  8.658559e-38  4.389703e-01       True       True
+Oasl2-Ifit1                                     +2.799901e+00  +5.536400e+00   [+4.772007e+00, +6.300794e+00]  4.590055e-44  3.900038e-01       True       True
+Ifi44-Usp18                                     +5.214976e+00  +5.499727e+00   [+4.834055e+00, +6.165399e+00]  4.436970e-57  3.396347e-01       True       True
+Ccno-Shisa8                                     +5.254628e+00  +5.497937e+00   [+4.654102e+00, +6.341772e+00]  7.909429e-36  4.305357e-01       True       True
+Irf7-Ifit1                                      +2.720239e+00  +5.414316e+00   [+4.652050e+00, +6.176583e+00]  2.062988e-42  3.889188e-01       True       True
+Myb-Ccno                                        +4.029798e+00  +5.333535e+00   [+4.533019e+00, +6.134051e+00]  1.999140e-37  4.084340e-01       True       True
+Ddx60-Rsad2                                     +3.109726e+00  +5.294026e+00   [+4.460245e+00, +6.127807e+00]  4.543926e-34  4.254062e-01       True       True
+Irf7-Ifit3                                      +3.823447e+00  +5.287192e+00   [+4.592830e+00, +5.981554e+00]  1.297886e-48  3.542730e-01       True       True
+Usp18-Ifit3                                     +5.213168e+00  +5.285935e+00   [+4.526733e+00, +6.045137e+00]  8.699931e-41  3.873551e-01       True       True
+Oasl2-Ifit3                                     +2.662866e+00  +5.276159e+00   [+4.576146e+00, +5.976171e+00]  1.197527e-47  3.571559e-01       True       True
+Usp18-Irf7                                      +5.381004e+00  +5.267108e+00   [+4.657922e+00, +5.876294e+00]  1.938347e-62  3.108147e-01       True       True
+Ifi44-Irf7                                      +3.693607e+00  +5.243530e+00   [+4.551072e+00, +5.935989e+00]  4.384033e-48  3.533016e-01       True       True
+Ifi44-Rsad2                                     +1.706923e+00  +5.208850e+00   [+4.380999e+00, +6.036701e+00]  1.796343e-33  4.223808e-01       True       True
+Psmb8-Ifit3                                     +1.662433e+00  +5.123438e+00   [+4.414370e+00, +5.832507e+00]  7.378719e-44  3.617763e-01       True       True
+Ifi44-Ddx60                                     +1.833304e+00  +5.122378e+00   [+4.358045e+00, +5.886711e+00]  7.441955e-38  3.899732e-01       True       True
+Ifi44-Oasl2                                     +2.778330e+00  +5.110232e+00   [+4.420313e+00, +5.800151e+00]  4.816141e-46  3.520060e-01       True       True
+Rsad2-Ifit3                                     +1.642283e+00  +5.089361e+00   [+4.215813e+00, +5.962908e+00]  7.797153e-29  4.456957e-01       True       True
+Ddx60-Ifit3                                     +1.889813e+00  +5.055295e+00   [+4.273584e+00, +5.837005e+00]  2.612731e-35  3.988392e-01       True       True
+Oasl2-Usp18                                     +3.841866e+00  +5.041610e+00   [+4.437939e+00, +5.645280e+00]  2.611817e-58  3.080007e-01       True       True
+Myb-Ccdc67                                      +4.476137e+00  +5.012981e+00   [+4.132689e+00, +5.893274e+00]  1.368208e-27  4.491371e-01       True       True
+  Full marginal numerical results remain in the Torch table: analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle.pt
+Pairs passing marginal q/effect screen: 126,760
+Saved all marginal pairwise results to analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle.pt
+Wrote interaction plots: analyses/nine_nine_nine_genes/plots/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle_overview.png, analyses/nine_nine_nine_genes/plots/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle_forest.png, analyses/nine_nine_nine_genes/plots/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle_network.png
+Marginal pairwise-TMLE stage runtime: 1.79s
+Pairwise cross-fitted marginal interactions written to analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle.pt
+
+==============================================================================
+Analysis completed.
+Interaction-analysis runtime: 3.06s
