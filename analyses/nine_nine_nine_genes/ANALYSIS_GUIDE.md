@@ -1,24 +1,35 @@
 # 999-gene interaction analysis
 
-This guide documents the scalable all-gene workflow. It explains why all 498,501 pairwise interactions can be evaluated quickly, why that pairwise shortcut does not make an exhaustive high-order scan feasible, and how screened higher-order results must be interpreted.
+This guide explains the scalable analysis that considers all 999 genes. It can calculate every pairwise interaction, but it cannot practically test every possible three-gene or larger set. Higher-order results therefore come from a clearly labelled screening workflow and should be treated as exploratory.
 
-## Scope, data, and artifacts
+## At a glance
 
-The source CSV contains 11,950 cells and 1,000 numeric columns. The unnamed first column is constant metadata and is removed; all 999 named genes remain in CSV order and must be binary (0/1). The current analysis has no cell or gene filtering: it uses all 11,950 x 999 values. Development options such as --max-samples and --max-genes alter the fingerprint and cannot be mixed with the saved checkpoint/cache.
+The workflow has two different scopes:
 
-The fingerprint hashes both the ordered names and data values. Checkpoint loading and pair-cache reuse require an exact match, preventing silent analysis of a changed file or reordered genes.
+- **Pairs:** calculate all 498,501 unordered gene pairs exactly under the fitted PC, then perform cross-fitted TMLE inference where the data support it.
+- **Orders 3 and above:** use the pairwise results to select a manageable set of candidate groups, then evaluate those candidates exactly. This is not an exhaustive all-gene search and it is not confirmatory inference.
 
-| Artifact | Meaning |
+An interaction measures association among binary gene-expression states. It does not by itself show direct regulation, a biological mechanism, or causation.
+
+## Data and saved files
+
+The source CSV contains 11,950 cells and 1,000 numeric columns. The unnamed first column is constant metadata and is removed. All 999 remaining named columns are kept in their CSV order and must be binary (0/1). The current analysis uses every cell and every gene; it applies no cell or gene filter.
+
+Development options such as `--max-samples` and `--max-genes` change the data fingerprint. A checkpoint or cache from a development run therefore cannot silently be used with the full dataset.
+
+The fingerprint hashes the ordered gene names and their binary values. The code requires an exact match before loading a checkpoint or reusing a pair cache. This prevents a changed input file or reordered columns from producing an apparently valid but incorrect analysis.
+
+| File | What it contains |
 | --- | --- |
-| output/pc_architecture_sweep_999_genes.csv | All architecture-selection candidates. |
-| output/pc_architecture_selected_config_999_genes.json | Likelihood-selected settings. |
-| output/cross_fitted_pcs_999_genes.pt | Two trained fold PCs and provenance. |
-| output/cross_fitted_pcs_999_genes_pair_cache.pt | Exact pairwise PC marginals and held-out pair counts. |
-| output/cross_fitted_pcs_999_genes_pairwise_tmle.pt | All C(999,2)=498,501 pairwise results. |
-| plots/*pairwise_tmle_{overview,forest,network}.png | Pairwise summary figures. |
-| *_order{r}_candidates.pt and *_order{r}_tmle.pt | Screened higher-order candidates and results. |
+| `output/pc_architecture_sweep_999_genes.csv` | Results for all architecture-selection candidates. |
+| `output/pc_architecture_selected_config_999_genes.json` | Settings selected by validation likelihood. |
+| `output/cross_fitted_pcs_999_genes.pt` | Two trained fold-specific PCs and run provenance. |
+| `output/cross_fitted_pcs_999_genes_pair_cache.pt` | Exact PC pair marginals and held-out pair counts. |
+| `output/cross_fitted_pcs_999_genes_pairwise_tmle.pt` | Results for all `C(999,2) = 498,501` pairs. |
+| `plots/*pairwise_tmle_{overview,forest,network}.png` | Pairwise summary figures. |
+| `*_order{r}_candidates.pt`, `*_order{r}_tmle.pt` | Screened higher-order candidates and their results. |
 
-Usual commands, from the repository root:
+Run the usual workflow from the repository root:
 
 ~~~bash
 python sweep_pc_architectures.py --analysis 999
@@ -27,42 +38,44 @@ python cross_fitted_interactions.py --analysis 999 --interaction-order 2 --rebui
 python cross_fitted_interactions.py --analysis 999 --interaction-order 3
 ~~~
 
-## 1. Architecture selection and model
+## 1. Select the PC model
 
-Selection is independent of interaction inference. With seed=0, a random permutation makes a 9,560-cell sweep-training set and a 2,390-cell validation set. Candidate PCs are ranked only by validation mean negative log likelihood (NLL; lower is better) after 20 epochs.
+Architecture selection is separate from interaction inference. With `seed=0`, the 11,950 cells are randomly divided into 9,560 selection-training cells and 2,390 validation cells. Each candidate trains for 20 epochs on the first group and is ranked by mean validation negative log likelihood (NLL) on the second. Lower NLL is better.
 
-The selection grid contains 39 candidates:
+The selection grid has 39 candidates:
 
-- factorized, latent-class, mixture-chow-liu, and latent-class-residual-tree architectures;
-- 4, 8, 16, and 32 components for non-factorized architectures; factorized has one;
-- AdamW learning rates 0.005, 0.01, and 0.02;
-- batch size 1,024 cells, weight decay 1e-5, and seed 0.
+- four architectures: factorized, latent-class, mixture-Chow--Liu, and latent-class-residual-tree;
+- 4, 8, 16, or 32 components for non-factorized models (the factorized model has one);
+- AdamW learning rates of 0.005, 0.01, and 0.02; and
+- a batch size of 1,024 cells, weight decay of `1e-5`, and seed 0.
 
-For tree candidates, the sweep derives one smoothed Chow--Liu maximum-mutual-information tree from sweep-training rows only, roots it at a high-entropy gene, and reuses it across tree candidates. The final cross-fitted fits relearn their own topology from their own training halves.
+For each tree-based candidate, the sweep learns one smoothed Chow--Liu maximum-mutual-information tree from the selection-training cells only. It roots the tree at a high-entropy gene and reuses that topology for the sweep's tree candidates. The final cross-fitted PCs relearn a separate topology from their own training halves.
 
-The saved winner is:
+The saved winner was:
 
-| Selected quantity | Value |
+| Selected setting | Value |
 | --- | --- |
 | Architecture | latent-class-residual-tree |
 | Components | 32 |
 | AdamW learning rate | 0.01 |
-| Weight decay | 1e-5 |
+| Weight decay | `1e-5` |
 | Validation NLL | 241.895630 |
 | Trainable parameters | 33,998 |
 
-The selected PC has 32 mixture components. Each component has a base Bernoulli logit for every gene; every learned tree edge has two residual logits that are shared across components:
+The selected PC has 32 mixture components. Each component has its own baseline Bernoulli logit for every gene. Tree-edge residual logits are shared across components:
 
 ~~~text
 logit P(X_j=1 | X_parent(j)=u, Z=z)
-    = base_logit[z,j] + residual_edge_logit[j,u].
+    = base_logit[z,j] + residual_edge_logit[j,u]
 ~~~
 
-The root uses its component base logit and component weights are softmax-normalized. This gives component-specific broad cell-state effects plus compact, shared tree residual dependencies. The parameter count is 32 x (999 + 1) + 2 x 999 = 33,998.
+In plainer terms, the components can represent broad cell-state patterns, while the shared tree residuals represent compact gene-to-gene dependence. The root uses its component-specific baseline, and softmax-normalized weights combine the components. The parameter count is `32 x (999 + 1) + 2 x 999 = 33,998`.
 
-## 2. Actual checkpoint training and cross-fitting
+No interaction result, p-value, or q-value was used to choose this model.
 
-The sweep chooses the architecture, component count, learning rate, and weight decay; it is not the complete checkpoint-training record. The saved checkpoint was actually fitted as follows:
+## 2. Cross-fit the final models
+
+The selection sweep does not describe the final checkpoint training in full. The saved checkpoint was trained as follows:
 
 | Checkpoint setting | Recorded value |
 | --- | --- |
@@ -71,173 +84,163 @@ The sweep chooses the architecture, component count, learning rate, and weight d
 | Training / held-out cells per fold | 5,975 / 5,975 |
 | Epochs | 10 |
 | Training minibatch | 1,024 cells |
-| AdamW learning rate / weight decay | 0.01 / 1e-5 |
+| AdamW learning rate / weight decay | 0.01 / `1e-5` |
 | Fold seeds | 0 and 1 |
 | Device | CPU |
 | Training time | 11.78 s |
 | Final training NLL, folds 1 and 2 | 246.000771, 246.297290 |
 
-Each epoch shuffles cells and AdamW minimizes mean negative log likelihood. The training batch is a number of **cells**, never a partition of the 999 genes.
+Each epoch shuffles cells and AdamW minimizes the mean NLL. A minibatch always contains **cells**; it does not split the 999 genes into smaller analyses.
+
+Cross-fitting means each cell is assessed by a model that did not train on it:
 
 ~~~text
-All 11,950 cells -- seeded permutation --> F1 (5,975) + F2 (5,975)
+All 11,950 cells -- seeded split --> F1 (5,975) + F2 (5,975)
 
-             PC_1: learn topology and fit on F2
-F1 counts  <---- predict P_1(X_S=a) for F1 targets
+PC_1 learns from F2  --> predicts probabilities and targets F1
+PC_2 learns from F1  --> predicts probabilities and targets F2
 
-             PC_2: learn topology and fit on F1
-F2 counts  <---- predict P_2(X_S=a) for F2 targets
-
-              fold-specific TMLE / EIF moments
-                           |
-                           v
-        held-out-size-weighted log estimate and pooled EIF variance
+Combine fold estimates by held-out sample size and pool EIF moments for uncertainty.
 ~~~
 
-Every cell is targeted with a PC that was not fitted on it, and every cell contributes once across the two held-out folds.
+Together, the two held-out folds include every cell exactly once.
 
-## 3. All-pair cache: exact and fast
+## 3. Calculate all pairs with one exact cache
 
-There are 498,501 unordered pairs, but the workflow does not fit or query a PC 498,501 times. With --rebuild-cache, it validates the data/checkpoint fingerprint, restores the two fold PCs, and writes one cache containing for each fold:
+There are 498,501 unordered pairs, but the workflow does not fit or separately query 498,501 PCs. With `--rebuild-cache`, it checks the data/checkpoint fingerprint, loads the two fold PCs, and creates a cache containing the following for each fold:
 
-1. p_one[i] = P(X_i=1), a length-999 vector;
-2. p11[i,j] = P(X_i=1, X_j=1), retained for the upper triangle;
-3. held-out count_one[i] and count11[i,j]; and
-4. held-out fold size.
+1. `p_one[i] = P(X_i=1)`, a length-999 vector;
+2. `p11[i,j] = P(X_i=1, X_j=1)` for the upper triangle;
+3. held-out `count_one[i]` and `count11[i,j]`; and
+4. the held-out fold size.
 
-For this tree-mixture PC, one- and two-gene probabilities are exact analytic marginals. Component means and covariances are propagated along the tree, averaged with mixture weights, and assembled into one 999 x 999 pair-marginal matrix per fold. This never enumerates the 2^999 full joint state space.
+For this tree-mixture PC, one-gene and two-gene probabilities have exact analytic solutions. The code propagates component means and covariances along the tree, averages them using the mixture weights, and builds one 999 x 999 pair-probability matrix per fold. It never enumerates the impossible `2^999` full joint state space.
 
-Held-out counts are bulk calculations: one-gene counts are column sums and all pairwise 11 counts are X.T @ X, a dense optimized matrix multiply. Upper-triangle extraction gives the cache. The other table entries are identities:
+Observed counts are also calculated in bulk. One-gene counts are column sums; all 11 counts come from `X.T @ X`, an optimized dense matrix multiplication. The remaining three cells for a pair follow from identities:
 
 ~~~text
 p00 = 1 - p_i - p_j + p11     n00 = n - n_i - n_j + n11
 p01 = p_j - p11               n01 = n_j - n11
 p10 = p_i - p11               n10 = n_i - n11
-p11 = p11                     n11 = n11.
+p11 = p11                     n11 = n11
 ~~~
 
-The current run really rebuilt this cache: --rebuild-cache bypasses reuse, the log records “Building pair cache,” processes both 5,975-cell held-out folds, and saves the cache. That run's cache stage took 1.16 seconds; the all-pairs TMLE stage took 1.26 seconds; total interaction-analysis time was 2.53 seconds. Those numbers exclude PC fitting (11.78 seconds) and Python process/import startup.
+The current run rebuilt the cache rather than reusing one. Its log records “Building pair cache,” processes both 5,975-cell held-out folds, and saves the result. Cache construction took 1.16 seconds; all-pairs TMLE took 1.26 seconds; total interaction-analysis time was 2.53 seconds. These times do not include PC fitting (11.78 seconds) or Python startup/import time.
 
-### Why this is so much faster than legacy code
+### Why this is faster than the legacy workflow
 
-The retired 12-gene code repeatedly invoked a generic circuit-integration query for every target, outcome, and fold, then scanned rows in Python for counts and TMLE diagnostics. The scalable workflow uses a structure-specific all-pairs marginal calculation, optimized matrix arithmetic for counts, and vectorized tensor operations for 498,501 four-cell tables.
+The retired 12-gene code repeatedly used a generic circuit-integration query for each target, binary pattern, and fold. It also scanned cell rows in Python for counts and TMLE diagnostics.
 
-This is an algorithmic speed-up, not evidence that 498,501 PCs were fitted. It also does not mean the new estimates should reproduce legacy results: the PC class, topology learning, and saved checkpoint differ.
+The scalable workflow instead uses a calculation specific to pairwise marginals in this model, matrix arithmetic for observed counts, and vectorized operations across 498,501 four-cell tables. This is an algorithmic speed-up, not evidence that hundreds of thousands of PCs were fitted. Results are not expected to reproduce the retired implementation exactly, because the PC class, tree learning, and saved checkpoint differ.
 
-## 4. Pairwise TMLE, EIF, and support
+## 4. Pairwise interaction, TMLE, and support
 
 For a pair, the target is the log odds ratio:
 
 ~~~text
-theta(P) = log[p00 p11 / (p01 p10)].
+theta(P) = log[p00 p11 / (p01 p10)]
 ~~~
 
-Positive/negative values mean positive/negative association on this binary odds-ratio scale; zero is the no-interaction reference. This is not a causal estimate or proof of a direct biological mechanism.
+Zero means no interaction on this binary odds-ratio scale. Positive and negative values mean positive and negative association. This is not a causal estimate and does not establish a direct biological mechanism.
 
-For each cross-fitted fold, the PC's initial table p_0 is fluctuated along:
+### What TMLE does
+
+For each cross-fitted fold, TMLE starts with the PC's four-cell table `p_0` and makes a targeted update:
 
 ~~~text
-p_epsilon(a) = p_0(a) + epsilon s(a),    s = (+1, -1, -1, +1).
+p_epsilon(a) = p_0(a) + epsilon s(a),    s = (+1, -1, -1, +1)
 ~~~
 
-The strict positivity interval is max(-p00,-p11) < epsilon < min(p01,p10). After moving its endpoints slightly inward, 64 vectorized bisection steps solve:
+`epsilon` must keep all four probabilities strictly positive. Its allowable interval is:
 
 ~~~text
-sum_a P_n(a) s(a) / p_epsilon(a) = 0.
+max(-p00,-p11) < epsilon < min(p01,p10)
 ~~~
 
-This is the EIF score/estimating equation. **The EIF is not minimized.** TMLE finds the epsilon whose empirical EIF mean is zero. At p_star, the centred EIF
+After shifting the endpoints slightly inward, the code runs 64 vectorized bisection steps to solve:
+
+~~~text
+sum_a P_n(a) s(a) / p_epsilon(a) = 0
+~~~
+
+`P_n` is the observed distribution in that held-out fold. This is the efficient-influence-function (EIF) score equation: TMLE chooses the update whose empirical EIF mean is zero. The EIF is **not** minimized.
+
+At the updated table `p_star`, the centered EIF is:
 
 ~~~text
 H(a) = s(a)/p_star(a) - E_pstar[s(A)/p_star(A)]
 ~~~
 
-gives held-out sums and squared sums. Fold log estimates are weighted by held-out sample size; pooled EIF moments provide the SE, 95% Wald CI, and normal-approximation p-value. Benjamini--Hochberg (BH) adjusts p-values among supported pairs.
+Fold log estimates are weighted by held-out sample size. Pooled EIF values give the SE, a 95% Wald confidence interval, and a normal-approximation p-value. Benjamini--Hochberg (BH) then adjusts p-values over the supported pair family.
 
-The result table distinguishes:
+### When the table reports uncertainty
 
-- **targeted:** the initial table is finite and strictly positive and bisection has a valid root in every fold, yielding a finite point estimate;
-- **supported:** targeted and, in every fold, the smallest of the four held-out counts is at least minimum-cell-count, every initial model probability is at least minimum-probability, and the table is finite.
+The result table distinguishes two statuses:
 
-Only supported pairs receive SEs, CIs, p-values, and q-values. A finite targeted estimate that fails support is descriptive only. Thus TMLE support is an unregularized positivity/stability condition, not a measure of biological relevance.
+- **Targeted:** The initial table is finite and strictly positive, and bisection has a valid root in both folds. It has a finite point estimate.
+- **Supported:** The result is targeted and, in each fold, the smallest of the four observed counts is at least `--minimum-cell-count`, every initial model probability is at least `--minimum-probability`, and the table is finite.
 
-> **Plain-language meaning in this project.** The log's “supported
-> unregularized targets” are targets for which the code can make inference from
-> the raw held-out four-cell table without adding a pseudocount, continuity
-> correction, probability floor, ridge penalty, or variance regularization. The
-> support threshold is a gate; it does not change a count, smooth a table, or
-> clip a probability before estimating the effect.
+Only supported pairs receive an SE, CI, p-value, and q-value. A finite targeted pair that fails support is descriptive only. Support is an unregularized positivity and stability requirement; it is not a score of biological importance.
+
+> **What “supported unregularized” means here.** Inference uses the raw held-out four-cell table. It does not add a pseudocount, continuity correction, probability floor, ridge penalty, or variance regularization to repair an empty or rare cell. The thresholds are gates: they decide whether inference is shown, but they do not modify a count or clip a probability.
 >
-> In the current rerun, minimum-cell-count=1 has a very literal per-fold
-> meaning: for a pair to be supported, 00, 01, 10, and 11 must each occur at
-> least once in F1 **and** at least once in F2. Counts are not pooled across
-> the 11,950 cells for that decision. In each fold, the fitted PC must also
-> assign all four cells at least 1e-12 probability; values below the threshold
-> are excluded, not raised to 1e-12.
+> In the current rerun, `minimum-cell-count=1`. A supported pair must therefore have at least one observation in each of 00, 01, 10, and 11 in F1 **and** in F2. The decision does not pool counts across all 11,950 cells. In every fold, the PC must also assign all four cells a probability of at least `1e-12`; lower values are excluded, not raised to that threshold.
 >
-> “Targeted” is weaker than “supported.” A pair is targeted if its finite,
-> strictly positive model table admits a bisection root for the raw TMLE score.
-> It may still have a zero or otherwise under-threshold held-out cell and is
-> then denied an SE, CI, p-value, and q-value. In the current result, 389,779
-> pairs are targeted but only 389,725 are supported: 54 finite point estimates
-> therefore remain intentionally non-inferential. The 108,776 unsupported
-> pairs all fail the held-out count rule in at least one fold; none fails the
-> 1e-12 model-probability rule.
+> “Targeted” is weaker than “supported.” A finite, strictly positive model table can have a valid TMLE solution even if one held-out cell is zero or otherwise below the threshold. Such a pair deliberately receives no SE, CI, p-value, or q-value.
 
-The most recent table was deliberately rerun with minimum-cell-count=1 and minimum-probability=1e-12. It has 498,501 pairs, 389,779 finite targeted estimates, and 389,725 supported estimates. Lowering the threshold increased coverage but permits inference based on smaller cells; it is a scientific design choice, not a speed optimization.
+The most recent table used `minimum-cell-count=1` and `minimum-probability=1e-12`. Of 498,501 pairs, 389,779 have finite targeted estimates and 389,725 are supported. The 54 targeted-but-unsupported pairs remain point estimates without inference. All 108,776 unsupported pairs fail the held-out count rule in at least one fold; none fails the `1e-12` model-probability rule.
 
-A BH q-value is a false-discovery-rate-adjusted p-value within this supported pair family. A threshold q <= 0.05 controls the expected false-discovery proportion under standard BH assumptions; it is neither a posterior probability that an edge is false nor a causal guarantee. The default screen also requires |TMLE log interaction| >= 0.25. In the current run, 132,169 pairs pass both cuts.
+Lowering the minimum count increases coverage, but it permits inference based on smaller cells. That is a scientific design choice, not a speed optimization.
 
-## 5. Reading the pairwise results and plots
+A BH q-value is a false-discovery-rate-adjusted p-value within this family of supported pairs. Under its usual assumptions, `q <= 0.05` controls the expected false-discovery proportion. It is not the probability that one named edge is false and it is not a causal guarantee. The default display screen additionally requires `|TMLE log interaction| >= 0.25`; 132,169 pairs pass both cuts in the current run.
 
-The pairwise table retains every result, including the plug-in and TMLE log effects, SE, CIs, p/q-values, support flags, and the minimum count/probability. Exponentiating a pair effect gives its odds ratio. Strong values should still be read with their CI, support, counts, q-value, and external validation in mind.
+## 5. Read the pairwise table and figures
 
-The three figures are deliberately sparse/readable summaries:
+The pairwise table keeps every result: PC plug-in and TMLE log effects, SE, CIs, p-values, q-values, support flags, and the smallest count/probability. Exponentiate a pair's log effect to get its odds ratio. Consider its CI, q-value, raw support, and external validation before drawing a biological conclusion.
 
-- **Overview:** all supported pairs. The x-axis is TMLE log interaction; the y-axis is -log10(BH q-value), capped at 50 only for display. Red is positive and blue negative. Vertical dashed lines are +/-0.25; the horizontal dashed line is q=0.05.
-- **Forest:** starts from pairs passing both display cuts (or all supported pairs if none pass), then shows the 25 most negative and 25 most positive. Points are TMLE log effects, bars are 95% CIs, and zero is the black reference line.
-- **Network:** starts from the same display set, ranks by absolute effect, and retains at most 25 edges while capping each gene at degree 4. Red/blue gives sign; edge width is relative absolute effect; node size is retained degree. It is not the full screened graph.
+The three figures are intentionally readable summaries rather than complete graphs:
+
+- **Overview:** Includes all supported pairs. The x-axis is the TMLE log interaction; the y-axis is `-log10(BH q-value)`, capped at 50 only for display. Red means positive and blue means negative. Dashed vertical lines mark +/-0.25; the horizontal line marks q=0.05.
+- **Forest:** Starts with pairs that pass both display cuts, or all supported pairs if none pass. It shows the 25 most negative and 25 most positive. Points are TMLE log effects, bars are 95% CIs, and the black line marks zero.
+- **Network:** Starts with the same display set, ranks pairs by absolute effect, keeps at most 25 edges, and limits every gene to degree 4. Red/blue marks sign; edge width shows relative absolute effect; node size shows retained degree. It is not the complete screened graph.
 
 ## 6. Screened higher-order interactions
 
-For --interaction-order r >= 3, the workflow first runs or reuses the pairwise stage, then proposes a tractable candidate set:
+For `--interaction-order r >= 3`, the code first runs or reuses the all-pair stage. It then chooses a manageable candidate set:
 
-1. retain pairwise targets that are supported and finite, with q <= 0.05 and |log interaction| >= 0.25;
-2. for each gene, keep its strongest absolute-effect max-degree=20 neighbours;
-3. by default (edge-policy=mutual), keep an edge only if both endpoints selected each other; edge-policy=union keeps either endpoint's choice;
-4. enumerate r-cliques in the retained graph, stopping with an error above max-candidates=100,000;
-5. store every candidate's minimum absolute constituent pair effect and largest constituent-pair q-value.
+1. keep pairs that are supported and finite, have `q <= 0.05`, and have `|log interaction| >= 0.25`;
+2. for each gene, retain its 20 neighbours with the largest absolute pair effect;
+3. by default, keep an edge only if both genes selected each other (`edge-policy=mutual`); `edge-policy=union` keeps an edge if either endpoint selected it;
+4. enumerate `r`-cliques in the retained graph, stopping with an error above `max-candidates=100,000`; and
+5. save each candidate's smallest absolute constituent-pair effect and largest constituent-pair q-value.
 
-Each candidate is then evaluated exactly under the PC for all 2^r binary configurations by batched tree message passing. Held-out tables use binary coding and bincount; the same least-favourable TMLE path, support checks, pooled EIF variance, p-value, and BH calculation are applied.
+For every selected candidate, the PC then calculates all `2^r` binary-pattern probabilities exactly by batched tree message passing. The held-out patterns are counted with binary coding and `bincount`. The same TMLE update, support checks, pooled EIF variance, p-value, and BH calculation are then applied.
 
-The high-order estimand is:
+The higher-order target is:
 
 ~~~text
-theta_r(P) = sum_{a in {0,1}^r} (-1)^(r-sum(a)) log P(X_S=a).
+theta_r(P) = sum_{a in {0,1}^r} (-1)^(r-sum(a)) log P(X_S=a)
 ~~~
 
-This is not a complete all-gene high-order scan. Candidate selection reuses the same pairwise data later used for high-order estimation. The saved high-order result therefore has an explicit exploratory warning. That two-stage pipeline should not be presented as confirmatory FDR inference: use an independent confirmation split or a selection-aware design.
+This is not a complete all-gene high-order search. The same pairwise data select candidates and are later used to estimate them. The saved higher-order result therefore carries an explicit exploratory warning. Do not present its q-values as confirmatory FDR evidence; use an independent confirmation split or a selection-aware design.
 
-## 7. Scaling and CPU/GPU feasibility
+## 7. Why exhaustive high-order scans do not scale
 
-The full set count alone grows explosively:
+The number of possible gene sets grows very quickly:
 
-| Order r | Full all-gene set count C(999,r) |
+| Order r | All-gene set count `C(999,r)` |
 | ---: | ---: |
 | 2 | 498,501 |
 | 3 | 165,668,499 |
 | 4 | 41,251,456,251 |
 | 5 | 8,209,039,793,949 |
 
-Every order-r target has 2^r table cells. A general tree query has work roughly proportional to batch-size x 2^r x 999 x 32 per fold, plus held-out count construction; TMLE then makes 64 bisection updates across those 2^r cells. Larger batches reduce loop overhead but consume more memory and do not reduce the number of sets.
+Each order-`r` set also has `2^r` binary pattern cells. A general tree query takes work roughly proportional to `batch size x 2^r x 999 x 32` per fold, plus count construction. TMLE then performs 64 bisection updates across those `2^r` cells. Larger batches reduce loop overhead, but they use more memory and do not reduce the number of sets.
 
-Therefore:
+- The exact analytic pair cache makes a complete order-2 analysis practical on CPU. Its special pairwise identities do not exist for arbitrary larger sets.
+- An exhaustive order-3 scan is not practical in this implementation on a CPU or a typical GPU. It starts with 166 million sets before accounting for eight patterns, two folds, PC queries, counts, TMLE, or result storage. A multi-field results table alone would need many tens of gigabytes.
+- Orders 4 and 5 are much larger still. A normal GPU cannot remove the combinatorial `C(999,r)` growth or the `2^r` pattern growth.
+- A CUDA GPU can speed model fitting and a **screened, bounded** set of higher-order candidates. With enough memory, it can also allow a larger candidate batch. It cannot make exhaustive high-order inference feasible.
+- On Apple MPS, pairwise and higher-order TMLE run on CPU because the implementation needs reliable float64 arithmetic and MPS float64 support is limited.
 
-- The analytic all-pairs cache makes full r=2 inference practical on CPU. It uses pairwise identities unavailable for arbitrary gene sets.
-- A full r=3 scan is not practical in this implementation on either CPU or a normal GPU: it has 166 million sets before eight configurations, two folds, PC queries, counts, TMLE, and result storage. A multi-field results table alone would require many tens of gigabytes.
-- Orders 4 and 5 are categorically larger. No ordinary GPU removes the C(999,r) factor or 2^r growth.
-- A CUDA GPU can materially speed fitting and a **screened, bounded** batch of high-order candidates, and may permit a larger candidate batch if it has enough memory. It cannot make exhaustive high-order inference feasible.
-- On Apple MPS, pairwise and higher-order TMLE deliberately run on CPU because the implementation requires reliable float64 arithmetic and MPS float64 support is limited.
-
-The practical strategy is: calculate all pairs exactly; screen with predeclared q/effect/degree limits; cap candidates; inspect support; and treat selected high-order findings as exploratory until independent confirmation.
-
+The practical approach is to calculate all pairs exactly, screen using predeclared q-value, effect-size, and degree limits, cap the candidate set, inspect support carefully, and independently confirm selected higher-order findings.
