@@ -15,9 +15,9 @@ python sweep_pc_architectures.py --analysis 999 --batch-size 256
 ```
 
 Both commands use the internal `pc_core` package; no second implementation is
-maintained for either gene set.  The 12-gene command evaluates all panel
-combinations (or one `--genes` set), while the 999-gene command uses the cached
-pair/TMLE and higher-order screening pipeline.
+maintained for either gene set. The 12-gene command evaluates all panel
+combinations (or one ordered `--genes` set), while the 999-gene command uses
+the batched conditional-TMLE and higher-order screening pipeline.
 
 Detailed workflow documentation is kept with each study:
 
@@ -25,7 +25,7 @@ Detailed workflow documentation is kept with each study:
 - [999-gene analysis guide](nine_nine_nine_genes/ANALYSIS_GUIDE.md)
 
 Their default filenames are study-tagged (`*_12_genes.*` or `*_999_genes.*`)
-to prevent mixing checkpoints, caches, figures, and TMLE tables between the
+to prevent mixing checkpoints, figures, and TMLE tables between the
 two analyses.
 
 Each interaction run writes an all-result overview, a signed ranked forest

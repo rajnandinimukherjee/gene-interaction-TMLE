@@ -144,12 +144,25 @@ def print_tmle_result_summary(
     q_value = result["q_value"].cpu()
     total = len(tmle)
 
-    print("\nTMLE support")
-    print(f"  Finite point estimates in every fold: {int(targeted.sum()):,} / {total:,}")
-    print(f"  Supported unregularized targets: {int(supported.sum()):,} / {total:,}")
-    print(f"  Unsupported targets: {int((~supported).sum()):,}")
     settings = result.get("settings", {})
-    if settings:
+    conditional = result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    print("\nTMLE targeting")
+    print(f"  Finite point estimates in every cross-targeted fold: {int(targeted.sum()):,} / {total:,}")
+    if conditional:
+        print(f"  Finite conditional fluctuations: {int(supported.sum()):,} / {total:,}")
+        print(f"  No finite fluctuation: {int((~supported).sum()):,}")
+        print("  No empirical four-cell support gate is applied on this branch.")
+        if settings.get("probability_clip") is not None:
+            print(f"  Conditional outcome/propensity clip: {settings['probability_clip']}")
+        minimum_propensity = result.get("minimum_conditional_propensity")
+        if minimum_propensity is not None:
+            floor = settings.get("probability_clip", 0.0)
+            below_floor = minimum_propensity.cpu() < floor
+            print(f"  Raw PC propensities below the clip in any fold: {int(below_floor.sum()):,}")
+    else:
+        print(f"  Supported unregularized targets: {int(supported.sum()):,} / {total:,}")
+        print(f"  Unsupported targets: {int((~supported).sum()):,}")
+    if settings and not conditional:
         minimum_cell_count = settings.get("minimum_cell_count")
         minimum_probability = settings.get("minimum_probability")
         if minimum_cell_count is not None or minimum_probability is not None:
@@ -190,7 +203,7 @@ def print_tmle_result_summary(
         if bool(supported[row]):
             interval = f"[{_format_number(ci_low[row], signed=True)}, {_format_number(ci_high[row], signed=True)}]"
         else:
-            interval = "not supported"
+            interval = "no finite fluctuation" if conditional else "not supported"
         print(
             f"{label:<46.46}  "
             f"{_format_number(plugin[row], signed=True):>13}  "

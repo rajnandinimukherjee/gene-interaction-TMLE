@@ -82,8 +82,15 @@ def screen_higher_order(args: argparse.Namespace) -> None:
     result = load_torch_checkpoint(args.pairwise_results)
     required = {"format_version", "gene_names", "pair_i", "pair_j", "tmle_supported", "q_value", "tmle_log_interaction"}
     missing = required - result.keys()
-    if missing or result.get("format_version") not in (1, 2):
-        raise ValueError(f"Expected version-1 or version-2 pairwise results; missing: {', '.join(sorted(missing))}")
+    if (
+        missing
+        or result.get("format_version") != 3
+        or result.get("estimand") != "standardized_conditional_log_odds_interaction"
+    ):
+        raise ValueError(
+            "Expected version-3 standardized-conditional pairwise results; "
+            f"missing: {', '.join(sorted(missing))}"
+        )
 
     edges, row_lookup = _screen_edges(result, args.max_q, args.min_abs_log_interaction)
     adjacency = _bounded_adjacency(

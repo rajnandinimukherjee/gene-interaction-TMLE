@@ -1,9 +1,9 @@
 """Unified cross-fitted interaction analysis for 12 or 999 genes.
 
 The 12-gene study evaluates every requested-order panel combination and makes
-its comparison plot.  The 999-gene study creates/reuses a pair cache, applies
-TMLE to all pairs, and screens pairwise q-values/effect sizes before querying
-higher-order candidates.  Shared options retain the same spelling in both
+its comparison plot. The 999-gene study applies batched conditional TMLE to
+all pairs and screens pairwise q-values/effect sizes before querying
+higher-order candidates. Shared options retain the same spelling in both
 studies; options marked 999-only configure the scalable screened workflow.
 """
 
@@ -51,9 +51,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Optional plaintext-log base path; order and submission timestamp are always appended.",
     )
     shared.add_argument("--batch-size", type=int, default=512)
-    shared.add_argument("--minimum-cell-count", type=int, default=5)
-    shared.add_argument("--minimum-probability", type=float, default=1e-12)
-    shared.add_argument("--bisection-iterations", type=int, default=64)
+    shared.add_argument("--nuisance-sample-batch-size", type=int, default=64)
+    shared.add_argument("--probability-clip", type=float, default=1e-6)
+    shared.add_argument("--fluctuation-iterations", type=int, default=64)
     shared.add_argument("--max-samples", type=int, default=None)
     shared.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
 
@@ -67,10 +67,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     panel = parser.add_argument_group("12-gene legacy comparison plot")
     panel.add_argument("--plot", type=Path, default=None)
 
-    scalable = parser.add_argument_group("999-gene cache and higher-order screening")
+    scalable = parser.add_argument_group("999-gene conditional TMLE and higher-order screening")
     scalable.add_argument("--max-genes", type=int, default=None, help="Development/testing only.")
-    scalable.add_argument("--cache", type=Path, default=None)
-    scalable.add_argument("--rebuild-cache", action="store_true")
     scalable.add_argument("--pairwise-output", type=Path, default=None)
     scalable.add_argument("--candidates", type=Path, default=None)
     scalable.add_argument("--candidates-csv", type=Path, default=None)
@@ -99,8 +97,8 @@ def _result_path(args: argparse.Namespace) -> Path:
         return TWELVE_OUTPUT_DIR / f"{args.interaction_order}_pt_interactions_{TWELVE_ANALYSIS_TAG}.pt"
     model = Path(args.model or _default_model(999))
     if args.interaction_order == 2:
-        return model.parent / f"{model.stem}_pairwise_tmle.pt"
-    return model.parent / f"{model.stem}_order{args.interaction_order}_tmle.pt"
+        return model.parent / f"{model.stem}_conditional_pairwise_tmle.pt"
+    return model.parent / f"{model.stem}_conditional_order{args.interaction_order}_tmle.pt"
 
 
 def _timestamped_log_path(
@@ -167,9 +165,9 @@ def _run_twelve(args: argparse.Namespace) -> None:
             network_max_degree=args.network_max_degree,
             no_plots=args.no_plots,
             batch_size=args.batch_size,
-            minimum_cell_count=args.minimum_cell_count,
-            minimum_probability=args.minimum_probability,
-            bisection_iterations=args.bisection_iterations,
+            nuisance_sample_batch_size=args.nuisance_sample_batch_size,
+            probability_clip=args.probability_clip,
+            fluctuation_iterations=args.fluctuation_iterations,
             max_samples=args.max_samples,
             device=args.device,
         )
@@ -185,8 +183,6 @@ def _run_all_genes(args: argparse.Namespace) -> None:
             max_genes=args.max_genes,
             interaction_order=args.interaction_order,
             genes=args.genes,
-            cache=tagged_path(args.cache, 999),
-            rebuild_cache=args.rebuild_cache,
             output=tagged_path(args.output, 999),
             pairwise_output=tagged_path(args.pairwise_output, 999),
             candidates=args.candidates,
@@ -197,9 +193,9 @@ def _run_all_genes(args: argparse.Namespace) -> None:
             network_max_items=args.network_max_items,
             network_max_degree=args.network_max_degree,
             no_plots=args.no_plots,
-            minimum_cell_count=args.minimum_cell_count,
-            minimum_probability=args.minimum_probability,
-            bisection_iterations=args.bisection_iterations,
+            nuisance_sample_batch_size=args.nuisance_sample_batch_size,
+            probability_clip=args.probability_clip,
+            fluctuation_iterations=args.fluctuation_iterations,
             screen_max_q=args.screen_max_q,
             screen_min_abs_log_interaction=args.screen_min_abs_log_interaction,
             max_degree=args.max_degree,
@@ -212,7 +208,7 @@ def _run_all_genes(args: argparse.Namespace) -> None:
 
 
 def main(args: argparse.Namespace | None = None) -> None:
-    """Dispatch to the panel or cached all-gene interaction workflow."""
+    """Dispatch to the panel or all-gene conditional-TMLE workflow."""
 
     args = parse_args() if args is None else args
     submitted_at = datetime.now().astimezone()

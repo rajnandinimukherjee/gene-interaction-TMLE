@@ -12,8 +12,7 @@ Run from the repository root:
 ```bash
 python train_cross_fitted_pcs.py --analysis 12
 python sweep_pc_architectures.py --analysis 12
-python -m analyses.twelve_genes.build_pair_cache
-python -m analyses.twelve_genes.pairwise_tmle
+python cross_fitted_interactions.py --analysis 12 --interaction-order 2
 ```
 
 To reproduce the former all-combinations plot for a chosen order, use:
@@ -24,12 +23,14 @@ python cross_fitted_interactions.py --analysis 12 \
   --interaction-order 3
 ```
 
-It evaluates all `C(12, order)` sets, writes the log-interaction estimates to
-`output/<order>_pt_interactions_12_genes.pt`, and retains the former
-all-combinations comparison plot at `plots/<order>_pt_interactions_12_genes.png`.
+It evaluates all `C(12, order)` ordered sets, writes standardized conditional
+log-interaction estimates to `output/<order>_pt_conditional_interactions_12_genes.pt`,
+and writes a labelled all-combinations comparison plot at
+`plots/<order>_pt_conditional_interactions_12_genes.png`.
 That figure is a vertical, labelled row for every interaction (for example,
-66 rows at order 2 and 220 at order 3).  A focused `--genes` query receives a
-gene-set-specific default filename, so it cannot overwrite the canonical
+66 rows at order 2 and 220 at order 3). The first gene is the outcome and the
+remaining genes are the exposures. A focused ordered `--genes` query receives
+a gene-set-specific default filename, so it cannot overwrite the canonical
 all-combinations figure or result table.
 It also writes `*_overview.png`, `*_forest.png`, and either `*_network.png`
 (pairwise) or `*_hypergraph.png` (higher-order) in the same plots directory.

@@ -97,7 +97,14 @@ def _result_arrays(
         if len(candidate_q) == len(estimates):
             q_values = candidate_q
 
-    labels = ["-".join(names[int(index)] for index in row) for row in memberships]
+    conditional = result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    if conditional:
+        labels = [
+            f"{names[int(row[0])]} <- " + ",".join(names[int(index)] for index in row[1:])
+            for row in memberships
+        ]
+    else:
+        labels = ["-".join(names[int(index)] for index in row) for row in memberships]
     return names, memberships, labels, estimates, ci_low, ci_high, supported, q_values
 
 
@@ -203,7 +210,7 @@ def plot_effect_evidence_overview(
         axis.set(
             title=title,
             xlabel="TMLE log(interaction)",
-            ylabel=f"−log10(BH q-value), capped at {evidence_cap:g}",
+            ylabel=f"−log10(BY q-value), capped at {evidence_cap:g}",
         )
         axis.legend(frameon=False, loc="upper right")
     axis.grid(axis="y", color="0.9", linewidth=0.8)
@@ -381,6 +388,7 @@ def _plot_pair_network(
     title: str,
     max_edges: int,
     max_degree: int,
+    directed: bool,
     output: Path,
 ) -> None:
     rows = _bounded_pair_network_indices(
@@ -412,7 +420,18 @@ def _plot_pair_network(
         colour = POSITIVE_COLOUR if estimates[row] >= 0.0 else NEGATIVE_COLOUR
         width = 0.6 + 3.0 * abs(estimates[row]) / maximum
         start, end = positions[first], positions[second]
-        axis.plot((start[0], end[0]), (start[1], end[1]), color=colour, linewidth=width, alpha=0.68, zorder=1)
+        if directed:
+            # Membership is stored as (outcome, exposure), so arrowheads point
+            # from exposure to outcome.  This is a descriptive direction set
+            # by the estimand, not a causal-direction claim.
+            axis.annotate(
+                "", xy=start, xytext=end,
+                arrowprops={"arrowstyle": "->", "color": colour, "lw": width, "alpha": 0.68,
+                            "shrinkA": 12, "shrinkB": 12},
+                zorder=1,
+            )
+        else:
+            axis.plot((start[0], end[0]), (start[1], end[1]), color=colour, linewidth=width, alpha=0.68, zorder=1)
     for node in nodes:
         point = positions[int(node)]
         axis.scatter(point[0], point[1], s=80 + 32 * degrees[int(node)], color="white", edgecolor="black", linewidth=0.8, zorder=2)
@@ -513,7 +532,11 @@ def generate_interaction_plots(
     overview = output_dir / f"{prefix}_overview.png"
     forest = output_dir / f"{prefix}_forest.png"
     network = output_dir / f"{prefix}_{'network' if order == 2 else 'hypergraph'}.png"
-    quantity = f"Cross-fitted {order}-point log interactions"
+    conditional = result.get("estimand") == "standardized_conditional_log_odds_interaction"
+    quantity = (
+        f"Cross-targeted standardized conditional {order}-point log interactions"
+        if conditional else f"Cross-fitted {order}-point log interactions"
+    )
     plot_effect_evidence_overview(
         estimates, supported_indices, q_values,
         title=(
@@ -537,6 +560,7 @@ def generate_interaction_plots(
             title=f"{quantity}: sparse signed network",
             max_edges=network_max_items,
             max_degree=network_max_degree,
+            directed=conditional,
             output=network,
         )
     else:
