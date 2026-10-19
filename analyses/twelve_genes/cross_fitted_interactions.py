@@ -13,7 +13,9 @@ import os
 from pathlib import Path
 
 os.environ.setdefault("MPLBACKEND", "Agg")
-os.environ.setdefault("MPLCONFIGDIR", str(Path(__file__).resolve().parent / ".matplotlib"))
+os.environ.setdefault(
+    "MPLCONFIGDIR", str(Path(__file__).resolve().parent / ".matplotlib")
+)
 os.environ.setdefault("XDG_CACHE_HOME", str(Path(__file__).resolve().parent / ".cache"))
 
 import matplotlib.pyplot as plt
@@ -28,11 +30,21 @@ from pc_core.higher_order_tmle import (
     universal_tmle_fold,
 )
 from pc_core.interaction_plots import generate_interaction_plots
-from pc_core.pairwise_tmle import MARGINAL_ESTIMAND, NORMAL_95_CRITICAL_VALUE, benjamini_hochberg
+from pc_core.pairwise_tmle import (
+    MARGINAL_ESTIMAND,
+    NORMAL_95_CRITICAL_VALUE,
+    benjamini_hochberg,
+)
 from pc_core.plaintext_reporting import print_tmle_result_summary
 from pc_core.runtime import choose_device
 
-from analyses.twelve_genes.config import ANALYSIS_TAG, DATA, MODEL_PATH, OUTPUT_DIR, PLOTS_DIR
+from analyses.twelve_genes.config import (
+    ANALYSIS_TAG,
+    DATA,
+    MODEL_PATH,
+    OUTPUT_DIR,
+    PLOTS_DIR,
+)
 from analyses.twelve_genes.data import load_panel
 from analyses.naming import marginal_estimand_path
 
@@ -43,28 +55,44 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model", type=Path, default=MODEL_PATH)
     parser.add_argument("--interaction-order", type=int, required=True)
     parser.add_argument(
-        "--genes", type=str, default=None,
+        "--genes",
+        type=str,
+        default=None,
         help="Optional comma-separated gene set. By default every panel combination is evaluated.",
     )
-    parser.add_argument("--output", type=Path, default=None, help="Optional .pt result table.")
+    parser.add_argument(
+        "--output", type=Path, default=None, help="Optional .pt result table."
+    )
     parser.add_argument("--plot", type=Path, default=None)
     parser.add_argument("--plots-dir", type=Path, default=None)
     parser.add_argument("--forest-top-n", type=int, default=25)
     parser.add_argument("--network-max-items", type=int, default=25)
     parser.add_argument("--network-max-degree", type=int, default=4)
-    parser.add_argument("--no-plots", action="store_true", help="Do not write overview, forest, and hypergraph figures.")
+    parser.add_argument(
+        "--no-plots",
+        action="store_true",
+        help="Do not write overview, forest, and hypergraph figures.",
+    )
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--minimum-cell-count", type=int, default=5)
     parser.add_argument("--minimum-probability", type=float, default=1e-12)
     parser.add_argument("--bisection-iterations", type=int, default=64)
     parser.add_argument("--max-samples", type=int, default=None)
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     return parser.parse_args()
 
 
 def plot_log_interactions(
-    labels: list[str], plugin: torch.Tensor, tmle: torch.Tensor, se: torch.Tensor,
-    tmle_supported: torch.Tensor, empirical: torch.Tensor, interaction_order: int, output: Path,
+    labels: list[str],
+    plugin: torch.Tensor,
+    tmle: torch.Tensor,
+    se: torch.Tensor,
+    tmle_supported: torch.Tensor,
+    empirical: torch.Tensor,
+    interaction_order: int,
+    output: Path,
 ) -> None:
     """Write the legacy-style vertical comparison for every requested gene set.
 
@@ -80,10 +108,14 @@ def plot_log_interactions(
     empirical_values = empirical.numpy()
     empirical_finite = np.isfinite(empirical_values)
     finite_indices = np.flatnonzero(empirical_finite)
-    order = np.concatenate((
-        finite_indices[np.argsort(-empirical_values[finite_indices], kind="stable")],
-        np.flatnonzero(~empirical_finite),
-    ))
+    order = np.concatenate(
+        (
+            finite_indices[
+                np.argsort(-empirical_values[finite_indices], kind="stable")
+            ],
+            np.flatnonzero(~empirical_finite),
+        )
+    )
     y = np.arange(len(labels))
     plugin_values = plugin.numpy()[order]
     tmle_values = tmle.numpy()[order]
@@ -96,39 +128,72 @@ def plot_log_interactions(
     figure, axis = plt.subplots(figsize=(6, height))
     axis.scatter(plugin_values, y, label="marginal PC plug-in", marker="o")
     valid = supported_values & np.isfinite(tmle_values) & np.isfinite(errors)
-    axis.errorbar(tmle_values[valid], y[valid], xerr=NORMAL_95_CRITICAL_VALUE * errors[valid],
-                  fmt="x", capsize=2, color="tab:orange", label="marginal TMLE (95% CI)")
+    axis.errorbar(
+        tmle_values[valid],
+        y[valid],
+        xerr=NORMAL_95_CRITICAL_VALUE * errors[valid],
+        fmt="x",
+        capsize=2,
+        color="tab:orange",
+        label="marginal TMLE (95% CI)",
+    )
     unsupported = ~supported_values & np.isfinite(tmle_values)
-    axis.scatter(tmle_values[unsupported], y[unsupported], marker="x", color="tab:orange",
-                 zorder=3, label="TMLE (unsupported; no CI)")
+    axis.scatter(
+        tmle_values[unsupported],
+        y[unsupported],
+        marker="x",
+        color="tab:orange",
+        zorder=3,
+        label="TMLE (unsupported; no CI)",
+    )
     empirical_valid = np.isfinite(empirical_values)
-    axis.scatter(empirical_values[empirical_valid], y[empirical_valid], marker="*", color="tab:green",
-                 zorder=4, label="empirical")
+    axis.scatter(
+        empirical_values[empirical_valid],
+        y[empirical_valid],
+        marker="*",
+        color="tab:green",
+        zorder=4,
+        label="empirical",
+    )
 
     # Retain the legacy connector between the plug-in and TMLE estimates.
     # Unsupported TMLE values remain visible, but no fabricated CI is drawn.
     connected = np.isfinite(plugin_values) & np.isfinite(tmle_values)
     for index in np.flatnonzero(connected):
-        axis.plot([plugin_values[index], tmle_values[index]], [y[index], y[index]],
-                  linewidth=1, color="tab:orange", zorder=2)
+        axis.plot(
+            [plugin_values[index], tmle_values[index]],
+            [y[index], y[index]],
+            linewidth=1,
+            color="tab:orange",
+            zorder=2,
+        )
 
     # A symmetric log-scale range makes the no-interaction reference (zero)
     # visually comparable across the full vertical panel.
     ci_low = tmle_values[valid] - NORMAL_95_CRITICAL_VALUE * errors[valid]
     ci_high = tmle_values[valid] + NORMAL_95_CRITICAL_VALUE * errors[valid]
-    plotted_values = np.concatenate((
-        plugin_values[np.isfinite(plugin_values)],
-        tmle_values[np.isfinite(tmle_values)],
-        ci_low[np.isfinite(ci_low)],
-        ci_high[np.isfinite(ci_high)],
-        empirical_values[empirical_valid],
-    ))
-    half_width = max(np.max(np.abs(plotted_values)), 0.1) if plotted_values.size else 0.1
+    plotted_values = np.concatenate(
+        (
+            plugin_values[np.isfinite(plugin_values)],
+            tmle_values[np.isfinite(tmle_values)],
+            ci_low[np.isfinite(ci_low)],
+            ci_high[np.isfinite(ci_high)],
+            empirical_values[empirical_valid],
+        )
+    )
+    half_width = (
+        max(np.max(np.abs(plotted_values)), 0.1) if plotted_values.size else 0.1
+    )
     axis.set_xlim(-1.05 * half_width, 1.05 * half_width)
     axis.axvline(0, color="0.5", linewidth=1, linestyle="--", zorder=0)
-    axis.set(yticks=y, yticklabels=[labels[index] for index in order],
-             xlabel="marginal log(interaction strength)")
-    axis.set_title(f"Cross-fitted marginal {interaction_order}-pt log interactions", pad=0)
+    axis.set(
+        yticks=y,
+        yticklabels=[labels[index] for index in order],
+        xlabel="marginal log(interaction strength)",
+    )
+    axis.set_title(
+        f"Cross-fitted marginal {interaction_order}-pt log interactions", pad=0
+    )
     # Matplotlib places y=0 at the bottom by default.  Reverse it so the
     # largest empirical log interaction is the top gene tuple in the plot.
     axis.invert_yaxis()
@@ -152,7 +217,9 @@ def main(args: argparse.Namespace | None = None) -> None:
     data = load_panel(args.data, max_samples=args.max_samples)
     order = args.interaction_order
     if not 2 <= order <= len(data.gene_names):
-        raise ValueError(f"--interaction-order must be between 2 and {len(data.gene_names)}.")
+        raise ValueError(
+            f"--interaction-order must be between 2 and {len(data.gene_names)}."
+        )
     device = choose_device(args.device)
     # Float64 TMLE is not available on MPS; the panel is small, so CPU is the
     # reliable fallback while model checkpoints remain device-independent.
@@ -162,21 +229,31 @@ def main(args: argparse.Namespace | None = None) -> None:
     requested_label = None
     if args.genes is None:
         gene_sets_cpu = torch.tensor(
-            list(itertools.combinations(range(len(data.gene_names)), order)), dtype=torch.long
+            list(itertools.combinations(range(len(data.gene_names)), order)),
+            dtype=torch.long,
         )
     else:
-        requested = tuple(name.strip() for name in args.genes.split(",") if name.strip())
+        requested = tuple(
+            name.strip() for name in args.genes.split(",") if name.strip()
+        )
         if len(requested) != order:
-            raise ValueError("--genes must contain exactly --interaction-order comma-separated names.")
+            raise ValueError(
+                "--genes must contain exactly --interaction-order comma-separated names."
+            )
         if len(set(requested)) != len(requested):
             raise ValueError("--genes cannot contain duplicate names.")
         indices = {name: index for index, name in enumerate(data.gene_names)}
         unknown = sorted(set(requested) - indices.keys())
         if unknown:
             raise ValueError(f"Unknown panel gene(s): {', '.join(unknown)}")
-        gene_sets_cpu = torch.tensor([[indices[name] for name in requested]], dtype=torch.long)
+        gene_sets_cpu = torch.tensor(
+            [[indices[name] for name in requested]], dtype=torch.long
+        )
         requested_label = "-".join(requested)
-    labels = ["-".join(data.gene_names[index] for index in gene_set) for gene_set in gene_sets_cpu.tolist()]
+    labels = [
+        "-".join(data.gene_names[index] for index in gene_set)
+        for gene_set in gene_sets_cpu.tolist()
+    ]
     dtype = torch.float64
     outcomes, signs = outcome_signs(order, device, dtype)
     count = len(gene_sets_cpu)
@@ -192,9 +269,15 @@ def main(args: argparse.Namespace | None = None) -> None:
     minimum_model_probability = torch.full((count,), float("inf"), dtype=dtype)
     fold_sizes: list[int] = []
 
-    print(f"Evaluating {count:,} marginal order-{order} interactions across {len(models)} folds.")
-    for fold_number, (model, held_out_indices) in enumerate(zip(models, folds), start=1):
-        held_out = torch.as_tensor(data.values[held_out_indices], dtype=torch.uint8, device=device)
+    print(
+        f"Evaluating {count:,} marginal order-{order} interactions across {len(models)} folds."
+    )
+    for fold_number, (model, held_out_indices) in enumerate(
+        zip(models, folds), start=1
+    ):
+        held_out = torch.as_tensor(
+            data.values[held_out_indices], dtype=torch.uint8, device=device
+        )
         fold_size = len(held_out)
         fold_sizes.append(fold_size)
         fold_log = torch.empty(count, dtype=dtype)
@@ -206,17 +289,24 @@ def main(args: argparse.Namespace | None = None) -> None:
             gene_sets = gene_sets_cpu[start:stop].to(device)
             probabilities = model_probabilities(model, gene_sets, outcomes).to(dtype)
             counts = held_out_counts(held_out, gene_sets, order)
-            plugin_total[start:stop] += fold_size * (probabilities.log() * signs).sum(dim=1).cpu()
+            plugin_total[start:stop] += (
+                fold_size * (probabilities.log() * signs).sum(dim=1).cpu()
+            )
             minimum_heldout_cell_count[start:stop] = torch.minimum(
                 minimum_heldout_cell_count[start:stop],
                 counts.min(dim=1).values.cpu().to(torch.int32),
             )
             minimum_model_probability[start:stop] = torch.minimum(
-                minimum_model_probability[start:stop], probabilities.min(dim=1).values.cpu()
+                minimum_model_probability[start:stop],
+                probabilities.min(dim=1).values.cpu(),
             )
             log_tmle, eif_sum, eif_square_sum, supported = universal_tmle_fold(
-                probabilities, counts, signs, minimum_cell_count=args.minimum_cell_count,
-                minimum_probability=args.minimum_probability, iterations=args.bisection_iterations,
+                probabilities,
+                counts,
+                signs,
+                minimum_cell_count=args.minimum_cell_count,
+                minimum_probability=args.minimum_probability,
+                iterations=args.bisection_iterations,
             )
             fold_log[start:stop] = log_tmle.cpu()
             fold_eif_sum[start:stop] = eif_sum.cpu()
@@ -227,7 +317,9 @@ def main(args: argparse.Namespace | None = None) -> None:
         tmle_total += fold_size * torch.nan_to_num(fold_log, nan=0.0)
         eif_sum_total += torch.nan_to_num(fold_eif_sum, nan=0.0)
         eif_square_sum_total += torch.nan_to_num(fold_eif_square_sum, nan=0.0)
-        print(f"  fold {fold_number}: {int(fold_valid.sum()):,}/{count:,} marginal-TMLE targets supported")
+        print(
+            f"  fold {fold_number}: {int(fold_valid.sum()):,}/{count:,} marginal-TMLE targets supported"
+        )
 
     total_n = sum(fold_sizes)
     plugin_log = plugin_total / total_n
@@ -238,14 +330,18 @@ def main(args: argparse.Namespace | None = None) -> None:
     se[~valid] = float("nan")
     z = tmle_log / se
     p_value = torch.erfc(torch.abs(z) / torch.sqrt(torch.tensor(2.0, dtype=dtype)))
-    p_value = torch.where((se == 0.0) & (tmle_log == 0.0), torch.ones_like(p_value), p_value)
-    p_value = torch.where((se == 0.0) & (tmle_log != 0.0), torch.zeros_like(p_value), p_value)
+    p_value = torch.where(
+        (se == 0.0) & (tmle_log == 0.0), torch.ones_like(p_value), p_value
+    )
+    p_value = torch.where(
+        (se == 0.0) & (tmle_log != 0.0), torch.zeros_like(p_value), p_value
+    )
     p_value[~valid] = float("nan")
     q_value = benjamini_hochberg(p_value, valid)
     # This deliberately uses every selected cell, matching the empirical
     # comparator in the legacy figure rather than cross-fitted held-out folds.
     full_data = torch.as_tensor(data.values, dtype=torch.uint8, device=device)
-    empirical_counts = torch.empty((count, 2 ** order), dtype=torch.int64)
+    empirical_counts = torch.empty((count, 2**order), dtype=torch.int64)
     for start in range(0, count, args.batch_size):
         stop = min(start + args.batch_size, count)
         empirical_counts[start:stop] = held_out_counts(
@@ -262,8 +358,12 @@ def main(args: argparse.Namespace | None = None) -> None:
     if requested_label is None:
         default_stem = f"{order}_pt_marginal_estimand_interactions_{ANALYSIS_TAG}"
     else:
-        default_stem = f"{order}_pt_marginal_estimand_interaction_{requested_label}_{ANALYSIS_TAG}"
-    output = marginal_estimand_path(args.output, 12) or OUTPUT_DIR / f"{default_stem}.pt"
+        default_stem = (
+            f"{order}_pt_marginal_estimand_interaction_{requested_label}_{ANALYSIS_TAG}"
+        )
+    output = (
+        marginal_estimand_path(args.output, 12) or OUTPUT_DIR / f"{default_stem}.pt"
+    )
     plot = marginal_estimand_path(args.plot, 12) or PLOTS_DIR / f"{default_stem}.png"
     output.parent.mkdir(parents=True, exist_ok=True)
     result = {
@@ -291,8 +391,12 @@ def main(args: argparse.Namespace | None = None) -> None:
         },
     }
     torch.save(result, output)
-    print_tmle_result_summary({**result, "output_path": str(output)}, labels, max_rows=None)
-    plot_log_interactions(labels, plugin_log, tmle_log, se, valid, empirical_log, order, plot)
+    print_tmle_result_summary(
+        {**result, "output_path": str(output)}, labels, max_rows=None
+    )
+    plot_log_interactions(
+        labels, plugin_log, tmle_log, se, valid, empirical_log, order, plot
+    )
     if not getattr(args, "no_plots", False):
         plot_paths = generate_interaction_plots(
             result,

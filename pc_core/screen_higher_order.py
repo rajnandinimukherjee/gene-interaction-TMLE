@@ -11,11 +11,18 @@ import torch
 from .runtime import load_torch_checkpoint
 
 
-def _screen_edges(result: dict, max_q: float, min_abs_log_interaction: float) -> tuple[list[tuple[int, int, float]], dict[tuple[int, int], int]]:
+def _screen_edges(
+    result: dict, max_q: float, min_abs_log_interaction: float
+) -> tuple[list[tuple[int, int, float]], dict[tuple[int, int], int]]:
     supported = result["tmle_supported"].bool()
     q_values = result["q_value"]
     effects = result["tmle_log_interaction"]
-    keep = supported & torch.isfinite(q_values) & (q_values <= max_q) & (torch.abs(effects) >= min_abs_log_interaction)
+    keep = (
+        supported
+        & torch.isfinite(q_values)
+        & (q_values <= max_q)
+        & (torch.abs(effects) >= min_abs_log_interaction)
+    )
     edges: list[tuple[int, int, float]] = []
     lookup: dict[tuple[int, int], int] = {}
     for row in torch.nonzero(keep, as_tuple=False).squeeze(1).tolist():
@@ -39,7 +46,12 @@ def _bounded_adjacency(
         ranked[i].append((strength, j))
         ranked[j].append((strength, i))
     selected = [
-        {neighbour for _, neighbour in sorted(values, key=lambda item: (-item[0], item[1]))[:max_degree]}
+        {
+            neighbour
+            for _, neighbour in sorted(values, key=lambda item: (-item[0], item[1]))[
+                :max_degree
+            ]
+        }
         for values in ranked
     ]
     adjacency = [set() for _ in range(n_genes)]
@@ -52,7 +64,9 @@ def _bounded_adjacency(
     return adjacency
 
 
-def enumerate_cliques(adjacency: list[set[int]], order: int, max_candidates: int) -> list[tuple[int, ...]]:
+def enumerate_cliques(
+    adjacency: list[set[int]], order: int, max_candidates: int
+) -> list[tuple[int, ...]]:
     """Enumerate unique cliques, aborting safely if the cap is reached."""
 
     candidates: list[tuple[int, ...]] = []
@@ -67,8 +81,11 @@ def enumerate_cliques(adjacency: list[set[int]], order: int, max_candidates: int
                 )
             return
         for position, gene in enumerate(possible):
-            remainder = possible[position + 1:]
-            extend(prefix + (gene,), [other for other in remainder if other in adjacency[gene]])
+            remainder = possible[position + 1 :]
+            extend(
+                prefix + (gene,),
+                [other for other in remainder if other in adjacency[gene]],
+            )
 
     extend((), list(range(len(adjacency))))
     return candidates
@@ -80,10 +97,20 @@ def screen_higher_order(args: argparse.Namespace) -> None:
     if args.max_degree < args.order - 1:
         raise ValueError("--max-degree must be at least --order - 1.")
     result = load_torch_checkpoint(args.pairwise_results)
-    required = {"format_version", "gene_names", "pair_i", "pair_j", "tmle_supported", "q_value", "tmle_log_interaction"}
+    required = {
+        "format_version",
+        "gene_names",
+        "pair_i",
+        "pair_j",
+        "tmle_supported",
+        "q_value",
+        "tmle_log_interaction",
+    }
     missing = required - result.keys()
     if missing or result.get("format_version") not in (1, 2):
-        raise ValueError(f"Expected version-1 or version-2 pairwise results; missing: {', '.join(sorted(missing))}")
+        raise ValueError(
+            f"Expected version-1 or version-2 pairwise results; missing: {', '.join(sorted(missing))}"
+        )
 
     edges, row_lookup = _screen_edges(result, args.max_q, args.min_abs_log_interaction)
     adjacency = _bounded_adjacency(
@@ -102,7 +129,11 @@ def screen_higher_order(args: argparse.Namespace) -> None:
     min_pair_effect: list[float] = []
     max_pair_q: list[float] = []
     for genes in candidates:
-        rows = [row_lookup[(i, j)] for index, i in enumerate(genes) for j in genes[index + 1:]]
+        rows = [
+            row_lookup[(i, j)]
+            for index, i in enumerate(genes)
+            for j in genes[index + 1 :]
+        ]
         min_pair_effect.append(min(abs(float(pair_effect[row])) for row in rows))
         max_pair_q.append(max(float(pair_q[row]) for row in rows))
 
@@ -116,7 +147,9 @@ def screen_higher_order(args: argparse.Namespace) -> None:
             "data_fingerprint": result.get("data_fingerprint"),
             "gene_names": result["gene_names"],
             "gene_sets": candidate_tensor,
-            "minimum_abs_pair_effect": torch.tensor(min_pair_effect, dtype=torch.float64),
+            "minimum_abs_pair_effect": torch.tensor(
+                min_pair_effect, dtype=torch.float64
+            ),
             "maximum_pair_q_value": torch.tensor(max_pair_q, dtype=torch.float64),
             "settings": {
                 "order": args.order,
@@ -132,7 +165,9 @@ def screen_higher_order(args: argparse.Namespace) -> None:
         output,
     )
     print(f"Marginal pairwise q/effect hits: {len(edges):,}")
-    print(f"Edges retained after {args.edge_policy} degree cap: {retained_edge_count:,}")
+    print(
+        f"Edges retained after {args.edge_policy} degree cap: {retained_edge_count:,}"
+    )
     print(f"Order-{args.order} candidates: {len(candidates):,}")
     print(f"Saved marginal higher-order candidates to {output}")
     if args.csv is not None:
@@ -164,8 +199,18 @@ def write_candidates_csv(candidate_path: Path, csv_path: Path) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pairwise-results", type=Path, default=Path("output/cross_fitted_marginal_estimand_pairwise_tmle_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/marginal_estimand_order3_candidates_999_genes.pt"))
+    parser.add_argument(
+        "--pairwise-results",
+        type=Path,
+        default=Path(
+            "output/cross_fitted_marginal_estimand_pairwise_tmle_999_genes.pt"
+        ),
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("output/marginal_estimand_order3_candidates_999_genes.pt"),
+    )
     parser.add_argument("--order", type=int, default=3)
     parser.add_argument("--max-q", type=float, default=0.05)
     parser.add_argument("--min-abs-log-interaction", type=float, default=0.25)

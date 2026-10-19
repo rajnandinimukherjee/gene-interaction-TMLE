@@ -23,7 +23,9 @@ from analyses.twelve_genes.config import DATA as DEFAULT_DATA
 from analyses.twelve_genes.config import LOG_DIR as TWELVE_LOG_DIR
 from analyses.twelve_genes.config import MODEL_PATH as TWELVE_MODEL_PATH
 from analyses.twelve_genes.config import OUTPUT_DIR as TWELVE_OUTPUT_DIR
-from analyses.twelve_genes.cross_fitted_interactions import main as run_twelve_gene_analysis
+from analyses.twelve_genes.cross_fitted_interactions import (
+    main as run_twelve_gene_analysis,
+)
 from pc_core.cross_fitted_interactions import main as run_all_gene_analysis
 from pc_core.plaintext_reporting import (
     format_duration,
@@ -35,7 +37,10 @@ from pc_core.plaintext_reporting import (
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--analysis", type=int, choices=(12, 999), required=True,
+        "--analysis",
+        type=int,
+        choices=(12, 999),
+        required=True,
         help="Gene set to analyse: curated 12-gene panel or all 999 named genes.",
     )
     shared = parser.add_argument_group("shared options")
@@ -43,12 +48,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     shared.add_argument("--model", type=Path, default=None)
     shared.add_argument("--interaction-order", type=int, default=2)
     shared.add_argument(
-        "--genes", type=str, default=None,
+        "--genes",
+        type=str,
+        default=None,
         help="Comma-separated names for one interaction; the 12-gene default is all combinations.",
     )
     shared.add_argument("--output", type=Path, default=None)
     shared.add_argument(
-        "--log", type=Path, default=None,
+        "--log",
+        type=Path,
+        default=None,
         help="Optional plaintext-log base path; order and submission timestamp are always appended.",
     )
     shared.add_argument("--batch-size", type=int, default=512)
@@ -56,20 +65,28 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     shared.add_argument("--minimum-probability", type=float, default=1e-12)
     shared.add_argument("--bisection-iterations", type=int, default=64)
     shared.add_argument("--max-samples", type=int, default=None)
-    shared.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    shared.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
 
     plotting = parser.add_argument_group("interaction plotting")
     plotting.add_argument("--plots-dir", type=Path, default=None)
     plotting.add_argument("--forest-top-n", type=int, default=25)
     plotting.add_argument("--network-max-items", type=int, default=25)
     plotting.add_argument("--network-max-degree", type=int, default=4)
-    plotting.add_argument("--no-plots", action="store_true", help="Do not write overview, forest, and network figures.")
+    plotting.add_argument(
+        "--no-plots",
+        action="store_true",
+        help="Do not write overview, forest, and network figures.",
+    )
 
     panel = parser.add_argument_group("12-gene legacy comparison plot")
     panel.add_argument("--plot", type=Path, default=None)
 
     scalable = parser.add_argument_group("999-gene cache and higher-order screening")
-    scalable.add_argument("--max-genes", type=int, default=None, help="Development/testing only.")
+    scalable.add_argument(
+        "--max-genes", type=int, default=None, help="Development/testing only."
+    )
     scalable.add_argument("--cache", type=Path, default=None)
     scalable.add_argument("--rebuild-cache", action="store_true")
     scalable.add_argument("--pairwise-output", type=Path, default=None)
@@ -79,7 +96,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     scalable.add_argument("--screen-max-q", type=float, default=0.05)
     scalable.add_argument("--screen-min-abs-log-interaction", type=float, default=0.25)
     scalable.add_argument("--max-degree", type=int, default=20)
-    scalable.add_argument("--edge-policy", choices=("mutual", "union"), default="mutual")
+    scalable.add_argument(
+        "--edge-policy", choices=("mutual", "union"), default="mutual"
+    )
     scalable.add_argument("--max-candidates", type=int, default=100_000)
     return parser.parse_args(argv)
 
@@ -97,11 +116,17 @@ def _result_path(args: argparse.Namespace) -> Path:
     if requested_output is not None:
         return requested_output
     if args.analysis == 12:
-        return TWELVE_OUTPUT_DIR / f"{args.interaction_order}_pt_marginal_estimand_interactions_{TWELVE_ANALYSIS_TAG}.pt"
+        return (
+            TWELVE_OUTPUT_DIR
+            / f"{args.interaction_order}_pt_marginal_estimand_interactions_{TWELVE_ANALYSIS_TAG}.pt"
+        )
     model = Path(args.model or _default_model(999))
     if args.interaction_order == 2:
         return model.parent / f"{model.stem}_marginal_estimand_pairwise_tmle.pt"
-    return model.parent / f"{model.stem}_marginal_estimand_order{args.interaction_order}_tmle.pt"
+    return (
+        model.parent
+        / f"{model.stem}_marginal_estimand_order{args.interaction_order}_tmle.pt"
+    )
 
 
 def _timestamped_log_path(
@@ -133,7 +158,10 @@ def _next_unused_path(path: Path) -> Path:
 
 def _default_log_path(args: argparse.Namespace, submitted_at: datetime) -> Path:
     log_dir = TWELVE_LOG_DIR if args.analysis == 12 else ALL_GENE_LOG_DIR
-    base_path = log_dir / f"cross_fitted_marginal_estimand_interactions_{analysis_tag(args.analysis)}.txt"
+    base_path = (
+        log_dir
+        / f"cross_fitted_marginal_estimand_interactions_{analysis_tag(args.analysis)}.txt"
+    )
     return _timestamped_log_path(base_path, args, submitted_at)
 
 
@@ -221,7 +249,9 @@ def main(args: argparse.Namespace | None = None) -> None:
     requested_log = marginal_estimand_path(getattr(args, "log", None), args.analysis)
     log_base = requested_log or _default_log_path(args, submitted_at)
     log_path = _next_unused_path(
-        _timestamped_log_path(log_base, args, submitted_at) if requested_log else log_base
+        _timestamped_log_path(log_base, args, submitted_at)
+        if requested_log
+        else log_base
     )
     started = time.perf_counter()
     outcome = "completed"
@@ -238,7 +268,9 @@ def main(args: argparse.Namespace | None = None) -> None:
         finally:
             print("\n" + "=" * 78)
             print(f"Analysis {outcome}.")
-            print(f"Interaction-analysis runtime: {format_duration(time.perf_counter() - started)}")
+            print(
+                f"Interaction-analysis runtime: {format_duration(time.perf_counter() - started)}"
+            )
     print(f"Plaintext run log written to {log_path}")
 
 

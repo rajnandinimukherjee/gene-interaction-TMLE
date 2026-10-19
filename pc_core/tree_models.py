@@ -48,7 +48,9 @@ def learn_chow_liu_tree(data: np.ndarray, smoothing: float = 1.0) -> np.ndarray:
     )
     np.fill_diagonal(mutual_information, -np.inf)
 
-    marginal = ((count_one + smoothing) / (n + 2.0 * smoothing)).clip(1e-12, 1.0 - 1e-12)
+    marginal = ((count_one + smoothing) / (n + 2.0 * smoothing)).clip(
+        1e-12, 1.0 - 1e-12
+    )
     entropy = -marginal * np.log(marginal) - (1.0 - marginal) * np.log(1.0 - marginal)
     root = int(np.argmax(entropy))
     parents = np.full(d, -1, dtype=np.int64)
@@ -89,13 +91,17 @@ def _tree_order(parents: np.ndarray) -> tuple[int, list[int], list[list[int]]]:
     return root, order, children
 
 
-def _empirical_tree_logits(data: torch.Tensor, parents: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+def _empirical_tree_logits(
+    data: torch.Tensor, parents: torch.Tensor
+) -> tuple[torch.Tensor, torch.Tensor]:
     """Smoothed root and conditional Bernoulli logits for one tree."""
 
     x = data.float()
     d = x.shape[1]
     root = int(torch.nonzero(parents < 0, as_tuple=False).item())
-    root_probability = ((x[:, root].sum() + 1.0) / (len(x) + 2.0)).clamp(1e-4, 1.0 - 1e-4)
+    root_probability = ((x[:, root].sum() + 1.0) / (len(x) + 2.0)).clamp(
+        1e-4, 1.0 - 1e-4
+    )
     conditional_probability = torch.full((d, 2), 0.5, device=x.device)
     for child in range(d):
         parent = int(parents[child].item())
@@ -105,9 +111,11 @@ def _empirical_tree_logits(data: torch.Tensor, parents: torch.Tensor) -> tuple[t
         for parent_outcome in (0, 1):
             mask = parent_values == parent_outcome
             conditional_probability[child, parent_outcome] = (
-                (x[mask, child].sum() + 1.0) / (mask.sum() + 2.0)
-            )
-    return torch.logit(root_probability), torch.logit(conditional_probability.clamp(1e-4, 1.0 - 1e-4))
+                x[mask, child].sum() + 1.0
+            ) / (mask.sum() + 2.0)
+    return torch.logit(root_probability), torch.logit(
+        conditional_probability.clamp(1e-4, 1.0 - 1e-4)
+    )
 
 
 def _tree_pair_marginals(
@@ -150,7 +158,9 @@ def _tree_pair_marginals(
         if parent < 0:
             continue
         down_slope[:, child] = conditional_np[:, child, 1] - conditional_np[:, child, 0]
-        up_slope[:, child] = down_slope[:, child] * variances[:, parent] / variances[:, child]
+        up_slope[:, child] = (
+            down_slope[:, child] * variances[:, parent] / variances[:, child]
+        )
 
     adjacency: list[list[tuple[int, np.ndarray]]] = [[] for _ in range(d)]
     for child, parent in enumerate(parents_np):
@@ -183,7 +193,9 @@ def _tree_pair_marginals(
 class _TreeMixturePC(nn.Module):
     """Shared tree likelihood and marginal-query mechanics."""
 
-    def __init__(self, num_genes: int, num_components: int, parents: Sequence[int]) -> None:
+    def __init__(
+        self, num_genes: int, num_components: int, parents: Sequence[int]
+    ) -> None:
         super().__init__()
         parent_tensor = torch.as_tensor(parents, dtype=torch.long)
         if parent_tensor.shape != (num_genes,):
@@ -216,22 +228,32 @@ class _TreeMixturePC(nn.Module):
         parent_values = x[:, self.parents.clamp_min(0)].unsqueeze(1)
         conditional_logits = self.conditional_logits
         logits0, logits1 = conditional_logits[:, :, 0], conditional_logits[:, :, 1]
-        selected_logits = logits0.unsqueeze(0) + parent_values * (logits1 - logits0).unsqueeze(0)
-        leaf_log_prob = (
-            x.unsqueeze(1) * torch.nn.functional.logsigmoid(selected_logits)
-            + (1.0 - x).unsqueeze(1) * torch.nn.functional.logsigmoid(-selected_logits)
-        )
+        selected_logits = logits0.unsqueeze(0) + parent_values * (
+            logits1 - logits0
+        ).unsqueeze(0)
+        leaf_log_prob = x.unsqueeze(1) * torch.nn.functional.logsigmoid(
+            selected_logits
+        ) + (1.0 - x).unsqueeze(1) * torch.nn.functional.logsigmoid(-selected_logits)
         leaf_log_prob[:, :, self.root] = 0.0
         root_values = x[:, self.root].unsqueeze(1)
-        root_log_prob = (
-            root_values * torch.nn.functional.logsigmoid(self.root_logits).unsqueeze(0)
-            + (1.0 - root_values) * torch.nn.functional.logsigmoid(-self.root_logits).unsqueeze(0)
+        root_log_prob = root_values * torch.nn.functional.logsigmoid(
+            self.root_logits
+        ).unsqueeze(0) + (1.0 - root_values) * torch.nn.functional.logsigmoid(
+            -self.root_logits
+        ).unsqueeze(
+            0
         )
-        component_log_prob = leaf_log_prob.sum(dim=2) + root_log_prob + torch.log_softmax(self.logits_pi, dim=0)
+        component_log_prob = (
+            leaf_log_prob.sum(dim=2)
+            + root_log_prob
+            + torch.log_softmax(self.logits_pi, dim=0)
+        )
         return torch.logsumexp(component_log_prob, dim=1)
 
     @torch.no_grad()
-    def pair_marginals(self, *, dtype: torch.dtype = torch.float64) -> tuple[torch.Tensor, torch.Tensor]:
+    def pair_marginals(
+        self, *, dtype: torch.dtype = torch.float64
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         p_one, p11 = _tree_pair_marginals(
             self.pi, self.root_logits, self.conditional_logits, self.parents
         )
@@ -277,7 +299,9 @@ class _TreeMixturePC(nn.Module):
 
         conditional_probability = torch.sigmoid(self.conditional_logits).to(dtype=dtype)
         # [component, child, parent_state, child_state]
-        transition = torch.stack((1.0 - conditional_probability, conditional_probability), dim=3)
+        transition = torch.stack(
+            (1.0 - conditional_probability, conditional_probability), dim=3
+        )
         messages: dict[int, torch.Tensor] = {}
         for node in reversed(traversal):
             incoming = likelihood[:, :, node, :].unsqueeze(2)
@@ -289,19 +313,29 @@ class _TreeMixturePC(nn.Module):
                 )
             else:
                 root_probability = torch.sigmoid(self.root_logits).to(dtype=dtype)
-                root_distribution = torch.stack((1.0 - root_probability, root_probability), dim=1)
-                component_probability = (incoming * root_distribution[None, None, :, :]).sum(dim=3)
-                return (component_probability * self.pi.to(dtype=dtype)[None, None, :]).sum(dim=2)
+                root_distribution = torch.stack(
+                    (1.0 - root_probability, root_probability), dim=1
+                )
+                component_probability = (
+                    incoming * root_distribution[None, None, :, :]
+                ).sum(dim=3)
+                return (
+                    component_probability * self.pi.to(dtype=dtype)[None, None, :]
+                ).sum(dim=2)
         raise RuntimeError("Tree message pass did not reach its root.")
 
 
 class MixtureChowLiuPC(_TreeMixturePC):
     """Mixture of Chow--Liu trees sharing a training-fold topology."""
 
-    def __init__(self, num_genes: int, num_components: int, parents: Sequence[int]) -> None:
+    def __init__(
+        self, num_genes: int, num_components: int, parents: Sequence[int]
+    ) -> None:
         super().__init__(num_genes, num_components, parents)
         self._root_logits = nn.Parameter(torch.zeros(num_components))
-        self._conditional_logits = nn.Parameter(torch.zeros(num_components, num_genes, 2))
+        self._conditional_logits = nn.Parameter(
+            torch.zeros(num_components, num_genes, 2)
+        )
 
     @property
     def root_logits(self) -> torch.Tensor:
@@ -311,12 +345,17 @@ class MixtureChowLiuPC(_TreeMixturePC):
     def conditional_logits(self) -> torch.Tensor:
         return self._conditional_logits
 
-    def initialize_from_data(self, data: torch.Tensor, noise_scale: float = 0.20) -> None:
+    def initialize_from_data(
+        self, data: torch.Tensor, noise_scale: float = 0.20
+    ) -> None:
         root_logit, conditional_logits = _empirical_tree_logits(data, self.parents)
         with torch.no_grad():
-            self._root_logits.copy_(root_logit + noise_scale * torch.randn_like(self._root_logits))
+            self._root_logits.copy_(
+                root_logit + noise_scale * torch.randn_like(self._root_logits)
+            )
             self._conditional_logits.copy_(
-                conditional_logits.unsqueeze(0) + noise_scale * torch.randn_like(self._conditional_logits)
+                conditional_logits.unsqueeze(0)
+                + noise_scale * torch.randn_like(self._conditional_logits)
             )
             self.logits_pi.zero_()
 
@@ -330,7 +369,9 @@ class LatentResidualTreePC(_TreeMixturePC):
     fully component-specific mixture trees.
     """
 
-    def __init__(self, num_genes: int, num_components: int, parents: Sequence[int]) -> None:
+    def __init__(
+        self, num_genes: int, num_components: int, parents: Sequence[int]
+    ) -> None:
         super().__init__(num_genes, num_components, parents)
         self.base_logits = nn.Parameter(torch.zeros(num_components, num_genes))
         self.residual_edge_logits = nn.Parameter(torch.zeros(num_genes, 2))
@@ -343,17 +384,21 @@ class LatentResidualTreePC(_TreeMixturePC):
     def conditional_logits(self) -> torch.Tensor:
         return self.base_logits.unsqueeze(2) + self.residual_edge_logits.unsqueeze(0)
 
-    def initialize_from_data(self, data: torch.Tensor, noise_scale: float = 0.20) -> None:
+    def initialize_from_data(
+        self, data: torch.Tensor, noise_scale: float = 0.20
+    ) -> None:
         root_logit, conditional_logits = _empirical_tree_logits(data, self.parents)
         marginal = data.float().mean(dim=0).clamp(1e-4, 1.0 - 1e-4)
         base_logits = torch.logit(marginal)
         residual = conditional_logits - base_logits.unsqueeze(1)
         with torch.no_grad():
             self.base_logits.copy_(
-                base_logits.unsqueeze(0) + noise_scale * torch.randn_like(self.base_logits)
+                base_logits.unsqueeze(0)
+                + noise_scale * torch.randn_like(self.base_logits)
             )
             self.base_logits[:, self.root].copy_(
-                root_logit + noise_scale * torch.randn_like(self.base_logits[:, self.root])
+                root_logit
+                + noise_scale * torch.randn_like(self.base_logits[:, self.root])
             )
             self.residual_edge_logits.copy_(residual)
             self.residual_edge_logits[self.root].zero_()

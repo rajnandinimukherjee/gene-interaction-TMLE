@@ -49,7 +49,14 @@ def training_defaults(analysis: int) -> TrainingDefaults:
         learning_rate = float(selected["learning_rate"])
         weight_decay = float(selected.get("weight_decay", fallback.weight_decay))
     except (OSError, ValueError, KeyError, TypeError) as error:
-        raise ValueError(f"Invalid selected-PC configuration: {selection_path}") from error
-    if architecture not in ARCHITECTURES or components < 1 or learning_rate <= 0 or weight_decay < 0:
+        raise ValueError(
+            f"Invalid selected-PC configuration: {selection_path}"
+        ) from error
+    if (
+        architecture not in ARCHITECTURES
+        or components < 1
+        or learning_rate <= 0
+        or weight_decay < 0
+    ):
         raise ValueError(f"Invalid selected-PC configuration: {selection_path}")
     return TrainingDefaults(architecture, components, learning_rate, weight_decay)

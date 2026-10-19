@@ -45,6 +45,4 @@ def marginal_estimand_path(path: Path | None, analysis: int) -> Path | None:
     tagged = tagged_path(path, analysis)
     if tagged is None or MARGINAL_ESTIMAND_TAG in tagged.name:
         return tagged
-    return tagged.with_name(
-        f"{tagged.stem}_{MARGINAL_ESTIMAND_TAG}{tagged.suffix}"
-    )
+    return tagged.with_name(f"{tagged.stem}_{MARGINAL_ESTIMAND_TAG}{tagged.suffix}")

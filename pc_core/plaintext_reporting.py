@@ -88,7 +88,9 @@ def print_training_provenance(model_path: Path) -> None:
     fold_indices = checkpoint.get("fold_indices", ())
     if fold_indices:
         held_out_sizes = ", ".join(str(len(indices)) for indices in fold_indices)
-        print(f"  Cross-fitting folds: {len(fold_indices)} (held out: {held_out_sizes} cells)")
+        print(
+            f"  Cross-fitting folds: {len(fold_indices)} (held out: {held_out_sizes} cells)"
+        )
 
     training = checkpoint.get("training", {})
     if not training:
@@ -101,12 +103,15 @@ def print_training_provenance(model_path: Path) -> None:
     if details:
         print(f"  Training settings: {details}")
     if "elapsed_seconds" in training:
-        print(f"  Training runtime: {format_duration(float(training['elapsed_seconds']))}")
+        print(
+            f"  Training runtime: {format_duration(float(training['elapsed_seconds']))}"
+        )
     histories = training.get("nll_by_fold")
     if histories:
         final_nll = ", ".join(
             f"fold {fold + 1}: {float(history[-1]):.6f}"
-            for fold, history in enumerate(histories) if history
+            for fold, history in enumerate(histories)
+            if history
         )
         if final_nll:
             print(f"  Final training NLL: {final_nll}")
@@ -147,9 +152,15 @@ def print_tmle_result_summary(
     marginal = result.get("estimand") == "marginal_joint_cell_log_interaction"
     label = "Marginal-TMLE" if marginal else "TMLE"
     print(f"\n{label} support")
-    print(f"  Finite {'marginal ' if marginal else ''}point estimates in every fold: {int(targeted.sum()):,} / {total:,}")
-    print(f"  Supported unregularized {'marginal ' if marginal else ''}targets: {int(supported.sum()):,} / {total:,}")
-    print(f"  Unsupported {'marginal ' if marginal else ''}targets: {int((~supported).sum()):,}")
+    print(
+        f"  Finite {'marginal ' if marginal else ''}point estimates in every fold: {int(targeted.sum()):,} / {total:,}"
+    )
+    print(
+        f"  Supported unregularized {'marginal ' if marginal else ''}targets: {int(supported.sum()):,} / {total:,}"
+    )
+    print(
+        f"  Unsupported {'marginal ' if marginal else ''}targets: {int((~supported).sum()):,}"
+    )
     settings = result.get("settings", {})
     if settings:
         minimum_cell_count = settings.get("minimum_cell_count")
@@ -163,11 +174,20 @@ def print_tmle_result_summary(
     minimum_counts = result.get("minimum_heldout_cell_count")
     if minimum_counts is not None and settings.get("minimum_cell_count") is not None:
         below_count = minimum_counts.cpu() < settings["minimum_cell_count"]
-        print(f"  Below held-out cell-count threshold in any fold: {int(below_count.sum()):,}")
+        print(
+            f"  Below held-out cell-count threshold in any fold: {int(below_count.sum()):,}"
+        )
     minimum_probabilities = result.get("minimum_model_probability")
-    if minimum_probabilities is not None and settings.get("minimum_probability") is not None:
-        below_probability = minimum_probabilities.cpu() < settings["minimum_probability"]
-        print(f"  Below model-probability threshold in any fold: {int(below_probability.sum()):,}")
+    if (
+        minimum_probabilities is not None
+        and settings.get("minimum_probability") is not None
+    ):
+        below_probability = (
+            minimum_probabilities.cpu() < settings["minimum_probability"]
+        )
+        print(
+            f"  Below model-probability threshold in any fold: {int(below_probability.sum()):,}"
+        )
 
     supported_indices = torch.nonzero(supported, as_tuple=False).flatten()
     if max_rows is None:
@@ -181,7 +201,9 @@ def print_tmle_result_summary(
         rows = torch.nonzero(targeted, as_tuple=False).flatten()[:max_rows]
         description = f"up to {len(rows):,} targetable but unsupported targets"
 
-    print(f"\n{label} results on the {'marginal ' if marginal else ''}log-interaction scale ({description})")
+    print(
+        f"\n{label} results on the {'marginal ' if marginal else ''}log-interaction scale ({description})"
+    )
     print(
         f"{'Target':<46}  {'Marginal plug-in' if marginal else 'Plug-in':>17}  {'Marginal TMLE' if marginal else 'TMLE':>17}  {'TMLE 95% CI':>31}  "
         f"{'q value':>10}  {'SE':>11}  {'Targeted':>9}  {'Supported':>9}"
@@ -203,4 +225,6 @@ def print_tmle_result_summary(
             f"{str(bool(targeted[row])):>9}  {str(bool(supported[row])):>9}"
         )
     if max_rows is not None and total > len(rows):
-        print(f"  Full {'marginal ' if marginal else ''}numerical results remain in the Torch table: {result.get('output_path', 'see saved output above')}")
+        print(
+            f"  Full {'marginal ' if marginal else ''}numerical results remain in the Torch table: {result.get('output_path', 'see saved output above')}"
+        )

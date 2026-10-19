@@ -50,7 +50,9 @@ def _read_gene_names(path: Path) -> list[str]:
             next(reader)  # Dataset label line; intentionally unused.
             header = next(reader)
         except StopIteration as error:
-            raise ValueError(f"{path} does not contain the expected two header rows.") from error
+            raise ValueError(
+                f"{path} does not contain the expected two header rows."
+            ) from error
 
     if len(header) < 2 or header[0] != "":
         raise ValueError(
@@ -80,7 +82,9 @@ def load_gene_data(
     path = Path(path)
     names = _read_gene_names(path)
     usecols = tuple(range(1, len(names) + 1))
-    values = np.loadtxt(path, delimiter=",", dtype=np.uint8, skiprows=2, usecols=usecols)
+    values = np.loadtxt(
+        path, delimiter=",", dtype=np.uint8, skiprows=2, usecols=usecols
+    )
     if values.ndim == 1:
         values = values[None, :]
 

@@ -18,13 +18,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model", type=Path, default=MODEL_PATH)
     parser.add_argument("--output", type=Path, default=PAIR_CACHE_PATH)
     parser.add_argument("--max-samples", type=int, default=None)
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
     build_pair_cache_from_data(
-        load_panel(args.data, max_samples=args.max_samples), model_path=args.model,
-        output=args.output, device=choose_device(args.device),
+        load_panel(args.data, max_samples=args.max_samples),
+        model_path=args.model,
+        output=args.output,
+        device=choose_device(args.device),
     )

@@ -25,8 +25,14 @@ def load_cross_fitted_models(
 
     checkpoint = load_torch_checkpoint(checkpoint_path)
     required = {
-        "format_version", "model_type", "gene_names", "data_shape", "data_fingerprint",
-        "fold_indices", "state_dicts", "model",
+        "format_version",
+        "model_type",
+        "gene_names",
+        "data_shape",
+        "data_fingerprint",
+        "fold_indices",
+        "state_dicts",
+        "model",
     }
     missing = required - checkpoint.keys()
     if missing:
@@ -36,8 +42,7 @@ def load_cross_fitted_models(
         and checkpoint["model_type"] == "latent_class_pc"
     )
     is_previous_shared_pc = (
-        checkpoint["format_version"] == 3
-        and checkpoint["model_type"] == "scalable_pc"
+        checkpoint["format_version"] == 3 and checkpoint["model_type"] == "scalable_pc"
     )
     is_shared_pc = (
         checkpoint["format_version"] == 4
@@ -48,12 +53,18 @@ def load_cross_fitted_models(
             "Expected a format-version 2 latent checkpoint, version-3 scalable PC checkpoint, "
             "or version-4 cross-fitted PC checkpoint."
         )
-    if tuple(checkpoint["data_shape"]) != data.shape or checkpoint["data_fingerprint"] != data.fingerprint:
+    if (
+        tuple(checkpoint["data_shape"]) != data.shape
+        or checkpoint["data_fingerprint"] != data.fingerprint
+    ):
         raise ValueError("The supplied data do not exactly match this checkpoint.")
     if tuple(checkpoint["gene_names"]) != data.gene_names:
         raise ValueError("Checkpoint gene order does not match the supplied data.")
 
-    folds = [fold.cpu().numpy().astype(np.int64, copy=False) for fold in checkpoint["fold_indices"]]
+    folds = [
+        fold.cpu().numpy().astype(np.int64, copy=False)
+        for fold in checkpoint["fold_indices"]
+    ]
     states = checkpoint["state_dicts"]
     if len(folds) < 2 or len(folds) != len(states):
         raise ValueError("Checkpoint has invalid cross-fitting folds.")
@@ -64,7 +75,9 @@ def load_cross_fitted_models(
     architecture = checkpoint["model"].get("architecture", "latent-class")
     models: list[torch.nn.Module] = []
     for state in states:
-        models.append(restore_pc(architecture, data.shape[1], components, state, device))
+        models.append(
+            restore_pc(architecture, data.shape[1], components, state, device)
+        )
     return checkpoint, models, folds
 
 
@@ -99,7 +112,9 @@ def build_pair_cache_from_data(
 
     pair_i, pair_j = torch.triu_indices(data.shape[1], data.shape[1], offset=1)
     fold_caches: list[dict[str, torch.Tensor | int]] = []
-    print(f"device: {device}; caching marginal probabilities for {len(pair_i):,} pairs across {len(models)} folds")
+    print(
+        f"device: {device}; caching marginal probabilities for {len(pair_i):,} pairs across {len(models)} folds"
+    )
 
     for fold, (model, held_out_indices) in enumerate(zip(models, folds), start=1):
         # Exact model cache: use double precision on CPU even when fitting took
@@ -118,7 +133,9 @@ def build_pair_cache_from_data(
                 "count11": count11,
             }
         )
-        print(f"  fold {fold}: cached marginal probabilities and counts for {len(held_out_indices):,} held-out cells")
+        print(
+            f"  fold {fold}: cached marginal probabilities and counts for {len(held_out_indices):,} held-out cells"
+        )
 
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -141,9 +158,13 @@ def build_pair_cache_from_data(
 def build_pair_cache(args: argparse.Namespace) -> None:
     """CLI adapter for the all-gene workflow."""
 
-    data = load_gene_data(args.data, max_samples=args.max_samples, max_genes=args.max_genes)
+    data = load_gene_data(
+        args.data, max_samples=args.max_samples, max_genes=args.max_genes
+    )
     build_pair_cache_from_data(
-        data, model_path=args.model, output=args.output,
+        data,
+        model_path=args.model,
+        output=args.output,
         device=choose_device(args.device),
     )
 
@@ -151,11 +172,23 @@ def build_pair_cache(args: argparse.Namespace) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path(DEFAULT_DATA))
-    parser.add_argument("--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/cross_fitted_marginal_estimand_pair_cache_999_genes.pt"))
-    parser.add_argument("--max-samples", type=int, default=None, help="Must match training if used.")
-    parser.add_argument("--max-genes", type=int, default=None, help="Must match training if used.")
-    parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")
+    parser.add_argument(
+        "--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt")
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("output/cross_fitted_marginal_estimand_pair_cache_999_genes.pt"),
+    )
+    parser.add_argument(
+        "--max-samples", type=int, default=None, help="Must match training if used."
+    )
+    parser.add_argument(
+        "--max-genes", type=int, default=None, help="Must match training if used."
+    )
+    parser.add_argument(
+        "--device", choices=("auto", "cpu", "cuda", "mps"), default="auto"
+    )
     return parser.parse_args()
 
 
