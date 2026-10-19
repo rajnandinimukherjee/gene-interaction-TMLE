@@ -1,0 +1,8 @@
+__pycache__
+.DS_Store
+pc_core/__pycache__
+analyses/__pycache__
+analyses/twelve_genes/__pycache__
+analyses/twelve_genes/legacy_code
+analyses/nine_nine_nine_genes/__pycache__
+

@@ -1,0 +1,16 @@
+{
+  "architecture": "mixture-chow-liu",
+  "components": 32,
+  "learning_rate": 0.02,
+  "weight_decay": 1e-05,
+  "validation_nll": 4.081627141082636,
+  "selection_data_shape": [
+    11950,
+    12
+  ],
+  "train_size": 9560,
+  "validation_size": 2390,
+  "epochs": 20,
+  "seed": 0,
+  "analysis": 12
+}

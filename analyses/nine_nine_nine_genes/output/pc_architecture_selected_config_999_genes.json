@@ -1,0 +1,16 @@
+{
+  "architecture": "latent-class-residual-tree",
+  "components": 32,
+  "learning_rate": 0.01,
+  "weight_decay": 1e-05,
+  "validation_nll": 241.89563039356693,
+  "selection_data_shape": [
+    11950,
+    999
+  ],
+  "train_size": 9560,
+  "validation_size": 2390,
+  "epochs": 20,
+  "seed": 0,
+  "analysis": 999
+}
