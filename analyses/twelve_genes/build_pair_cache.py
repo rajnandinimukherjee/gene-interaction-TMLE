@@ -1,4 +1,4 @@
-"""Cache all 66 panel pairs using the shared cross-fitted PC implementation."""
+"""Cache all 66 panel marginal pairs using the shared PC implementation."""
 
 from __future__ import annotations
 

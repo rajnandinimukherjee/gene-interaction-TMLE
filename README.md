@@ -1,4 +1,4 @@
-# Cross-fitted gene-interaction analysis
+# Cross-fitted marginal-estimand gene-interaction analysis
 
 There are two public commands.  Select the gene set with `--analysis`; the
 implementation and checkpoint format are shared internally by `pc_core`.
@@ -16,12 +16,12 @@ python train_cross_fitted_pcs.py --analysis 999 --epochs 100 --device cuda
 python sweep_pc_architectures.py --analysis 12
 python sweep_pc_architectures.py --analysis 999 --batch-size 256
 
-# The 12-gene workflow evaluates every selected-order panel combination and
+# The 12-gene workflow evaluates every selected-order marginal panel interaction and
 # writes its result table and plot. --genes limits it to one set.
 python cross_fitted_interactions.py --analysis 12 --interaction-order 3
 
 # The 999-gene workflow builds/reuses a pair-marginal cache, runs pairwise
-# TMLE, then screens q-values/effect sizes before evaluating order > 2.
+# marginal-TMLE, then screens q-values/effect sizes before evaluating order > 2.
 python cross_fitted_interactions.py --analysis 999 --interaction-order 3 \
   --screen-max-q 0.05 --screen-min-abs-log-interaction 0.25
 ```
@@ -29,8 +29,10 @@ python cross_fitted_interactions.py --analysis 999 --interaction-order 3 \
 Artifacts are written to the selected study directory and always carry its
 tag, including when an explicit output path is supplied: for example,
 `cross_fitted_pcs_12_genes.pt`,
-`3_pt_interactions_12_genes.pt`, or
-`cross_fitted_pcs_999_genes_pairwise_tmle.pt`.
+`3_pt_marginal_estimand_interactions_12_genes.pt`, or
+`cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle.pt`.
+Interaction artifacts—not the reusable PC checkpoint—include a
+`marginal_estimand` marker in their filename.
 
 Every root `cross_fitted_interactions.py` command also writes a new plaintext,
 timestamped log in `analyses/twelve_genes/logs/` or
@@ -38,7 +40,7 @@ timestamped log in `analyses/twelve_genes/logs/` or
 order and submit time, and existing logs are never replaced.  `--log PATH`
 sets a base path but still appends those identifiers.  Logs record the
 checkpoint's training settings, final NLLs and training duration; the analysis
-settings; per-fold TMLE support; a readable TMLE result table; and the total
+settings; per-fold marginal-TMLE support; a readable marginal-TMLE result table; and the total
 analysis runtime.
 For the 999-gene workflow the table is the 25 largest supported effects, with
 the full numerical table retained in the `.pt` artifact.
@@ -47,7 +49,7 @@ Every interaction analysis also writes three figures beside the study results:
 
 - `*_overview.png`: all supported estimates, shown against BH q-value when
   inferential q-values are available;
-- `*_forest.png`: the strongest positive and negative TMLE estimates with
+- `*_forest.png`: the strongest positive and negative marginal-TMLE estimates with
   95% confidence intervals; and
 - `*_network.png` for pairs, or `*_hypergraph.png` for panel interactions of
   order greater than two.
@@ -61,7 +63,7 @@ tables can be plotted without rerunning TMLE:
 
 ```bash
 python -m pc_core.interaction_plots \
-  --results analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes_pairwise_tmle.pt
+  --results analyses/nine_nine_nine_genes/output/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle.pt
 ```
 
 The 20-epoch architecture sweeps selected different defaults for the studies:

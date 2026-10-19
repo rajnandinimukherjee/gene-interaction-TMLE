@@ -1,10 +1,11 @@
 """Unified cross-fitted interaction analysis for 12 or 999 genes.
 
-The 12-gene study evaluates every requested-order panel combination and makes
-its comparison plot.  The 999-gene study creates/reuses a pair cache, applies
-TMLE to all pairs, and screens pairwise q-values/effect sizes before querying
-higher-order candidates.  Shared options retain the same spelling in both
-studies; options marked 999-only configure the scalable screened workflow.
+The 12-gene study evaluates every requested-order marginal joint-cell
+interaction and makes its comparison plot. The 999-gene study creates/reuses
+a pair-marginal cache, applies marginal-TMLE to all pairs, and screens
+pairwise q-values/effect sizes before querying higher-order candidates.
+Shared options retain the same spelling in both studies; options marked
+999-only configure the scalable screened workflow.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ import time
 
 from analyses.nine_nine_nine_genes.config import MODEL_PATH as ALL_GENE_MODEL_PATH
 from analyses.nine_nine_nine_genes.config import LOG_DIR as ALL_GENE_LOG_DIR
-from analyses.naming import analysis_tag, tagged_path
+from analyses.naming import analysis_tag, marginal_estimand_path
 from analyses.twelve_genes.config import ANALYSIS_TAG as TWELVE_ANALYSIS_TAG
 from analyses.twelve_genes.config import DATA as DEFAULT_DATA
 from analyses.twelve_genes.config import LOG_DIR as TWELVE_LOG_DIR
@@ -92,15 +93,15 @@ def _default_model(analysis: int) -> Path:
 def _result_path(args: argparse.Namespace) -> Path:
     """Return the final result table path used to derive the default log."""
 
-    requested_output = tagged_path(args.output, args.analysis)
+    requested_output = marginal_estimand_path(args.output, args.analysis)
     if requested_output is not None:
         return requested_output
     if args.analysis == 12:
-        return TWELVE_OUTPUT_DIR / f"{args.interaction_order}_pt_interactions_{TWELVE_ANALYSIS_TAG}.pt"
+        return TWELVE_OUTPUT_DIR / f"{args.interaction_order}_pt_marginal_estimand_interactions_{TWELVE_ANALYSIS_TAG}.pt"
     model = Path(args.model or _default_model(999))
     if args.interaction_order == 2:
-        return model.parent / f"{model.stem}_pairwise_tmle.pt"
-    return model.parent / f"{model.stem}_order{args.interaction_order}_tmle.pt"
+        return model.parent / f"{model.stem}_marginal_estimand_pairwise_tmle.pt"
+    return model.parent / f"{model.stem}_marginal_estimand_order{args.interaction_order}_tmle.pt"
 
 
 def _timestamped_log_path(
@@ -132,7 +133,7 @@ def _next_unused_path(path: Path) -> Path:
 
 def _default_log_path(args: argparse.Namespace, submitted_at: datetime) -> Path:
     log_dir = TWELVE_LOG_DIR if args.analysis == 12 else ALL_GENE_LOG_DIR
-    base_path = log_dir / f"cross_fitted_interactions_{analysis_tag(args.analysis)}.txt"
+    base_path = log_dir / f"cross_fitted_marginal_estimand_interactions_{analysis_tag(args.analysis)}.txt"
     return _timestamped_log_path(base_path, args, submitted_at)
 
 
@@ -140,9 +141,10 @@ def _print_run_header(args: argparse.Namespace, submitted_at: datetime) -> None:
     """Print the stable provenance header retained in every plaintext log."""
 
     model = Path(args.model or _default_model(args.analysis))
-    print("Cross-fitted interaction analysis")
+    print("Cross-fitted marginal-estimand interaction analysis")
     print(f"Started: {submitted_at.isoformat(timespec='microseconds')}")
     print(f"Analysis: {args.analysis}-gene")
+    print("Estimand: marginal joint-cell log interaction")
     print("Run settings")
     for name, value in vars(args).items():
         print(f"  {name.replace('_', '-')}: {value}")
@@ -159,8 +161,8 @@ def _run_twelve(args: argparse.Namespace) -> None:
             model=args.model or _default_model(12),
             interaction_order=args.interaction_order,
             genes=args.genes,
-            output=tagged_path(args.output, 12),
-            plot=tagged_path(args.plot, 12),
+            output=marginal_estimand_path(args.output, 12),
+            plot=marginal_estimand_path(args.plot, 12),
             plots_dir=args.plots_dir,
             forest_top_n=args.forest_top_n,
             network_max_items=args.network_max_items,
@@ -185,13 +187,13 @@ def _run_all_genes(args: argparse.Namespace) -> None:
             max_genes=args.max_genes,
             interaction_order=args.interaction_order,
             genes=args.genes,
-            cache=tagged_path(args.cache, 999),
+            cache=marginal_estimand_path(args.cache, 999),
             rebuild_cache=args.rebuild_cache,
-            output=tagged_path(args.output, 999),
-            pairwise_output=tagged_path(args.pairwise_output, 999),
+            output=marginal_estimand_path(args.output, 999),
+            pairwise_output=marginal_estimand_path(args.pairwise_output, 999),
             candidates=args.candidates,
-            candidates_csv=tagged_path(args.candidates_csv, 999),
-            screened_pairs_csv=tagged_path(args.screened_pairs_csv, 999),
+            candidates_csv=marginal_estimand_path(args.candidates_csv, 999),
+            screened_pairs_csv=marginal_estimand_path(args.screened_pairs_csv, 999),
             plots_dir=args.plots_dir,
             forest_top_n=args.forest_top_n,
             network_max_items=args.network_max_items,
@@ -212,11 +214,11 @@ def _run_all_genes(args: argparse.Namespace) -> None:
 
 
 def main(args: argparse.Namespace | None = None) -> None:
-    """Dispatch to the panel or cached all-gene interaction workflow."""
+    """Dispatch to the panel or cached all-gene marginal-TMLE workflow."""
 
     args = parse_args() if args is None else args
     submitted_at = datetime.now().astimezone()
-    requested_log = tagged_path(getattr(args, "log", None), args.analysis)
+    requested_log = marginal_estimand_path(getattr(args, "log", None), args.analysis)
     log_base = requested_log or _default_log_path(args, submitted_at)
     log_path = _next_unused_path(
         _timestamped_log_path(log_base, args, submitted_at) if requested_log else log_base

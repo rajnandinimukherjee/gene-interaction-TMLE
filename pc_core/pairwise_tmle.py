@@ -1,4 +1,4 @@
-"""Run cached, batched cross-fitted TMLE for every gene pair."""
+"""Run cached, batched cross-fitted marginal-TMLE for every gene pair."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from .runtime import choose_device, load_torch_checkpoint
 
 
 NORMAL_95_CRITICAL_VALUE = 1.959963984540054
+MARGINAL_ESTIMAND = "marginal_joint_cell_log_interaction"
 
 
 def _pair_probabilities(fold: dict, pair_i: torch.Tensor, pair_j: torch.Tensor) -> torch.Tensor:
@@ -173,7 +174,7 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
     min_probability = torch.full((n_pairs,), float("inf"), dtype=dtype, device=device)
     fold_sizes: list[int] = []
 
-    print(f"TMLE device: {device}; evaluating {n_pairs:,} pairs across {len(cache['folds'])} folds")
+    print(f"Marginal-TMLE device: {device}; evaluating {n_pairs:,} pairs across {len(cache['folds'])} folds")
     for fold_number, raw_fold in enumerate(cache["folds"], start=1):
         fold = {key: value.to(device) if isinstance(value, torch.Tensor) else value for key, value in raw_fold.items()}
         probabilities = _pair_probabilities(fold, pair_i, pair_j).to(dtype)
@@ -194,7 +195,7 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
         eif_sum_by_fold.append(eif_sum)
         eif_square_sum_by_fold.append(eif_square_sum)
         valid_by_fold.append(valid)
-        print(f"  fold {fold_number}: {int(valid.sum()):,} supported TMLE targets")
+        print(f"  fold {fold_number}: {int(valid.sum()):,} supported marginal-TMLE targets")
 
     total_n = sum(fold_sizes)
     plugin_log = plugin_log_total / total_n
@@ -222,6 +223,7 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
     log_ci_high = tmle_log + NORMAL_95_CRITICAL_VALUE * se
     result = {
         "format_version": 2,
+        "estimand": MARGINAL_ESTIMAND,
         "source_cache": str(Path(args.cache)),
         "data_fingerprint": cache["data_fingerprint"],
         "gene_names": cache["gene_names"],
@@ -256,8 +258,8 @@ def compute_pairwise_tmle(args: argparse.Namespace) -> None:
         lambda row: f"{names[int(pair_i[row])]}-{names[int(pair_j[row])]}",
         max_rows=25,
     )
-    print(f"Pairs passing q/effect screen: {int(screened.sum()):,}")
-    print(f"Saved all pairwise results to {output}")
+    print(f"Pairs passing marginal q/effect screen: {int(screened.sum()):,}")
+    print(f"Saved all marginal pairwise results to {output}")
 
     if not getattr(args, "no_plots", False):
         default_plot_dir = output.parent.parent / "plots" if output.parent.name == "output" else output.parent / "plots"
@@ -285,7 +287,7 @@ def write_screened_pairs_csv(result: dict, path: Path) -> None:
     names = result["gene_names"]
     with path.open("w", newline="") as handle:
         writer = csv.writer(handle)
-        writer.writerow(("gene_1", "gene_2", "tmle_log_interaction", "tmle_se", "q_value", "minimum_heldout_cell_count"))
+        writer.writerow(("gene_1", "gene_2", "marginal_tmle_log_interaction", "tmle_se", "q_value", "minimum_heldout_cell_count"))
         for row in keep:
             writer.writerow((
                 names[int(result["pair_i"][row])],
@@ -295,13 +297,13 @@ def write_screened_pairs_csv(result: dict, path: Path) -> None:
                 float(result["q_value"][row]),
                 int(result["minimum_heldout_cell_count"][row]),
             ))
-    print(f"Wrote {len(keep):,} screened pairs to {path}")
+    print(f"Wrote {len(keep):,} screened marginal pairs to {path}")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cache", type=Path, default=Path("output/cross_fitted_pair_cache_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/cross_fitted_pairwise_tmle_999_genes.pt"))
+    parser.add_argument("--cache", type=Path, default=Path("output/cross_fitted_marginal_estimand_pair_cache_999_genes.pt"))
+    parser.add_argument("--output", type=Path, default=Path("output/cross_fitted_marginal_estimand_pairwise_tmle_999_genes.pt"))
     parser.add_argument("--minimum-cell-count", type=int, default=5)
     parser.add_argument("--minimum-probability", type=float, default=1e-12)
     parser.add_argument("--bisection-iterations", type=int, default=64)

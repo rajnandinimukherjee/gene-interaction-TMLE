@@ -1,4 +1,4 @@
-"""Create scalable summaries of cross-fitted log-interaction results.
+"""Create scalable summaries of cross-fitted marginal log-interaction results.
 
 The module accepts either result-table layout used in this repository:
 ``pair_i``/``pair_j`` for pairwise studies or ``gene_sets`` for a fixed
@@ -513,7 +513,11 @@ def generate_interaction_plots(
     overview = output_dir / f"{prefix}_overview.png"
     forest = output_dir / f"{prefix}_forest.png"
     network = output_dir / f"{prefix}_{'network' if order == 2 else 'hypergraph'}.png"
-    quantity = f"Cross-fitted {order}-point log interactions"
+    marginal = result.get("estimand") == "marginal_joint_cell_log_interaction"
+    quantity = (
+        f"Cross-fitted marginal {order}-point log interactions"
+        if marginal else f"Cross-fitted {order}-point log interactions"
+    )
     plot_effect_evidence_overview(
         estimates, supported_indices, q_values,
         title=(

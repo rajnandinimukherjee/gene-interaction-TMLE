@@ -1,4 +1,4 @@
-"""Plot every order-n log interaction for the curated 12-gene panel.
+"""Plot every marginal order-n log interaction for the curated 12-gene panel.
 
 This is the replacement for the legacy top-level script.  It retains its two
 important options, ``--model`` and ``--interaction-order``, but queries the
@@ -28,12 +28,13 @@ from pc_core.higher_order_tmle import (
     universal_tmle_fold,
 )
 from pc_core.interaction_plots import generate_interaction_plots
-from pc_core.pairwise_tmle import NORMAL_95_CRITICAL_VALUE, benjamini_hochberg
+from pc_core.pairwise_tmle import MARGINAL_ESTIMAND, NORMAL_95_CRITICAL_VALUE, benjamini_hochberg
 from pc_core.plaintext_reporting import print_tmle_result_summary
 from pc_core.runtime import choose_device
 
 from analyses.twelve_genes.config import ANALYSIS_TAG, DATA, MODEL_PATH, OUTPUT_DIR, PLOTS_DIR
 from analyses.twelve_genes.data import load_panel
+from analyses.naming import marginal_estimand_path
 
 
 def parse_args() -> argparse.Namespace:
@@ -93,10 +94,10 @@ def plot_log_interactions(
     # interaction vertically rather than collapsing the panel into a summary.
     height = len(labels) * 0.3 + 0.2
     figure, axis = plt.subplots(figsize=(6, height))
-    axis.scatter(plugin_values, y, label="plug-in", marker="o")
+    axis.scatter(plugin_values, y, label="marginal PC plug-in", marker="o")
     valid = supported_values & np.isfinite(tmle_values) & np.isfinite(errors)
     axis.errorbar(tmle_values[valid], y[valid], xerr=NORMAL_95_CRITICAL_VALUE * errors[valid],
-                  fmt="x", capsize=2, color="tab:orange", label="w/ TMLE (95% CI)")
+                  fmt="x", capsize=2, color="tab:orange", label="marginal TMLE (95% CI)")
     unsupported = ~supported_values & np.isfinite(tmle_values)
     axis.scatter(tmle_values[unsupported], y[unsupported], marker="x", color="tab:orange",
                  zorder=3, label="TMLE (unsupported; no CI)")
@@ -126,8 +127,8 @@ def plot_log_interactions(
     axis.set_xlim(-1.05 * half_width, 1.05 * half_width)
     axis.axvline(0, color="0.5", linewidth=1, linestyle="--", zorder=0)
     axis.set(yticks=y, yticklabels=[labels[index] for index in order],
-             xlabel="log(interaction strength)")
-    axis.set_title(f"Cross-fitted {interaction_order}-pt log interactions", pad=0)
+             xlabel="marginal log(interaction strength)")
+    axis.set_title(f"Cross-fitted marginal {interaction_order}-pt log interactions", pad=0)
     # Matplotlib places y=0 at the bottom by default.  Reverse it so the
     # largest empirical log interaction is the top gene tuple in the plot.
     axis.invert_yaxis()
@@ -191,7 +192,7 @@ def main(args: argparse.Namespace | None = None) -> None:
     minimum_model_probability = torch.full((count,), float("inf"), dtype=dtype)
     fold_sizes: list[int] = []
 
-    print(f"Evaluating {count:,} order-{order} interactions across {len(models)} folds.")
+    print(f"Evaluating {count:,} marginal order-{order} interactions across {len(models)} folds.")
     for fold_number, (model, held_out_indices) in enumerate(zip(models, folds), start=1):
         held_out = torch.as_tensor(data.values[held_out_indices], dtype=torch.uint8, device=device)
         fold_size = len(held_out)
@@ -226,7 +227,7 @@ def main(args: argparse.Namespace | None = None) -> None:
         tmle_total += fold_size * torch.nan_to_num(fold_log, nan=0.0)
         eif_sum_total += torch.nan_to_num(fold_eif_sum, nan=0.0)
         eif_square_sum_total += torch.nan_to_num(fold_eif_square_sum, nan=0.0)
-        print(f"  fold {fold_number}: {int(fold_valid.sum()):,}/{count:,} TMLE targets supported")
+        print(f"  fold {fold_number}: {int(fold_valid.sum()):,}/{count:,} marginal-TMLE targets supported")
 
     total_n = sum(fold_sizes)
     plugin_log = plugin_total / total_n
@@ -259,14 +260,15 @@ def main(args: argparse.Namespace | None = None) -> None:
     # result or its tall vertical plot.  Explicit output paths retain their
     # usual override behaviour.
     if requested_label is None:
-        default_stem = f"{order}_pt_interactions_{ANALYSIS_TAG}"
+        default_stem = f"{order}_pt_marginal_estimand_interactions_{ANALYSIS_TAG}"
     else:
-        default_stem = f"{order}_pt_interaction_{requested_label}_{ANALYSIS_TAG}"
-    output = args.output or OUTPUT_DIR / f"{default_stem}.pt"
-    plot = args.plot or PLOTS_DIR / f"{default_stem}.png"
+        default_stem = f"{order}_pt_marginal_estimand_interaction_{requested_label}_{ANALYSIS_TAG}"
+    output = marginal_estimand_path(args.output, 12) or OUTPUT_DIR / f"{default_stem}.pt"
+    plot = marginal_estimand_path(args.plot, 12) or PLOTS_DIR / f"{default_stem}.png"
     output.parent.mkdir(parents=True, exist_ok=True)
     result = {
         "format_version": 2,
+        "estimand": MARGINAL_ESTIMAND,
         "gene_names": list(data.gene_names),
         "gene_sets": gene_sets_cpu,
         "plugin_log_interaction": plugin_log,
@@ -301,7 +303,7 @@ def main(args: argparse.Namespace | None = None) -> None:
             network_max_degree=getattr(args, "network_max_degree", 4),
         )
         print("Wrote interaction plots: " + ", ".join(str(path) for path in plot_paths))
-    print(f"Wrote {output} and {plot}")
+    print(f"Wrote marginal interaction results to {output} and {plot}")
 
 
 if __name__ == "__main__":

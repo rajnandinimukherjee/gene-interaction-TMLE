@@ -1,4 +1,4 @@
-# 12-gene interaction analysis
+# 12-gene marginal-estimand analysis
 
 This guide explains the current analysis of a fixed panel of 12 genes. It uses the shared probabilistic-circuit (PC) models and batched TMLE code. Files in `legacy_code/` are kept only for historical reference; they did not create the current results.
 
@@ -33,8 +33,8 @@ Every checkpoint and result file stores a SHA-256 fingerprint of the ordered gen
 | `output/pc_architecture_sweep_12_genes.csv` | Results for every model-selection candidate. |
 | `output/pc_architecture_selected_config_12_genes.json` | The settings selected by validation likelihood. |
 | `output/cross_fitted_pcs_12_genes.pt` | The two fitted fold-specific PCs and run provenance. |
-| `output/{2,3,4,5,6,7}_pt_interactions_12_genes.pt` | Machine-readable interaction results for one order. |
-| `plots/{order}_pt_interactions_12_genes.png` | A labelled comparison plot for every requested gene set. |
+| `output/{2,3,4,5,6,7}_pt_marginal_estimand_interactions_12_genes.pt` | Machine-readable marginal-interaction results for one order. |
+| `plots/{order}_pt_marginal_estimand_interactions_12_genes.png` | A labelled marginal-interaction plot for every requested gene set. |
 | `plots/*_overview.png`, `*_forest.png`, `*_network.png`, `*_hypergraph.png` | Smaller summary figures. |
 | `logs/*.txt` | Plain-text run details, support checks, and results. |
 
@@ -258,7 +258,7 @@ References: Benjamini and Hochberg, “Controlling the False Discovery Rate: A P
 
 The `.pt` result table includes the gene set, PC plug-in effect, TMLE effect, SE, confidence interval, p-value, q-value, smallest observed count, smallest model probability, and targeted/supported flags. For pairs, exponentiate the log effect to obtain the odds ratio. Do not treat a screened result as proof of direct regulation or causation.
 
-### Full-panel comparison: `{order}_pt_interactions_12_genes.png`
+### Full-panel marginal comparison: `{order}_pt_marginal_estimand_interactions_12_genes.png`
 
 This tall figure intentionally gives every requested set its own row.
 

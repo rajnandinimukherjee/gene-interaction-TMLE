@@ -1,4 +1,4 @@
-"""Materialize exact pair marginals and held-out contingency counts once."""
+"""Materialize exact marginal pair probabilities and held-out counts once."""
 
 from __future__ import annotations
 
@@ -99,7 +99,7 @@ def build_pair_cache_from_data(
 
     pair_i, pair_j = torch.triu_indices(data.shape[1], data.shape[1], offset=1)
     fold_caches: list[dict[str, torch.Tensor | int]] = []
-    print(f"device: {device}; caching {len(pair_i):,} pairs for {len(models)} folds")
+    print(f"device: {device}; caching marginal probabilities for {len(pair_i):,} pairs across {len(models)} folds")
 
     for fold, (model, held_out_indices) in enumerate(zip(models, folds), start=1):
         # Exact model cache: use double precision on CPU even when fitting took
@@ -118,7 +118,7 @@ def build_pair_cache_from_data(
                 "count11": count11,
             }
         )
-        print(f"  fold {fold}: cached {len(held_out_indices):,} held-out cells")
+        print(f"  fold {fold}: cached marginal probabilities and counts for {len(held_out_indices):,} held-out cells")
 
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -135,7 +135,7 @@ def build_pair_cache_from_data(
         },
         output,
     )
-    print(f"Saved pairwise probability/count cache to {output}")
+    print(f"Saved marginal pairwise probability/count cache to {output}")
 
 
 def build_pair_cache(args: argparse.Namespace) -> None:
@@ -152,7 +152,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path(DEFAULT_DATA))
     parser.add_argument("--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/cross_fitted_pair_cache_999_genes.pt"))
+    parser.add_argument("--output", type=Path, default=Path("output/cross_fitted_marginal_estimand_pair_cache_999_genes.pt"))
     parser.add_argument("--max-samples", type=int, default=None, help="Must match training if used.")
     parser.add_argument("--max-genes", type=int, default=None, help="Must match training if used.")
     parser.add_argument("--device", choices=("auto", "cpu", "cuda", "mps"), default="auto")

@@ -1,4 +1,4 @@
-"""Query screened higher-order sets from saved PCs and run batched TMLE."""
+"""Query screened higher-order sets and run batched marginal TMLE."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import torch
 
 from .build_pair_cache import load_cross_fitted_models
 from .data import load_gene_data
-from .pairwise_tmle import NORMAL_95_CRITICAL_VALUE, benjamini_hochberg
+from .pairwise_tmle import MARGINAL_ESTIMAND, NORMAL_95_CRITICAL_VALUE, benjamini_hochberg
 from .plaintext_reporting import print_tmle_result_summary
 from .runtime import choose_device, load_torch_checkpoint
 
@@ -124,6 +124,9 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
     missing = required - candidate.keys()
     if missing or candidate.get("format_version") != 1:
         raise ValueError(f"Expected version-1 candidate file; missing: {', '.join(sorted(missing))}")
+    candidate_estimand = candidate.get("estimand")
+    if candidate_estimand is not None and candidate_estimand != MARGINAL_ESTIMAND:
+        raise ValueError("Candidate file was created for a different estimand.")
     gene_sets_cpu = candidate["gene_sets"].to(torch.long)
     if gene_sets_cpu.ndim != 2 or len(gene_sets_cpu) == 0:
         raise ValueError("Candidate file has no gene sets to evaluate.")
@@ -151,7 +154,7 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
     min_probability = torch.full((n_sets,), float("inf"), dtype=dtype)
     fold_sizes: list[int] = []
 
-    print(f"TMLE device: {device}; querying {n_sets:,} order-{order} candidate sets")
+    print(f"Marginal-TMLE device: {device}; querying {n_sets:,} order-{order} candidate sets")
     for fold_number, (model, held_out_indices) in enumerate(zip(models, folds), start=1):
         held_out = torch.as_tensor(data.values[held_out_indices], dtype=torch.uint8, device=device)
         fold_size = len(held_out_indices)
@@ -183,7 +186,7 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
         tmle_total += fold_size * torch.nan_to_num(fold_log, nan=0.0)
         eif_sum_total += torch.nan_to_num(fold_eif_sum, nan=0.0)
         eif_square_sum_total += torch.nan_to_num(fold_eif_square_sum, nan=0.0)
-        print(f"  fold {fold_number}: {int(fold_valid.sum()):,} supported targets")
+        print(f"  fold {fold_number}: {int(fold_valid.sum()):,} supported marginal-TMLE targets")
 
     total_n = sum(fold_sizes)
     plugin_log = plugin_total / total_n
@@ -201,6 +204,7 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     result = {
         "format_version": 2,
+        "estimand": MARGINAL_ESTIMAND,
         "source_candidates": str(Path(args.candidates)),
         "data_fingerprint": data.fingerprint,
         "gene_names": list(data.gene_names),
@@ -230,15 +234,15 @@ def run_higher_order_tmle(args: argparse.Namespace) -> None:
         lambda row: "-".join(names[int(gene)] for gene in gene_sets_cpu[row]),
         max_rows=25,
     )
-    print(f"Saved higher-order results to {output}")
+    print(f"Saved marginal higher-order results to {output}")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path("input/trainingData_11950Cells_1000Genes.csv"))
     parser.add_argument("--model", type=Path, default=Path("output/cross_fitted_pcs_999_genes.pt"))
-    parser.add_argument("--candidates", type=Path, default=Path("output/order3_candidates_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/order3_tmle_999_genes.pt"))
+    parser.add_argument("--candidates", type=Path, default=Path("output/marginal_estimand_order3_candidates_999_genes.pt"))
+    parser.add_argument("--output", type=Path, default=Path("output/marginal_estimand_order3_tmle_999_genes.pt"))
     parser.add_argument("--minimum-cell-count", type=int, default=5)
     parser.add_argument("--minimum-probability", type=float, default=1e-12)
     parser.add_argument("--bisection-iterations", type=int, default=64)

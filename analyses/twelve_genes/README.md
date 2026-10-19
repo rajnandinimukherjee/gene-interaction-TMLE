@@ -1,4 +1,4 @@
-# Curated 12-gene workflow
+# Curated 12-gene marginal-estimand workflow
 
 This analysis selects, in this exact order:
 
@@ -24,9 +24,9 @@ python cross_fitted_interactions.py --analysis 12 \
   --interaction-order 3
 ```
 
-It evaluates all `C(12, order)` sets, writes the log-interaction estimates to
-`output/<order>_pt_interactions_12_genes.pt`, and retains the former
-all-combinations comparison plot at `plots/<order>_pt_interactions_12_genes.png`.
+It evaluates all `C(12, order)` sets, writes the marginal log-interaction estimates to
+`output/<order>_pt_marginal_estimand_interactions_12_genes.pt`, and retains the former
+all-combinations comparison plot at `plots/<order>_pt_marginal_estimand_interactions_12_genes.png`.
 That figure is a vertical, labelled row for every interaction (for example,
 66 rows at order 2 and 220 at order 3).  A focused `--genes` query receives a
 gene-set-specific default filename, so it cannot overwrite the canonical

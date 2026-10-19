@@ -1,4 +1,4 @@
-"""Screen pairwise TMLE hits into bounded higher-order candidate cliques."""
+"""Screen marginal pairwise-TMLE hits into higher-order candidate cliques."""
 
 from __future__ import annotations
 
@@ -112,6 +112,7 @@ def screen_higher_order(args: argparse.Namespace) -> None:
         {
             "format_version": 1,
             "source_pairwise_results": str(Path(args.pairwise_results)),
+            "estimand": result.get("estimand", "marginal_joint_cell_log_interaction"),
             "data_fingerprint": result.get("data_fingerprint"),
             "gene_names": result["gene_names"],
             "gene_sets": candidate_tensor,
@@ -130,10 +131,10 @@ def screen_higher_order(args: argparse.Namespace) -> None:
         },
         output,
     )
-    print(f"Pairwise q/effect hits: {len(edges):,}")
+    print(f"Marginal pairwise q/effect hits: {len(edges):,}")
     print(f"Edges retained after {args.edge_policy} degree cap: {retained_edge_count:,}")
     print(f"Order-{args.order} candidates: {len(candidates):,}")
-    print(f"Saved candidates to {output}")
+    print(f"Saved marginal higher-order candidates to {output}")
     if args.csv is not None:
         write_candidates_csv(output, args.csv)
 
@@ -148,7 +149,7 @@ def write_candidates_csv(candidate_path: Path, csv_path: Path) -> None:
         order = len(sets[0]) if sets else int(candidate["settings"]["order"])
         writer.writerow(
             [f"gene_{index + 1}" for index in range(order)]
-            + ["minimum_abs_pair_effect", "maximum_pair_q_value"]
+            + ["minimum_abs_marginal_pair_effect", "maximum_pair_q_value"]
         )
         for index, genes in enumerate(sets):
             writer.writerow(
@@ -158,13 +159,13 @@ def write_candidates_csv(candidate_path: Path, csv_path: Path) -> None:
                     float(candidate["maximum_pair_q_value"][index]),
                 ]
             )
-    print(f"Wrote candidate table to {csv_path}")
+    print(f"Wrote marginal candidate table to {csv_path}")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pairwise-results", type=Path, default=Path("output/cross_fitted_pairwise_tmle_999_genes.pt"))
-    parser.add_argument("--output", type=Path, default=Path("output/order3_candidates_999_genes.pt"))
+    parser.add_argument("--pairwise-results", type=Path, default=Path("output/cross_fitted_marginal_estimand_pairwise_tmle_999_genes.pt"))
+    parser.add_argument("--output", type=Path, default=Path("output/marginal_estimand_order3_candidates_999_genes.pt"))
     parser.add_argument("--order", type=int, default=3)
     parser.add_argument("--max-q", type=float, default=0.05)
     parser.add_argument("--min-abs-log-interaction", type=float, default=0.25)

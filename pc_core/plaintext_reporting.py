@@ -1,4 +1,4 @@
-"""Plaintext reporting helpers for reproducible interaction runs.
+"""Plaintext reporting helpers for reproducible marginal-TMLE runs.
 
 The numerical result tables remain Torch checkpoints so downstream code can
 load them efficiently.  These helpers deliberately duplicate the essential
@@ -66,7 +66,7 @@ def tee_to_plaintext_log(path: Path) -> Iterator[None]:
 
 
 def print_training_provenance(model_path: Path) -> None:
-    """Print checkpoint training metadata that is useful beside TMLE output."""
+    """Print checkpoint training metadata that is useful beside marginal-TMLE output."""
 
     print("Training provenance")
     print(f"  Cross-fitted PC checkpoint: {model_path}")
@@ -127,7 +127,7 @@ def print_tmle_result_summary(
     *,
     max_rows: int | None,
 ) -> None:
-    """Print TMLE support diagnostics and a readable subset of result rows.
+    """Print marginal-TMLE support diagnostics and a readable result subset.
 
     ``max_rows=None`` prints every row, which is suitable for the small
     curated panel.  Large analyses receive the supported rows with the
@@ -144,10 +144,12 @@ def print_tmle_result_summary(
     q_value = result["q_value"].cpu()
     total = len(tmle)
 
-    print("\nTMLE support")
-    print(f"  Finite point estimates in every fold: {int(targeted.sum()):,} / {total:,}")
-    print(f"  Supported unregularized targets: {int(supported.sum()):,} / {total:,}")
-    print(f"  Unsupported targets: {int((~supported).sum()):,}")
+    marginal = result.get("estimand") == "marginal_joint_cell_log_interaction"
+    label = "Marginal-TMLE" if marginal else "TMLE"
+    print(f"\n{label} support")
+    print(f"  Finite {'marginal ' if marginal else ''}point estimates in every fold: {int(targeted.sum()):,} / {total:,}")
+    print(f"  Supported unregularized {'marginal ' if marginal else ''}targets: {int(supported.sum()):,} / {total:,}")
+    print(f"  Unsupported {'marginal ' if marginal else ''}targets: {int((~supported).sum()):,}")
     settings = result.get("settings", {})
     if settings:
         minimum_cell_count = settings.get("minimum_cell_count")
@@ -174,14 +176,14 @@ def print_tmle_result_summary(
     elif len(supported_indices):
         ranked = torch.argsort(torch.abs(tmle[supported_indices]), descending=True)
         rows = supported_indices[ranked[:max_rows]]
-        description = f"top {len(rows):,} supported targets by absolute TMLE log interaction"
+        description = f"top {len(rows):,} supported targets by absolute {'marginal-' if marginal else ''}TMLE log interaction"
     else:
         rows = torch.nonzero(targeted, as_tuple=False).flatten()[:max_rows]
         description = f"up to {len(rows):,} targetable but unsupported targets"
 
-    print(f"\nTMLE results on the log-interaction scale ({description})")
+    print(f"\n{label} results on the {'marginal ' if marginal else ''}log-interaction scale ({description})")
     print(
-        f"{'Target':<46}  {'Plug-in':>13}  {'TMLE':>13}  {'TMLE 95% CI':>31}  "
+        f"{'Target':<46}  {'Marginal plug-in' if marginal else 'Plug-in':>17}  {'Marginal TMLE' if marginal else 'TMLE':>17}  {'TMLE 95% CI':>31}  "
         f"{'q value':>10}  {'SE':>11}  {'Targeted':>9}  {'Supported':>9}"
     )
     print("-" * 166)
@@ -201,4 +203,4 @@ def print_tmle_result_summary(
             f"{str(bool(targeted[row])):>9}  {str(bool(supported[row])):>9}"
         )
     if max_rows is not None and total > len(rows):
-        print(f"  Full numerical results remain in the Torch table: {result.get('output_path', 'see saved output above')}")
+        print(f"  Full {'marginal ' if marginal else ''}numerical results remain in the Torch table: {result.get('output_path', 'see saved output above')}")

@@ -1,4 +1,4 @@
-# 999-gene interaction analysis
+# 999-gene marginal-estimand analysis
 
 This guide explains the scalable analysis that considers all 999 genes. It can calculate every pairwise interaction, but it cannot practically test every possible three-gene or larger set. Higher-order results therefore come from a clearly labelled screening workflow and should be treated as exploratory.
 
@@ -24,10 +24,10 @@ The fingerprint hashes the ordered gene names and their binary values. The code 
 | `output/pc_architecture_sweep_999_genes.csv` | Results for all architecture-selection candidates. |
 | `output/pc_architecture_selected_config_999_genes.json` | Settings selected by validation likelihood. |
 | `output/cross_fitted_pcs_999_genes.pt` | Two trained fold-specific PCs and run provenance. |
-| `output/cross_fitted_pcs_999_genes_pair_cache.pt` | Exact PC pair marginals and held-out pair counts. |
-| `output/cross_fitted_pcs_999_genes_pairwise_tmle.pt` | Results for all `C(999,2) = 498,501` pairs. |
-| `plots/*pairwise_tmle_{overview,forest,network}.png` | Pairwise summary figures. |
-| `*_order{r}_candidates.pt`, `*_order{r}_tmle.pt` | Screened higher-order candidates and their results. |
+| `output/cross_fitted_pcs_999_genes_marginal_estimand_pair_cache.pt` | Exact marginal PC pair probabilities and held-out pair counts. |
+| `output/cross_fitted_pcs_999_genes_marginal_estimand_pairwise_tmle.pt` | Marginal-TMLE results for all `C(999,2) = 498,501` pairs. |
+| `plots/*marginal_estimand_pairwise_tmle_{overview,forest,network}.png` | Marginal pairwise summary figures. |
+| `*_marginal_estimand_order{r}_candidates.pt`, `*_marginal_estimand_order{r}_tmle.pt` | Screened marginal higher-order candidates and their results. |
 
 Run the usual workflow from the repository root:
 
